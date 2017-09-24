@@ -4,10 +4,10 @@
 
 # Site
 title: Secrypt Agency
-subtitle:
+subtitle: Welcome to a platform for network security artists.
 description:
 author: Cipher Saw
-language: default.yml
+language: en
 timezone:
 
 # URL
@@ -72,7 +72,10 @@ pagination_dir: page
 # Extensions
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
-theme: landscape-plus
+theme: next
+
+# Disqus 
+disqus_shortname: ciphersaw
 
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
