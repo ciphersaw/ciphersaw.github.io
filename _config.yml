@@ -83,3 +83,9 @@ deploy:
   type: git
   repo: git@github.com:ciphersaw/ciphersaw.github.io.git
   branch: master
+
+#Local Server Port
+server:
+  port: 5000
+  compress: true
+  header: true
