@@ -63,6 +63,7 @@ menu:
   tags: /tags/ || tags
   categories: /categories/ || th
   archives: /archives/ || archive
+  friends: /friends/ || users
   #schedule: /schedule/ || calendar
   #sitemap: /sitemap.xml || sitemap
   #commonweal: /404/ || heartbeat
@@ -115,7 +116,8 @@ social_icons:
 #links_layout: block
 #links_layout: inline
 #links:
-  #Title: http://example.com/
+  #example: http://example.com
+
 
 # Sidebar Avatar
 # in theme directory(source/images): /images/avatar.gif
