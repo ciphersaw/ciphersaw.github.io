@@ -22,7 +22,7 @@ RSA公钥密码体制于1977年由 Ron Rivest、Adi Shamir、Leonard Adleman 一
 
 RSA公私密钥对的生成，由以下四个步骤完成：
 
-1. 选取两个**大素数** $p$ 和 $q$ （目前安全标准要求$p$、$q$长度相差不能太大，且至少有 $512 bits$；
+1. 选取两个**大素数** $p$ 和 $q$ （目前安全标准要求 $p$、$q$ 长度相差不能太大，且至少有 $512 bits$；
 2. 计算乘积 $n = p \times q$ 和 $\varphi\left(n\right) = \left(p-1\right)\left(q-1\right)$，其中 $\varphi\left(n\right)$ 是**欧拉函数**；
 3. 随机选取整数 $e$ 作为公钥，$1 < e < \varphi\left(n\right)$，并且要求 $gcd\left(e,\varphi\left(n\right)\right) = 1$，即 $e$ 与 $\varphi\left(n\right)$ 互素，**最大公约数**为 $1$；
 4. 用**扩展欧几里得算法**计算私钥 $d$，满足 $d \times e \equiv 1 \ mod \ \varphi\left(n\right)$，即 $d \equiv e^{-1} \ mod \ \varphi\left(n\right)$，称 $d$ 是 $e$ 在模 $\varphi\left(n\right)$ 下的**乘法逆元**。

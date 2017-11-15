@@ -9,7 +9,7 @@ categories: [InfoSec,Web]
 
 此题是Web基础题，难度中等，需要的基础知识有：**HTML、PHP、SQL、Linux、HTTP协议**。
 
-共涉及三个页面，需要用到**浏览器调试技巧和搜索技巧**，还要有**关键点发现意识**，先附上连接。
+共涉及三个页面，需要用到**浏览器调试技巧和搜索技巧**，还要有**关键点发现意识**，先附上链接。
 
 - 题目链接：[http://www.shiyanbar.com/ctf/1808](http://www.shiyanbar.com/ctf/1808)
 - 解题链接：[http://ctf5.shiyanbar.com/10/upload/step1.php](http://ctf5.shiyanbar.com/10/upload/step1.php)
