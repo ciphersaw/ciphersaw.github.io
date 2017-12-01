@@ -93,14 +93,14 @@ scheme: Gemini
 # Key is the link label showing to end users.
 # Value before `||` delimeter is the target permalink.
 # Value after `||` delimeter is the name of FontAwesome icon. If icon (with or without delimeter) is not specified, globe icon will be loaded.
-#social:
-  #GitHub: https://github.com/ciphersaw || github
+social:
+  StackOverflow: https://stackoverflow.com/users/7501472/cipher-saw || stack-overflow
+  GitHub: https://github.com/ciphersaw || github
   #E-Mail: mailto:yourname@gmail.com || envelope
   #Google: https://plus.google.com/yourname || google
   #Twitter: https://twitter.com/yourname || twitter
   #FB Page: https://www.facebook.com/yourname || facebook
   #VK Group: https://vk.com/yourname || vk
-  #StackOverflow: https://stackoverflow.com/yourname || stack-overflow
   #YouTube: https://youtube.com/yourname || youtube
   #Instagram: https://instagram.com/yourname || instagram
   #Skype: skype:yourname?call|chat || skype
@@ -109,7 +109,6 @@ social_icons:
   enable: true
   icons_only: false
   transition: false
-  #GitHub: github
 
 # Blog rolls
 #links_title: Links
@@ -220,6 +219,10 @@ post_copyright:
   enable: false
   license: CC BY-NC-SA 3.0
   license_url: https://creativecommons.org/licenses/by-nc-sa/3.0/
+
+# Declare my license on posts
+my_post_copyright:
+  enable: true
 
 
 # ---------------------------------------------------------------

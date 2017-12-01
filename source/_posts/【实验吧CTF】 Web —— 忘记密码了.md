@@ -3,6 +3,7 @@ title: 【实验吧CTF】 Web —— 忘记密码了
 date: 2017-09-28 16:13:00
 tags: [实验吧,CTF,writeup,audit]
 categories: [InfoSec,Web]
+copyright: true
 ---
 
 # 0x00 前言
