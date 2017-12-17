@@ -111,10 +111,11 @@ social_icons:
   transition: false
 
 # Blog rolls
-#links_title: Links
-#links_layout: block
+links_title: Links
+links_layout: block
 #links_layout: inline
-#links:
+links:
+  CTF Wiki: https://ctf-wiki.github.io/ctf-wiki/
   #example: http://example.com
 
 

@@ -10,6 +10,7 @@ categories: [InfoSec,Web]
 
 在 CTF Web 的基础题中，经常出现一类题型：在 HTTP 响应头获取了一段有效期很短的 key 值后，需要将经过处理后的 key 值快速 POST 给服务器，若 key 值还在有效期内，则服务器返回最终的 flag，否则继续提示“请再加快速度！！！”
 
+
 如果还执着于手动地获取 key 值，复制下来对其进行处理，最后用相应的工具把 key 值 POST 给服务器，那么对不起，因为 key 值的有效期一般都在 1 秒左右，除非有单身一百年的手速，否则不要轻易尝试。显然，这类题不是通过纯手工完成的，幸好 Python 提供了简单易用、功能强大的 HTTP 第三方开源库 [Requests](http://www.python-requests.org/en/master/)，帮助我们轻松解决关于 HTTP 的大部分问题。
 
 <!-- more -->
