@@ -1,7 +1,7 @@
 ---
 title: Hash Length Extension Attack（哈希长度扩展攻击）
 date: 2017-11-12 09:22:34
-tags: [vulnerability,crypto,web,audit,CTF,writeup]
+tags: [vulnerability,crypto,web,audit,实验吧,CTF,writeup]
 categories: [InfoSec,Crypto]
 copyright: true
 mathjax: true
@@ -189,7 +189,7 @@ HashPump [-h help] [-t test] [-s signature] [-d data] [-a additional] [-k keylen
 
 介绍完 Hash Length Extension Attack 的原理与 HashPump 工具的使用方法后，下面借助相关的 CTF 题目来展示该漏洞的实际利用过程。
 
-## 【实验吧CTF】 Web —— 让我进去
+## 【实验吧 CTF】 Web —— 让我进去
 
 此题结合了 PHP 的代码审计与 Hash Length Extension Attack，难度中等，需要的基础知识有：**PHP、Linux、HTTP协议、MD5加密原理**。相关链接如下：
 
