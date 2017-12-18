@@ -332,7 +332,7 @@ han: false
 
 # Disqus
 disqus:
-  enable: true
+  enable: false
   shortname: ciphersaw
   count: true
 
@@ -363,7 +363,7 @@ valine:
 
 # Support for LiveRe comments system.
 # You can get your uid from https://livere.com/insight/myCode (General web site)
-#livere_uid: your uid
+livere_uid: MTAyMC8zMjUyNS85MDg2
 
 # Baidu Share
 # Available value:
