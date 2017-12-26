@@ -94,11 +94,11 @@ scheme: Gemini
 # Value before `||` delimeter is the target permalink.
 # Value after `||` delimeter is the name of FontAwesome icon. If icon (with or without delimeter) is not specified, globe icon will be loaded.
 social:
-  StackOverflow: https://stackoverflow.com/users/7501472/cipher-saw || stack-overflow
+  #StackOverflow: https://stackoverflow.com/yourname || stack-overflow
   GitHub: https://github.com/ciphersaw || github
   #E-Mail: mailto:yourname@gmail.com || envelope
   #Google: https://plus.google.com/yourname || google
-  #Twitter: https://twitter.com/yourname || twitter
+  Twitter: https://twitter.com/CipherSaw || twitter
   #FB Page: https://www.facebook.com/yourname || facebook
   #VK Group: https://vk.com/yourname || vk
   #YouTube: https://youtube.com/yourname || youtube
