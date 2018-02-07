@@ -10,7 +10,6 @@ categories: [InfoSec,Web]
 
 在 CTF Web 的基础题中，经常出现一类题型：在 HTTP 响应头获取了一段有效期很短的 key 值后，需要将经过处理后的 key 值快速 POST 给服务器，若 key 值还在有效期内，则服务器返回最终的 flag，否则继续提示“请再加快速度！！！”
 
-
 如果还执着于手动地获取 key 值，复制下来对其进行处理，最后用相应的工具把 key 值 POST 给服务器，那么对不起，因为 key 值的有效期一般都在 1 秒左右，除非有单身一百年的手速，否则不要轻易尝试。显然，这类题不是通过纯手工完成的，幸好 Python 提供了简单易用、功能强大的 HTTP 第三方开源库 [Requests](http://www.python-requests.org/en/master/)，帮助我们轻松解决关于 HTTP 的大部分问题。
 
 <!-- more -->
@@ -300,3 +299,50 @@ print(requests.post(url, data = post, cookies = cookie).text)
 第 10 行提交带有 `data` 参数与 `cookies` 参数的 POST 请求，最终打印响应页面的内容。
 
 毫无疑问，以上代码的结果也是最终的 flag。
+
+## 【Bugku CTF】 Web —— 秋名山老司机
+
+前面两题均是对响应头中与flag相关的属性做解码处理，然后快速反弹一个 POST 请求得到 flag 值。而本题要求计算响应内容中的表达式，将结果用 POST 请求反弹回服务器换取 flag 值。实际上换汤不换药，依旧用 Python 写个脚本即可解决。
+
+- 题目链接：[http://123.206.31.85/challenges#秋名山老司机](http://123.206.31.85/challenges#秋名山老司机)
+- 解题链接：[http://120.24.86.145:8002/qiumingshan/](http://120.24.86.145:8002/qiumingshan/)
+
+![bugku_qiuming_driver](http://oyhh4m1mt.bkt.clouddn.com/%E8%AF%A6%E8%A7%A3_CTF_Web_%E4%B8%AD%E7%9A%84%E5%BF%AB%E9%80%9F%E5%8F%8D%E5%BC%B9_POST_%E8%AF%B7%E6%B1%82/bugku_qiuming_driver.png)
+
+打开解题连接，老规矩先看源码：
+
+![bugku_qiuming_page_source](http://oyhh4m1mt.bkt.clouddn.com/%E8%AF%A6%E8%A7%A3_CTF_Web_%E4%B8%AD%E7%9A%84%E5%BF%AB%E9%80%9F%E5%8F%8D%E5%BC%B9_POST_%E8%AF%B7%E6%B1%82/bugku_qiuming_page_source.png)
+
+题意很明确，要求在 2 秒内计算给出表达式的值...呃，然后呢？刷新页面再看看，噢噢，然后再将计算结果用 POST 请求反弹回服务器，请求参数的 key 值为 value：
+
+![bugku_qiuming_hint](http://oyhh4m1mt.bkt.clouddn.com/%E8%AF%A6%E8%A7%A3_CTF_Web_%E4%B8%AD%E7%9A%84%E5%BF%AB%E9%80%9F%E5%8F%8D%E5%BC%B9_POST_%E8%AF%B7%E6%B1%82/bugku_qiuming_hint.png)
+
+从页面内容中截取表达式，可以用 string 自带的 split()，但必须先要知道表达式两边的字符串，以其作为分隔符；也可以用正则表达式，仅需知道表达式本身的特征即可。此处用正则表达式更佳。先放上题解脚本，再来慢慢解析：
+
+``` python
+import requests
+import re
+
+url = 'http://120.24.86.145:8002/qiumingshan/'
+s = requests.Session()
+source = s.get(url)
+expression = re.search(r'(\d+[+\-*])+(\d+)', source.text).group()
+
+result = eval(expression)
+post = {'value': result}
+print(s.post(url, data = post).text)
+```
+
+- 有关 requests 的部分此处不细讲，唯一要注意的是，与上一篇 writeup 一样，要利用会话对象 Session()，否则提交结果的时候，重新生成一个新的表达式，结果自然错误。
+
+- 第 7 行是利用[正则表达式](http://www.runoob.com/python3/python3-reg-expressions.html)截取响应内容中的算术表达式。首先引入 re 模块，其次用 search() 匹配算术表达式，匹配成功后用 group() 返回算术表达式的字符串。（想掌握正则表达式，还是要**多看、多想、多练**，毕竟应用场合非常之广）
+
+> **search() 的第一个参数是匹配的正则表达式，第二个参数是要匹配的字符串。**其中 `\d+`代表一个或多个数字；`[+\-*]` 匹配一个加号，或一个减号，或一个乘号，注意减号在中括号内是特殊字符，要用反斜杠转义；`(\d+[+\-*])+`代表一个或多个由数字与运算符组成的匹配组；最后再加上剩下的一个数字 `(\d+)`。
+
+- 第 9 行在获得算术表达式的字符串后，直接利用 Python 的內建方法 [eval()](https://docs.python.org/3/library/functions.html#eval) 来计算出结果，简单、暴力、快捷。
+
+执行完上述脚本，就有一定的概率可以获得 flag 了：
+
+![bugku_qiuming_flag](http://oyhh4m1mt.bkt.clouddn.com/%E8%AF%A6%E8%A7%A3_CTF_Web_%E4%B8%AD%E7%9A%84%E5%BF%AB%E9%80%9F%E5%8F%8D%E5%BC%B9_POST_%E8%AF%B7%E6%B1%82/bugku_qiuming_flag.png)
+
+为什么说是一定概率呢？读者们自行尝试便知，据我观察，当计算结果超出一定长度时，服务器就不响应了。在此猜想：可能客户端 Python 脚本计算错误，也可能服务器端 PHP 脚本对大数计算有误差，还可能在 POST 请求过程中令大整数发生改变。至于是哪种，还请高手解答。
