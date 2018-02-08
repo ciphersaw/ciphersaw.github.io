@@ -116,8 +116,9 @@ links_layout: block
 #links_layout: inline
 links:
   CTF Wiki: https://ctf-wiki.github.io/ctf-wiki/
+  OWASP: https://www.owasp.org/index.php/Main_Page
+  Pentest Standard: http://www.pentest-standard.org/index.php/Main_Page
   #example: http://example.com
-
 
 # Sidebar Avatar
 # in theme directory(source/images): /images/avatar.gif
