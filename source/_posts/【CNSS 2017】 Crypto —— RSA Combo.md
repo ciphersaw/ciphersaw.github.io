@@ -9,7 +9,7 @@ mathjax: true
 
 # 0x00 前言
 
-本次 [UESTC CNSS Recruit 2017](https://ctf.cnssuestc.org/) 中，Crypto方面的题推出了RSA套餐，涉及RSA加密基本原理与特定情况下对RSA的密码攻击，对密码学初学者是个很好的练习机会，在此感谢出题人 [JHSN](http://blog.chrstm.com/) 和 [xris](http://blog.xris.co/) 。
+本次 [UESTC CNSS Recruit 2017](https://ctf.cnssuestc.org/) 中，Crypto方面的题推出了RSA套餐，涉及RSA加密基本原理与特定情况下对RSA的密码攻击，对密码学初学者是个很好的练习机会，在此感谢出题人 [JHSN](http://blog.chrstm.com/) 和 [xris](http://xr1s.me/) 。
 
 <!-- more -->
 
