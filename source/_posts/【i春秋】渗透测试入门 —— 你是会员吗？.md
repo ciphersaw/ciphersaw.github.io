@@ -1,0 +1,208 @@
+﻿---
+title: 【i春秋】渗透测试入门 —— 你是会员吗？
+copyright: true
+date: 2018-03-08 09:41:36
+tags: [i春秋,pentest,exploit,writeup,CMS,crypto,web,php,sqli,trojan,vulnerability]
+categories: [InfoSec,Pentest]
+---
+
+# 0x00 前言
+
+本题的目标是一个基于 [XDCMS](http://www.mshebei.com/) 的订餐管理系统，XDCMS 是各大漏洞平台的常客，维护效率极低，现已基本过时淘汰，常用于渗透测试的练习靶机。
+
+以下的问题均源自于两个典型的漏洞利用。第 1 题由 SQL 注入漏洞可得到管理员的密码散列值，进而破解得到密码明文；第 2 题先将一句话木马插入图片中，再将图片马上传到服务器，最后利用文件包含漏洞，顺利地将[中国菜刀](http://www.zhongguocaidao.com/)与服务器连接，即可看到网站根目录下的 flag 文件。
+
+- 题目链接：[https://www.ichunqiu.com/battalion?t=2&r=54399](https://www.ichunqiu.com/battalion?t=2&r=54399)
+- 解题链接：[https://www.ichunqiu.com/vm/50679/1](https://www.ichunqiu.com/vm/50679/1)
+
+<!-- more -->
+
+![guide](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E4%BD%A0%E6%98%AF%E4%BC%9A%E5%91%98%E5%90%97%EF%BC%9F/guide.png)
+
+# 0x01 获取目标网站管理员的密码
+
+从题目的暗示来看，应该与网站的会员注册有关。搜索一番后，发现了两个 SQL 注入漏洞均可获得管理员的账号密码，且都能在实验靶机上成功复现。
+
+## 注册会员处的 SQL 注入
+
+第一个漏洞是由于 `/system/modules/member/index.php` 中的注册函数 `register_save()` 过滤不严，可绕过限制造成 SQL 注入。漏洞原理在此没有深究，只是对该漏洞进行利用，详情可参考：
+
+> [xdcms注册用户处SQL注入漏洞](http://www.hack80.com/forum.php?mod=viewthread&tid=22401)
+
+接下来打开 Chrome 浏览器，进入默认首页，点击 **免费注册**，根据提示填写好对应信息：
+
+![register_info](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E4%BD%A0%E6%98%AF%E4%BC%9A%E5%91%98%E5%90%97%EF%BC%9F/register_info.png)
+
+下面要利用 [Burp Suite](https://portswigger.net/burp) 工具，准备对注册信息进行抓包改包。依次打开工具箱中的【抓包改包】->【Burp Suite】文件夹，双击【BurpLoader.jar】，弹出的所有提示框点击 **确定** 即可：
+
+![burp_path](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E4%BD%A0%E6%98%AF%E4%BC%9A%E5%91%98%E5%90%97%EF%BC%9F/burp_path.png)
+
+回到浏览器，设置局域网本地代理，依次点击 **设置 -> 更改代理服务器设置 -> 连接 -> 局域网设置**，在 **为 LAN 使用代理服务器** 前打钩，在**地址**上填 `127.0.0.1`，在**端口**上填 `8080`，最后点击 **确定** 返回即可：
+
+![proxy_setting](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E4%BD%A0%E6%98%AF%E4%BC%9A%E5%91%98%E5%90%97%EF%BC%9F/proxy_setting.png)
+
+设置完毕后，回到注册页面，点击 **注册** 后，在 Burp Suite 上点击 **Proxy -> Intercept -> Raw** 选项卡，看到了成功抓取的注册数据包：
+
+![register_capture](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E4%BD%A0%E6%98%AF%E4%BC%9A%E5%91%98%E5%90%97%EF%BC%9F/register_capture.png)
+
+再依次点击 **Action -> Send to Repeater**，便可在 **Repeater** 选项卡中看到刚才抓取的数据包，用于进行重放攻击：
+
+![register_repeater](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E4%BD%A0%E6%98%AF%E4%BC%9A%E5%91%98%E5%90%97%EF%BC%9F/register_repeater.png)
+
+根据漏洞报告中的利用方法以及 payload：
+
+```sql
+' UNION SELECT 1,2,3,4,5,6,7,8,9,10,11,12,13,14 FROM (SELECT count(1),concat(round(rand(0)),(SELECT concat(username,0x23,password) FROM c_admin LIMIT 0,1))a FROM information_schema.tables GROUP by a)b#
+```
+
+将该 payload 插入请求数据的 `username` 参数中，点击 **Go**，在响应数据中即可看到报错信息中泄露的管理员账号密码：
+
+![register_repeater_response](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E4%BD%A0%E6%98%AF%E4%BC%9A%E5%91%98%E5%90%97%EF%BC%9F/register_repeater_response.png)
+
+当然也可直接在 **Proxy** 选项卡中插入 payload，点击 **Forward**，将抓取的数据包转发给服务器：
+
+![register_proxy_forward](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E4%BD%A0%E6%98%AF%E4%BC%9A%E5%91%98%E5%90%97%EF%BC%9F/register_proxy_forward.png)
+
+在浏览器的注册响应信息中同样能看到账号密码：
+
+![register_proxy_response](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E4%BD%A0%E6%98%AF%E4%BC%9A%E5%91%98%E5%90%97%EF%BC%9F/register_proxy_response.png)
+ 
+## 会员资料修改处的 SQL 注入
+
+第二个漏洞也是由于 `/system/modules/member/index.php` 中的编辑函数 `edit_save()` 过滤不严，可绕过限制造成 SQL 注入。同样地，此处不研究漏洞原理，只对该漏洞进行利用，详情可参考：
+
+> [xdcms通用型全版本注入漏洞](http://wooyun.jozxing.cc/static/bugs/wooyun-2013-043334.html)
+
+利用刚刚注册好的 **sql_injection** 账户登录，准备对 **资料管理 -> 基本资料** 中的 **姓名** 进行修改：
+
+![modify_info](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E4%BD%A0%E6%98%AF%E4%BC%9A%E5%91%98%E5%90%97%EF%BC%9F/modify_info.png)
+
+打开 Burp Suite 后，点击 **更新**，成功截取到更改请求数据包：
+
+![modify_capture](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E4%BD%A0%E6%98%AF%E4%BC%9A%E5%91%98%E5%90%97%EF%BC%9F/modify_capture.png)
+
+根据漏洞报告中的利用方法以及 payload：
+
+```url
+%60%3D%28select%20group_concat%28username%2C0x3a%2Cpassword%29%20from%20c_admin%20where%20id%3D1%29%23
+```
+
+该 payload 经过 URL 解码后为：
+
+```sql
+`=(select group_concat(username,0x3a,password) from c_admin where id=1)#
+```
+
+将该 payload 插入请求数据的 `field%5Btruename%5D`中，**注意是要将经过 URL 编码后 payload 插入到 `truename` 与 `%5D` 之间**，否则漏洞利用失败。接着点击 **Forward**：
+
+![modify_forward](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E4%BD%A0%E6%98%AF%E4%BC%9A%E5%91%98%E5%90%97%EF%BC%9F/modify_forward.png)
+
+资料更新成功后，在 **基本资料** 中可看到在 **姓名** 处成功泄露了管理员的账号密码：
+
+![modify_response](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E4%BD%A0%E6%98%AF%E4%BC%9A%E5%91%98%E5%90%97%EF%BC%9F/modify_response.png)
+
+最终得到管理员账号为 `xdcms121`，密码为 `1be20cb2907edca1e4f55f375a5663f1`，从摘要长度猜测此为 MD5 哈希算法，用 [MD5解密工具](http://www.dmd5.com/md5-decrypter.jsp) 得到结果 `e890790166bfb88ee91047c64cda7aad`：
+
+![md5_1](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E4%BD%A0%E6%98%AF%E4%BC%9A%E5%91%98%E5%90%97%EF%BC%9F/md5_1.png)
+
+看来思路没错，再对其进行一次解密，终于得到密码明文 `xdcms212`：
+
+![md5_2](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E4%BD%A0%E6%98%AF%E4%BC%9A%E5%91%98%E5%90%97%EF%BC%9F/md5_2.png)
+
+接下来成功渗透后，即可看到 `/system/modules/member/index.php` 中 `register_save()` 函数处理密码明文的哈希算法源码，确实是对密码明文进行了连续两次的 MD5 哈希计算：
+
+![md5_source](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E4%BD%A0%E6%98%AF%E4%BC%9A%E5%91%98%E5%90%97%EF%BC%9F/md5_source.png)
+
+# 0x02 获取目标网站目录中的 flag 文件信息
+
+打开工具箱【目录扫描】文件夹下的【御剑后台扫描工具】，对目标 URL 进行扫描：
+
+![directory_scan](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E4%BD%A0%E6%98%AF%E4%BC%9A%E5%91%98%E5%90%97%EF%BC%9F/directory_scan.png)
+
+可轻松得到并成功验证后台登录页面 `/admin/index.php`：
+
+![login](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E4%BD%A0%E6%98%AF%E4%BC%9A%E5%91%98%E5%90%97%EF%BC%9F/login.png)
+
+用账号 `xdcms121` 与密码 `xdcms212` 登录后台后，根据实验手册提示，要用菜刀与服务器连接，并在网站目录中获取 flag 文件信息。我们接着搜索可利用的漏洞，发现 `/system/function/global.inc.php` 存在文件包含漏洞。根据漏洞说明，我们可将一句话木马插入图片中，再将图片马上传到服务器，利用 URL 查询字符串的 `m` 参数指向图片马的路径，最终触发文件包含漏洞，等待菜刀连接。该漏洞详情可参考：
+
+> [XDcms控制器绕过漏洞（可本地包含）](http://www.fr1sh.com/wooyun_1/bug_detail.php?wybug_id=wooyun-2013-043382)
+
+因此，首先来制作图片马。任意找到一张图片 `logo.jpg`（此处以 XDCMS 的 logo 为例），新建含有一句话木马的文本文档 `trojan.txt`，在命令行模式下用 [`copy`](https://baike.baidu.com/item/copy/10465712) 命令合并两个文件：
+
+> 小贴士：在 Windows 命令行下输入 `help copy`，即可看到 `copy` 命令的使用说明，限于篇幅在此省略。
+
+![copy](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E4%BD%A0%E6%98%AF%E4%BC%9A%E5%91%98%E5%90%97%EF%BC%9F/copy.png)
+
+用 【Notepad++】查看图片马 `result.jpg`，发现图片末尾确实已插入了一句话木马：
+
+![notepad](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E4%BD%A0%E6%98%AF%E4%BC%9A%E5%91%98%E5%90%97%EF%BC%9F/notepad.png)
+
+所以即使不用 `copy` 命令，直接将木马粘贴在图片末尾也是可以的，此处就不演示了。
+
+回到后台管理界面，依次点击 **模块管理 -> 幻灯片管理 -> 添加幻灯**，发现此处能够上传图片，在 **名称** 处填上任意字符（此处以 `upload trojan` 为例），在 **链接地址** 处填上 `http://www.test.ichunqiu`（不知能否填任意地址，保险起见此处填入相关地址），接着点击 **上传**，选择图片马 `result.jpg`：
+
+![upload_trojan](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E4%BD%A0%E6%98%AF%E4%BC%9A%E5%91%98%E5%90%97%EF%BC%9F/upload_trojan.png)
+
+再次点击 **上传** 后，发现 **图片** 一栏仍为空，需要**手动填写图片马的绝对地址**（这里真心想吐槽这个不合理的设计=_=!!!），填写完点击 **保存** 即可：
+
+![upload_save](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E4%BD%A0%E6%98%AF%E4%BC%9A%E5%91%98%E5%90%97%EF%BC%9F/upload_save.png)
+
+咦，怎么在 **幻灯片管理** 页面没显示图片马在服务器上的地址？点击 **编辑** 亦是如此：
+
+![upload_manager](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E4%BD%A0%E6%98%AF%E4%BC%9A%E5%91%98%E5%90%97%EF%BC%9F/upload_manager.png)
+
+这个点也是本题的一大坑，大家也许注意到了，既然 **图片** 一栏要手动填写地址，那前面还需要点击 **上传** 来选择图片马吗？其实这是为了用 Burp Suite 抓取数据包，获得图片马在服务器上的地址。
+
+如果刚刚忘记打开 Burp Suite，现在请打开，并设置好浏览器的局域网本地代理，严格按照上述的上传步骤重新将图片马上传。成功上传后，可在 **Proxy -> History** 中点击相应记录，并在 **Response -> Raw** 中看到图片马的地址为 `/uploadfile/image/20180309/201803090113470.jpg`：
+
+> 小贴士：在上传图片马的步骤中，在 **Proxy -> Intercept** 中点击关闭截取功能，操作起来更加顺畅。当显示 `Intercept is off` 表示已关闭截取功能。
+
+![upload_path](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E4%BD%A0%E6%98%AF%E4%BC%9A%E5%91%98%E5%90%97%EF%BC%9F/upload_path.png)
+
+由于 `/uploadfile/` 在网站根目录下，而根据漏洞说明中的源码，可知参数 `m` 是在 `/system/function/global.inc.php` 文件中被引用，文件包含的关键语句如下：
+
+```php
+include MOD_PATH.$m."/".$c.".php"; //调用类
+```
+
+因此使用菜刀 **添加SHELL** 时，赋值给 `m` 的图片马路径需要先从 `MOD_PATH` 返回根目录，拟在前面添加 `../../`，猜测向上返回两级目录后可到达根目录，若猜测正确即能指向图片马的路径：
+
+![add_shell](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E4%BD%A0%E6%98%AF%E4%BC%9A%E5%91%98%E5%90%97%EF%BC%9F/add_shell.png)
+
+接下来尝试连接服务器，结果得到报错信息：
+
+![get_shell_error](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E4%BD%A0%E6%98%AF%E4%BC%9A%E5%91%98%E5%90%97%EF%BC%9F/get_shell_error.png)
+
+原因是参数 `m` 被引用到源码后，后面还连了一段字符串，该字符串默认情况下是 `/index.php`，在漏洞说明的源码中可得到验证。所以可在参数 `m` 末尾加入空字符 `%00`，对源码中的 `include` 语句进行截断。详情可参考：
+
+> [文件上传之\00截断与文件包含之%00截断 文件包含漏洞详解](http://www.jinglingshu.org/?p=1339)
+
+![add_shell_null](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E4%BD%A0%E6%98%AF%E4%BC%9A%E5%91%98%E5%90%97%EF%BC%9F/add_shell_null.png)
+
+如无意外，成功地连接上服务器，并在根目录下看到 flag 文件 `flag9szsed-fdzvc4-1l3iza.txt`：
+
+![server_root](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E4%BD%A0%E6%98%AF%E4%BC%9A%E5%91%98%E5%90%97%EF%BC%9F/server_root.png)
+
+打开 flag 文件即可获得 `key{7h7hii9a}`，大功告成，因此第 2 题答案就是 `7h7hii9a`：
+
+![flag](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E4%BD%A0%E6%98%AF%E4%BC%9A%E5%91%98%E5%90%97%EF%BC%9F/flag.png)
+
+另外，如果等得起暴力目录扫描的话，直接可以扫出 `http://www.test.ichunqiu/flag9szsed-fdzvc4-1l3iza.txt`，然后往浏览器一扔：
+
+![flag_browser](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E4%BD%A0%E6%98%AF%E4%BC%9A%E5%91%98%E5%90%97%EF%BC%9F/flag_browser.png)
+
+呵呵...想想就好，还是按部就班的渗透吧~
+
+# 0x03 小结
+
+获得 webshell 后，除了查看 flag 文件，还能查看所有后台文件的源码，包括上述的 MD5 哈希算法，以及在 `/system/common.inc.php` 与 `/system/function/global.inc.php` 中进一步验证了参数 `m` 的值是跟在 `/system/modules/` 后面的，所以，需要向上返回两级目录的猜测是正确的：
+
+![mod_path](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E4%BD%A0%E6%98%AF%E4%BC%9A%E5%91%98%E5%90%97%EF%BC%9F/mod_path.png)
+
+![include](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E4%BD%A0%E6%98%AF%E4%BC%9A%E5%91%98%E5%90%97%EF%BC%9F/include.png)
+
+本次渗透过程没有用到实验手册中提到的 [SQLMap](http://sqlmap.org/)，若有使用其他工具或有新奇的渗透思路，还请各位前辈多多指教。最后向以下三篇参考 writeup 的作者表示致谢！
+
+> [10-在线挑战详细攻略-《你是会员吗》 ](https://bbs.ichunqiu.com/thread-19746-1-1.html)
+> [你是会员吗？](https://bbs.ichunqiu.com/thread-8816-1-1.html)
+> [你是会员吗挑战攻略](https://bbs.ichunqiu.com/thread-8263-1-1.html)

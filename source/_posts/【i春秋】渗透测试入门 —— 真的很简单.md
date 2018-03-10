@@ -1,8 +1,8 @@
-﻿---
+---
 title: 【i春秋】渗透测试入门 —— 真的很简单
 copyright: true
 date: 2018-03-06 15:56:26
-tags: [i春秋,pentest,writeup,web,php,vulnerability]
+tags: [i春秋,pentest,exploit,writeup,CMS,crypto,web,php,trojan,vulnerability,privilege,cmd]
 categories: [InfoSec,Pentest]
 ---
 
