@@ -1,4 +1,4 @@
-﻿---
+---
 title: 【i春秋】渗透测试入门 —— 你是会员吗？
 copyright: true
 date: 2018-03-08 09:41:36
@@ -8,7 +8,7 @@ categories: [InfoSec,Pentest]
 
 # 0x00 前言
 
-本题的目标是一个基于 [XDCMS](http://www.mshebei.com/) 的订餐管理系统，XDCMS 是各大漏洞平台的常客，维护效率极低，现已基本过时淘汰，常用于渗透测试的练习靶机。
+本题的目标是一个基于 XDCMS（目前官网貌似被黑）的订餐管理系统，XDCMS 是各大漏洞平台的常客，维护效率极低，基本过时淘汰，常用于渗透测试的练习靶机。
 
 以下的问题均源自于两个典型的漏洞利用。第 1 题由 SQL 注入漏洞可得到管理员的密码散列值，进而破解得到密码明文；第 2 题先将一句话木马插入图片中，再将图片马上传到服务器，最后利用文件包含漏洞，顺利地将[中国菜刀](http://www.zhongguocaidao.com/)与服务器连接，即可看到网站根目录下的 flag 文件。
 
@@ -66,7 +66,7 @@ categories: [InfoSec,Pentest]
 在浏览器的注册响应信息中同样能看到账号密码：
 
 ![register_proxy_response](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E4%BD%A0%E6%98%AF%E4%BC%9A%E5%91%98%E5%90%97%EF%BC%9F/register_proxy_response.png)
- 
+
 ## 会员资料修改处的 SQL 注入
 
 第二个漏洞也是由于 `/system/modules/member/index.php` 中的编辑函数 `edit_save()` 过滤不严，可绕过限制造成 SQL 注入。同样地，此处不研究漏洞原理，只对该漏洞进行利用，详情可参考：

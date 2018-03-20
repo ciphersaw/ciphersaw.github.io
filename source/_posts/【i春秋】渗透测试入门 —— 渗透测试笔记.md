@@ -1,4 +1,4 @@
----
+﻿---
 title: 【i春秋】渗透测试入门 —— 渗透测试笔记
 copyright: true
 date: 2018-03-14 23:10:17
@@ -37,7 +37,7 @@ categories: [InfoSec,Pentest]
 
 ![subject_id](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E7%AC%94%E8%AE%B0/subject_id.png)
 
-接下来访问 `http://www.test.ichunqiu/member/special.php`，并打开 HackBar 工具，按照漏洞报告中的格式填写好 URL 和请求数据。注意 URL 中的 `id` 值要等于上述专题 ID，请求数据填入 SQL 报错注入的 payload：
+接下来访问 `http://www.test.ichunqiu/member/special.php`，并打开 HackBar 工具，按照漏洞报告中的格式填写好 URL 和请求数据。URL 的查询字符串填入 `job=show_BBSiframe&id=27&type=all`（注意 `id` 值要等于上述专题 ID），请求数据填入 SQL 报错注入的 payload：
 
 > 小贴士：为了方便使用 HackBar，可在浏览器右上角点击 **菜单 -> 定制**，将 HackBar 拖到工具栏中。
 
@@ -203,7 +203,7 @@ SELECT * FROM COLUMNS WHERE COLUMN_NAME = 'salt'
 
 ![chopper_salt](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E7%AC%94%E8%AE%B0/chopper_salt.png)
 
-到此为止，渗透测试的最终目标已达成。
+到此为止，本次渗透测试的指定任务已达成。
 
 意犹未尽的各位看官可接着往下看，既然我们把 `172.16.12.3` 上的数据库给爆了，那也趁此机会，不妨把 `172.16.12.2` 上的数据库也给爆了。经过搜索后发现，齐博 CMS 的[默认数据库配置文件](https://zhidao.baidu.com/question/252236807.html)为 `/data/mysql_config.php `：
 
@@ -217,11 +217,13 @@ SELECT * FROM COLUMNS WHERE COLUMN_NAME = 'salt'
 
 ![chopper_qibo](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E7%AC%94%E8%AE%B0/chopper_qibo.png)
 
-至此，本题的两个服务器系统已被我们完全打穿。
+至此，本题两个服务器中的数据库系统已被我们打穿。还想继续深挖的朋友，建议去尝试获得论坛社区的 webshell，并通过提权获得两个服务器系统的最高权限，达到完全控制的最终目的。
 
 # 0x04 小结
 
 本题虽然有两台目标服务器，但万变不离其宗，熟练之后自然得心应手。在此过程中，我同样也受益匪浅，细心的读者会发现全文多次出现**『搜索』**二字，而渗透测试的核心正是**收集目标系统的信息，挖掘其漏洞并加以利用**。
+
+> 小贴士：关于本系列渗透的练习方法，建议先自己动手做，用尽你毕生所学，实在卡住无法继续时（比如规定在半小时内），再翻看 writeup，把当前的困难点看懂后就不要往下看了。接着按上述流程一直往下做，直至完成渗透目标。
 
 以上是笔者之拙见，不足之处还望各位指出，有其他更猥琐的渗透的思路欢迎前来交流。最后向以下参考 writeup 的作者表示致谢！
 
