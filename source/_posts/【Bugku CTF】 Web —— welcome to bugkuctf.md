@@ -1,4 +1,4 @@
-﻿---
+---
 title: 【Bugku CTF】 Web —— welcome to bugkuctf
 copyright: true
 date: 2018-01-03 22:40:23
