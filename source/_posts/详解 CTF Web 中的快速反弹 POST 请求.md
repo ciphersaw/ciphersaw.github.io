@@ -23,21 +23,21 @@ categories: [InfoSec,Web]
 在安装了 Python 的终端下输入以下命令安装 requests：
 
     $ pip install requests
-    
+
 安装完使用以下命令导入 requests：
 
     >>> import requests
-    
+
 ## 发送 GET 请求与 POST 请求
 
 以 Github 官网为例，对其发起 GET 请求;
 
     >>> r = requests.get('https://github.com/')
-    
+
 对其发起 POST 请求：
 
     >>> r = requests.post('https://github.com/')
-    
+
 ## 查看请求头
 
 对 Github 官网发起请求，以查看 GET 请求的请求头为例，POST 请求同理：
@@ -45,12 +45,12 @@ categories: [InfoSec,Web]
     >>> r = requests.get('https://github.com/')
     >>> r.request.headers
     {'Connection': 'keep-alive', 'Accept-Encoding': 'gzip, deflate',...
-    
+
 查看请求头的某一属性：
 
     >>> r.request.headers['Accept-Encoding']
     'gzip, deflate'
-    
+
 ## 查看响应头
 
 对 Github 官网发起请求，以查看 GET 请求的响应头为例，POST 请求同理：
@@ -58,12 +58,12 @@ categories: [InfoSec,Web]
     >>> r = requests.get('https://github.com/')
     >>> r.headers
     {'Status': '200 OK', 'Expect-CT': 'max-age=2592000, report-uri=...
-        
+
 查看响应头的某一属性：
 
     >>> r.headers['Status']
     '200 OK'
-    
+
 ## 查看响应内容
 
 对 Github 官网发起请求，查看服务器返回页面的内容，以查看 GET 请求的响应内容为例，POST 请求同理：
@@ -71,7 +71,7 @@ categories: [InfoSec,Web]
     >>> r = requests.get('https://github.com/')
     >>> r.text
     u'\n\n\n\n\n\n<!DOCTYPE html>\n<html lang="en">\n  <head>\n    <meta charset="utf-8">\n...
-    
+
 ## 传递 GET 请求参数
 
 GET 请求参数作为查询字符串附加在 URL 末尾，可以通过 `requests.get()` 方法中的 `params` 参数完成。例如，我要构建的 URL 为 `https://github.com/?username=ciphersaw&id=1`，则可以通过以下代码传递 GET 请求参数：
@@ -100,7 +100,7 @@ POST 请求参数以表单数据的形式传递，可以通过 `requests.post()`
     >>> r = requests.post('https://github.com/', cookies = mycookie)
     >>> r.request.headers
     ...'Cookie': 'userid=123456',...
-    
+
 其中 `cookies` 参数也是 `dict` 类型变量。可以看到，POST 请求的请求头中确实包含了自定义 Cookie。
 
 ## 会话对象 Session()
@@ -117,11 +117,11 @@ requests 模块中的 会话对象 Session() 能够在多次请求中保持某�
 Session() 的创建过程如下：
 
     >>> s = requests.Session()
-    
+
 在有效期内，同一个会话对象发出的所有请求都保持着相同的 Cookie，可以看出，会话对象也可以通过 `get` 与 `post` 方法发送请求，以发送 GET 请求为例：
 
     >>> r = s.get('https://github.com/')
-    
+
 # 0x02 writeups
 
 介绍完 requests 模块的基本使用方法，下面借助几道题来分析讲解。另外，在 HTTP 响应头中获取的 key 值通常是经过 base64 编码的，所以还需要引入內建模块 [base64](https://docs.python.org/3/library/base64.html) 用于解码。以下代码均在 Python 3.6 环境下运行。
@@ -313,11 +313,11 @@ print(requests.post(url, data = post, cookies = cookie).text)
 
 ![bugku_qiuming_page_source](http://oyhh4m1mt.bkt.clouddn.com/%E8%AF%A6%E8%A7%A3_CTF_Web_%E4%B8%AD%E7%9A%84%E5%BF%AB%E9%80%9F%E5%8F%8D%E5%BC%B9_POST_%E8%AF%B7%E6%B1%82/bugku_qiuming_page_source.png)
 
-题意很明确，要求在 2 秒内计算给出表达式的值...呃，然后呢？刷新页面再看看，噢噢，然后再将计算结果用 POST 请求反弹回服务器，请求参数的 key 值为 value：
+题意很明确，要求在 2 秒内计算给出表达式的值...呃，然后呢？刷新页面再看看，噢噢，然后再将计算结果用 POST 请求反弹回服务器，请求参数的 key 值为 `value`：
 
 ![bugku_qiuming_hint](http://oyhh4m1mt.bkt.clouddn.com/%E8%AF%A6%E8%A7%A3_CTF_Web_%E4%B8%AD%E7%9A%84%E5%BF%AB%E9%80%9F%E5%8F%8D%E5%BC%B9_POST_%E8%AF%B7%E6%B1%82/bugku_qiuming_hint.png)
 
-从页面内容中截取表达式，可以用 string 自带的 split()，但必须先要知道表达式两边的字符串，以其作为分隔符；也可以用正则表达式，仅需知道表达式本身的特征即可。此处用正则表达式更佳。先放上题解脚本，再来慢慢解析：
+从页面内容中截取表达式，可以用 string 自带的 `split()` 函数，但必须先要知道表达式两边的字符串，以其作为分隔符；也可以用正则表达式，仅需知道表达式本身的特征即可。此处用正则表达式更佳。先放上题解脚本，再来慢慢解析：
 
 ``` python
 import requests
@@ -333,13 +333,13 @@ post = {'value': result}
 print(s.post(url, data = post).text)
 ```
 
-- 有关 requests 的部分此处不细讲，唯一要注意的是，与上一篇 writeup 一样，要利用会话对象 Session()，否则提交结果的时候，重新生成一个新的表达式，结果自然错误。
+有关 requests 的部分此处不细讲，唯一要注意的是，与上一篇 writeup 一样，要利用会话对象 Session()，否则提交结果的时候，重新生成了一个新的表达式，结果自然错误。
 
-- 第 7 行是利用[正则表达式](http://www.runoob.com/python3/python3-reg-expressions.html)截取响应内容中的算术表达式。首先引入 re 模块，其次用 search() 匹配算术表达式，匹配成功后用 group() 返回算术表达式的字符串。（想掌握正则表达式，还是要**多看、多想、多练**，毕竟应用场合非常之广）
+第 7 行是利用[正则表达式](http://www.runoob.com/python3/python3-reg-expressions.html)截取响应内容中的算术表达式。首先引入 re 模块，其次用 `search()` 匹配算术表达式，匹配成功后用 `group()` 返回算术表达式的字符串。（想掌握正则表达式，还是要**多看、多想、多练**，毕竟应用场合非常之广）
 
-	> **search() 的第一个参数是匹配的正则表达式，第二个参数是要匹配的字符串。**其中 `\d+`代表一个或多个数字；`[+\-*]` 匹配一个加号，或一个减号，或一个乘号，注意减号在中括号内是特殊字符，要用反斜杠转义；`(\d+[+\-*])+`代表一个或多个由数字与运算符组成的匹配组；最后再加上剩下的一个数字 `(\d+)`。
+> **search() 的第一个参数是匹配的正则表达式，第二个参数是要匹配的字符串。**其中 `\d+`代表一个或多个数字；`[+\-*]` 匹配一个加号，或一个减号，或一个乘号，注意减号在中括号内是特殊字符，要用反斜杠转义；`(\d+[+\-*])+`代表一个或多个由数字与运算符组成的匹配组；最后再加上剩下的一个数字 `(\d+)`。
 
-- 第 9 行在获得算术表达式的字符串后，直接利用 Python 的內建方法 [eval()](https://docs.python.org/3/library/functions.html#eval) 来计算出结果，简单、暴力、快捷。
+第 9 行在获得算术表达式的字符串后，直接利用 Python 的內建方法 [`eval()`](https://docs.python.org/3/library/functions.html#eval) 来计算出结果，简单、暴力、快捷。
 
 执行完上述脚本，就有一定的概率可以获得 flag 了：
 

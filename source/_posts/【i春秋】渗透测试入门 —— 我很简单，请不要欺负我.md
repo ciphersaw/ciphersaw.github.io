@@ -394,6 +394,8 @@ SQL 语句中限制条件为 `WHERE id=1 AND 1=2# `，相当于 `WHERE 1=2# `，
 
 使用前，先把【arp嗅探】->【Cain】文件夹下的 **ca_setup_53494.exe** 安装包上传至服务器 `C:\wmpub` 目录进行安装，并且安装完 Cain & Abel 后，必须同时安装后续的 WinPcap，否则功能缺失出现报错：
 
+> 小贴士：比起前两款工具，Cain & Abel 使用前需要安装，并且操作步骤相对繁琐，增大了在目标系统留下痕迹的可能，因此建议在满足需求的情况下，尽量选用小巧便捷的工具。
+
 ![cain_install](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/cain_install.png)
 
 全部安装完毕后点击桌面上的 **Cain**，在 **Cracker** 选项卡下选中 **LM & NTLM Hashes**，点击 **Add to list（即蓝色加号）**，勾选上 **Include Password History Hashes** ：
