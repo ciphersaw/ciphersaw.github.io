@@ -165,7 +165,6 @@ SQL 语句中限制条件为 `WHERE id=1 AND 1=2# `，相当于 `WHERE 1=2# `，
 （6）`python sqlmap.py -u <URL> -D <database> -T <table> --columns`：查询某数据表中的所有列名。
 （7）`python sqlmap.py -u <URL> -D <database> -T <table> -C <column> --dump`：查询某列中的所有数据。
 
-
 以上是通过 GET 方式来检测注入点，并进行 SQL 注入读取数据库中数据的常规套路。**注意一个特例：由于 Microsoft Access 数据库结构特殊，注入时不必通过（3）或（4）来查询数据库名，直接从（5）开始查询表名即可，`-D` 选项也可省去。**
 
 > 小贴士：为了避免在命令行界面输入中文进入【SQLMap】目录，因此使用前建议将【SQLMap】文件夹拷贝到 C 盘下。
@@ -413,7 +412,6 @@ SQL 语句中限制条件为 `WHERE id=1 AND 1=2# `，相当于 `WHERE 1=2# `，
 在主页点击 **OPHCRACK** 选项卡，将 NTLM 哈希 `4D478675344541AACCF6CF33E1DD9D85` 填入第一个文本框，点击 **GO** 解密后，即得管理员系统密码的明文 `cu9e2cgw`：
 
 ![objectif](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/objectif.png)
-
 
 # 0x07 小结
 

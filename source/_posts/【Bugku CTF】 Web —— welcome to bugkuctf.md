@@ -125,7 +125,7 @@ if(isset($user)&&(file_get_contents($user,'r')==="welcome to the bugkuctf")){
 
 因此看到此魔术方法定义为 `__toString()`，在源码中却是 `__tostring()` 就不足为奇了。
 
-**魔术方法 [__toString()](http://php.net/manual/zh/language.oop5.magic.php#object.tostring)** 定义在类中，在该类的对象被当成字符串打印时执行，并且返回一个字符串，否则出现报错。
+**魔术方法 [__toString()](http://php.net/manual/zh/language.oop5.magic.php#object.tostring)** 定义在类中，在该类的对象被当成字符串打印时执行，并且必须返回一个字符串，否则出现报错。
 
 因此在 hint.php 中，当 `Flag` 类的对象被打印时，将获取 `$file` 变量（注意此处的 `$file` 与 index.php 中的不同）中文件的内容并输出，最后返回字符串 `good`。
 
