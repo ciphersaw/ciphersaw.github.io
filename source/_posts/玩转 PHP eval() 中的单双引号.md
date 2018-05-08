@@ -14,14 +14,14 @@ copyright: true
 
 # 0x01 eval() 函数
 
-官方文档将 eval() 函数的解释为**【把字符串参数当作 PHP 代码执行】**，说明如下：
+官方文档将 eval() 函数的解释为**「把字符串参数当作 PHP 代码执行」**，说明如下：
 
 ``` php
 mixed eval ( string $code )
 ```
 
 - 参数 `$code` 是需要被执行的字符串
-- 返回值类型 `mixed` 是指存在多种不同类型的返回值，默认返回 **NULL**；如果代码中 **return** 了一个值，则该值也作为函数的返回值返回；如果代码中出现解析错误，则在 PHP7 之前，返回 **FALSE**，在 PHP7 之后，抛出 ParseError 异常。
+- 返回值类型 `mixed` 是指存在多种不同类型的返回值，默认返回 NULL；如果代码中 return 了一个值，则该值也作为函数的返回值返回；如果代码中出现解析错误，则在 PHP7 之前，返回 FALSE，在 PHP7 之后，抛出 ParseError 异常。
 
 下面说明几点注意事项：
 
@@ -50,15 +50,15 @@ This is a $string with my $name in it.
 This is a cup with my coffee in it.
 ```
 
-刚开始看到输出结果，怎么想也想不通，`eval("\$str = \"$str\";");` 语句不就把字符串当成 PHP 代码来执行吗？为什么去掉 eval() 函数后的语句 `$str = "$str";` 的输出结果就变成了 `This is a $string with my $name in it.` 呢？
+刚开始看到输出结果，百思不得其解，`eval("\$str = \"$str\";");` 语句不就把字符串 `"\$str = \"$str\";"` 当成 PHP 代码来执行吗？如果去掉 eval() 函数后直接执行 `$str = "$str";` 语句，为什么输出结果就变成了 `This is a $string with my $name in it.` 呢？
 
 # 0x02 示例解析
 
 要理解上述现象，首先要知道以下两条规则：
 
-## **Rule1：单引号内不解析变量，双引号内解析变量**
+## **Rule 1：单引号内不解析变量，双引号内解析变量**
 
-下面给出 Rule1 的 PoC：
+下面给出 Rule 1 的 PoC：
 
 ``` php
 <?php 
@@ -79,9 +79,9 @@ hello Alice
 
 因此在 `eval("\$str = \"$str\";");` 语句中，`\$str` 是为了变量不被解析成字符串，`\"` 是为了转义内层的双引号，避免与外层的双引号闭合。
 
-## **Rule2：php中嵌套引号的解析是由外向里的，且只解析一次**
+## **Rule 2：PHP 字符串中嵌套引号的解析是由外向里的，且只解析一次**
 
-换句话说，即只解析最外层的引号，下面给出 Rule2 的 PoC：
+换句话说，即只解析最外层的引号，下面给出 Rule 2 的 PoC：
 
 ``` php
 <?php 
@@ -137,7 +137,7 @@ hello Alice
 "hello Alice"
 ```
 
-下面开始解析以下代码，为了方便说明，对官网文档中示例代码的变量名稍作修改，并将 eval() 函数中的字符串语句抽离出来，单独执行：
+下面开始分析以下代码，为了方便理解与说明，对官网文档中示例代码的变量名稍作修改，并将 eval() 函数中的字符串语句抽离出来，单独执行：
 
 ``` php
 <?php 
@@ -162,27 +162,33 @@ This is a $string with my $name in it.
 This is a cup with my coffee in it.
 ```
 
- - `$origin` 的输出没有问题，根据 Rule1 即可理解；
- - `$result_1` 的输出为什么不变呢？理解了 `$result_1 = "$origin";` 就明白了。根据 Rule1，`$origin` 会被解析，得到它本身的值，即字符串 `'This is a $string with my $name in it.'` （注意两边的引号与 `$origin` 的相同，此处为单引号），因此 `$result_1` 的输出与 `$origin` 一样；
- - `$result_2` 为什么会改变，是最难理解的。根据 Rule2，可知 eval() 函数最外层的双引号会被解析，内层被转义的双引号原封不动，因此函数内执行的语句相当于 `$result_2 = "This is a $string with my $name in it."`，此时字符串两边变成了双引号，因此 `$result_2` 的输出会将字符串中的变量转义。
+ - `$origin` 的输出没有问题，根据 Rule 1 即可理解；
+ - `$result_1` 的输出为什么不变呢？理解了 `$result_1 = "$origin";` 就明白了。根据 Rule1，`$origin` 会被解析，得到它本身的值，即字符串 `'This is a $string with my $name in it.'` （注意该字符串两边的引号与 `$origin` 的相同，此处为单引号），因此 `$result_1` 的输出与 `$origin` 一样；
+ - `$result_2` 为什么会改变，是最难理解的。根据 Rule 2，可知 eval() 函数最外层的双引号会被解析，内层被转义的双引号原封不动，因此函数内执行的语句相当于 `$result_2 = "This is a $string with my $name in it."`，注意该字符串两边已变成双引号，故$result_2` 字符串中的变量会被解析。
 
-讲到这里，肯定有人疑问：不是说转义后字符串两边引号跟 `$origin` 相同吗？按理说应该是 `$result_2 = "'This is a $string with my $name in it.'"`，那么输出应该跟 Rule2 PoC 中的 `echo "'$x'"` 一样。请注意，此处因为有个 eval() 函数，所以可以有双层转义，即第一层是 eval() 函数最外层的双引号，第二层是执行语句中的双引号，而类似 `echo "'$x'"` 的引号嵌套，只有单层转义，因此 `result_1` 中 `'This is a $string with my $name in it.'` 的单引号与 `$origin` 的相同，而 `result_2` 中 `"This is a $string with my $name in it."` 的引号则由第二层的双引号赋予。
+讲到这里，肯定有人疑问：不是说解析后字符串两边引号跟 `$origin` 相同吗？按理说应该是 `$result_2 = "'This is a $string with my $name in it.'"`，那么输出应该跟 Rule 2 PoC 中的 `echo "'$x'"` 一样啊！
 
-可能还有人不死心，非要在赋值语句中构造双层转义，那我们就来试试看吧。在 `$result_1 = "$origin";` 的基础上，再加个双引号吧，得到 `$result_1 = ""$origin"";`，简直完美、帅气、机智...
+**请注意，此处因为有个 eval() 函数，所以可以有双层解析，即第一层是解析 eval() 函数最外层的双引号，第二层是解析字符串中的双引号。**类似 `echo "'$x'"` 的引号嵌套，只有单层解析，因此 `result_1` 中 `'This is a $string with my $name in it.'` 的单引号与 `$origin` 的相同，而 `result_2` 中 `"This is a $string with my $name in it."` 的引号则由第二层的双引号赋予。
+
+可能还有读者不死心，非要在赋值语句中构造双层解析，那我们就来试试看吧。在 `$result_1 = "$origin";` 的基础上，再加个双引号吧，得到 `$result_1 = ""$origin"";`，简直完美、帅气、机智...
 
 ```
 PHP Parse error:  syntax error, unexpected '$origin' (T_VARIABLE)
 ```
 
-咳咳，已经丧失理智到忘记相邻两个双引号会闭合吗？不行就转义吧，于是有 `$result_1 = "\"$origin\"";`，再于是就有 `请参见 Rule2 PoC 吧同学`，以及脑海中一堆类似 `$result_1 = ''$origin'';`、`$result_1 = '\'$origin\'';` 等等的语句在风中凌乱。这个故事告诉我们一个道理：**单凭赋值语句是完成不了字符串单双引号转换的**。
+咳咳，已经丧失理智到忘记相邻两个双引号会闭合吗？不行就转义吧，看我骚操作 `$result_1 = "\"$origin\"";`，还有 `$result_1 = ''$origin'';` 与 `$result_1 = '\'$origin\'';`！表演结束了吗？要不送一份 Rule 2 的 PoC 给你参考参考？
+
+以上故事告诉我们一个道理：**单凭赋值语句是完成不了字符串单双引号转换的**。
 
 ----------
 
 # 0x03 玩法进阶
 
-对于官方文档中示例代码的疑惑，看到分割线以上就 OK 了，想再深入理解的可继续看下面的玩法（玩法之间互不干扰）：
+对于官方文档中示例代码的疑惑，看到分割线以上就 OK 了，想再深入理解的可继续看下面的玩法（每个玩法在上例基础上修改，之间互不干扰）：
 
-## **玩法1：将 eval() 函数的第二层转义改为单引号（注意这里单引号不需要转义了，因为第一层是双引号）：**
+## **玩法 1：将 eval() 函数的第二层解析改为单引号：**
+
+> **注意：第二层解析的单引号不需要转义，因为第一层是双引号。**
 
 ``` php
 eval("\$result_2 = '$origin';");
@@ -198,7 +204,7 @@ This is a $string with my $name in it.
 
 如果理解了上面 `result_2` 的输出原理，结果容易理解，即相当于执行了 `$result_2 = 'This is a $string with my $name in it.'`，自然与 `$origin` 和 `result_1` 相同。
 
-## **玩法2：将 `$origin` 字符串两边改为双引号：**
+## **玩法 2：将 `$origin` 字符串两边改为双引号：**
 
 ``` php
 $origin = "This is a $string with my $name in it.";
@@ -212,9 +218,9 @@ This is a cup with my coffee in it.
 This is a cup with my coffee in it.
 ```
 
-这种情况也容易理解，原始字符串一开始就是双引号，那自然是一直转义到底。
+这种情况也容易理解，原始字符串一开始就是双引号，那自然是一直解析到底。
 
-## **玩法3：将 eval() 函数的第二层转义改为单引号，并将 `$origin` 字符串两边改为双引号：**
+## **玩法 3：将 eval() 函数的第二层解析改为单引号，并将 `$origin` 字符串两边改为双引号：**
 
 ``` php
 $origin = "This is a $string with my $name in it.";
@@ -229,9 +235,11 @@ This is a cup with my coffee in it.
 This is a cup with my coffee in it.
 ```
 
-输出结果与玩法2相同，这里注意一点，就是 eval() 函数第一层转义后，返回值为 `$result_2 = 'This is a cup with my coffee in it.'`，即得到的是所有变量都转义后的字符串。
+输出结果与玩法 2 相同，**不过注意一点，就是 eval() 函数第一层转义后，返回值为 `$result_2 = 'This is a cup with my coffee in it.'`，即得到的是所有变量都解析后的字符串**。
 
-## **玩法4：将 eval() 函数的第一层转义改为单引号（注意这第二层的双引号不需要转义了，因为第一层是单引号，并且单号内本身就不会转义 `$`，所以 `$` 前面的转义字符也可以去除）：**
+## **玩法 4：将 eval() 函数的第一层解析改为单引号：**
+
+> **注意：第二层解析的双引号不需要转义，因为第一层是单引号，并且单引号内本身就不会转义 `$`，所以 `$`  前面的转义字符也可以去除。**
 
 ``` php
 eval('$result_2 = "$origin";');
@@ -245,9 +253,11 @@ This is a $string with my $name in it.
 This is a $string with my $name in it.
 ```
 
-输出结果与玩法1相同，但输出原理却不同了。第一层转义时，`$origin` 是原封不动保留下来的，即 `$result_2 = "$origin"`，跟 `result_1` 的情况完全相同。
+输出结果与玩法 1 相同，但输出原理却不同了。第一层解析时，`$origin` 是原封不动保留下来的，即 `$result_2 = "$origin"`，跟 `result_1` 的情况完全相同。
 
-## **玩法5：将 eval() 函数的第一层和第二层转义都改为单引号（注意这时第二层的单引号就需要转义了）：**
+## **玩法 5：将 eval() 函数的第一层和第二层解析都改为单引号：**
+
+> **注意：第二层解析的单引号此时需要转义，因为第一层也是单引号。**
 
 ``` php
 eval('$result_2 = \'$origin\';');
@@ -261,6 +271,6 @@ This is a $string with my $name in it.
 $origin
 ```
 
-这次的输出结果有点意思，跟玩法4一样，在第一层转义时，`$origin` 原封不动保留下来，即 `$result_2 = '$origin'`，但在第二层转义时也要原封不动地输出字符串 `$origin`。
+这次的输出结果有点意思，跟玩法 4 一样，在第一层解析时，`$origin` 原封不动保留下来，即 `$result_2 = '$origin'`，而且在第二层解析时也要原封不动地输出字符串 `$origin`。
 
-还有两种玩法（即分别在玩法4和玩法5的基础上，将 `$origin` 字符串两边改为双引号）大同小异，这里就不详述了，有兴趣的读者可以自行推导验证。
+还有两种玩法（即分别在玩法 4 和玩法 5 的基础上，将 `$origin` 字符串两边改为双引号）大同小异，这里就不详述了，有兴趣的读者可以自行推导。
