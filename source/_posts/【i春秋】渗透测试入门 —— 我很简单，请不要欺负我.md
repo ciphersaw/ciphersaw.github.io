@@ -90,9 +90,9 @@ SQL 语句中限制条件为 `WHERE id=1 AND 1=2# `，相当于 `WHERE 1=2# `，
 
 **（2）`http://www.test.ichunqiu/Aboutus.asp?Title=%B9%AB%CB%BE%BC%F2%BD%E9' AND 1=2# `**
 
-此时页面应该显示异常，且结果与（1）中情况类似。
+此时页面应该显示异常，而测试的异常结果也与（1）中情况类似。
 
-因此，经过以上两 个步骤，即可判断 `http://www.test.ichunqiu/Aboutus.asp?Title=%B9%AB%CB%BE%BC%F2%BD%E9` 不存在字符型 SQL 注入。
+因此，经过以上两个步骤，即可判断 `http://www.test.ichunqiu/Aboutus.asp?Title=%B9%AB%CB%BE%BC%F2%BD%E9` 不存在字符型 SQL 注入。
 
 至于不存在字符型 SQL 注入的原因，我们可以深入地分析一下。当 `Title=%B9%AB%CB%BE%BC%F2%BD%E9' AND '1'='1` 或 `Title=%B9%AB%CB%BE%BC%F2%BD%E9' AND '1'='1# ` 时，页面是能够正常显示的，但 `Title=%B9%AB%CB%BE%BC%F2%BD%E9' AND '1'='1'# ` 却不行，所以注释符 `#` 此处被过滤了。
 
