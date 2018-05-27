@@ -206,9 +206,11 @@ SQL 语句中限制条件为 `WHERE id=1 AND 1=2# `，相当于 `WHERE 1=2# `，
 
 已知 `admin` 表存在后，接着猜解当前未知表的列数，用于后续的[联合查询（UNION SELECT）](http://www.w3school.com.cn/sql/sql_union.asp)，因为**联合查询的必要条件是每个查询的列数需要严格相等**。
 
-猜解列数最便捷的方法是利用 [**ORDER BY**](http://www.w3school.com.cn/sql/sql_orderby.asp) 语句的隐藏用法。一般来说，`ORDER BY <column>` 代表对 `<column>` 列进行升排序，而 **`ORDER BY <column_order>` 代表对第 `<column_order>` 列进行升排序**。容易看出，`<column_order>` 的最大取值即为表的列数，因此，当发现 `ORDER BY n` 显示正常，并且 `ORDER BY n+1` 出现异常时，可判断当前表的列数为 n。
+猜解列数最便捷的方法是利用 [**ORDER BY**](http://www.w3school.com.cn/sql/sql_orderby.asp) 语句的隐藏用法。一般来说，`ORDER BY <column>` 代表对 `<column>` 列进行升排序，而 **`ORDER BY <column_order>` 代表对第 `<column_order>` 列进行升排序**。容易看出，`<column_order>` 的最大取值即为查询数据的列数，因此，当发现 `ORDER BY n` 显示正常，并且 `ORDER BY n+1` 出现异常时，可判断当前查询数据的列数为 n。
 
-经过反复尝试，可以确定表的列数为 11：
+**注意，只有在后端数据库的查询语句为 `SELECT * FROM admin` 时，当前查询数据的列数 n 才等于数据库 `admin` 的总列数。**详情可参考：[sql注入之order by猜列数问题](https://segmentfault.com/a/1190000002655427)。
+
+经过反复尝试，可以确定查询数据的列数为 11：
 
 ![manual_num_true](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/manual_num_true.png)
 
