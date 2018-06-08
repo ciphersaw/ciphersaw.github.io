@@ -1,15 +1,12 @@
 User-agent: *
-Allow: /
+
 Allow: /archives/
 Allow: /tags/
 Allow: /categories/
+Allow: /2017/
+Allow: /2018/
 
-Disallow: /vendors/
-Disallow: /js/
-Disallow: /css/
-Disallow: /fonts/
-Disallow: /vendors/
-Disallow: /fancybox/
+Disallow: /
 
 Sitemap: https://ciphersaw.github.io/sitemap.xml
 Sitemap: https://ciphersaw.github.io/baidusitemap.xml
