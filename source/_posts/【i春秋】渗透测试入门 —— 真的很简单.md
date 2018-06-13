@@ -10,7 +10,7 @@ categories: [InfoSec,Pentest]
 
 本题是渗透测试入门的一道基础题，虽然美其名曰“真的很简单”，但对于新手还是有一定挑战性的，实践并掌握本题中的所有知识点，对渗透测试的基本理解有很大帮助。
 
-此题的目标是对一个基于[织梦 CMS](http://www.dedecms.com/) 的网站进行渗透测试，找到网站登录后台，继而入侵服务器找到存放 flag 的文件。从实验手册上，可看出其中还会涉及到简单的提权过程。
+此题的目标是对一个**基于[织梦 CMS](http://www.dedecms.com/) 的网站**进行渗透测试，找到网站登录后台，继而入侵服务器找到存放 flag 的文件。从实验手册上，可看出其中还会涉及到简单的提权过程。
 
 - 题目链接：[https://www.ichunqiu.com/battalion?t=2&r=54399](https://www.ichunqiu.com/battalion?t=2&r=54399)
 - 解题链接：[https://www.ichunqiu.com/vm/51123/1](https://www.ichunqiu.com/vm/51123/1)

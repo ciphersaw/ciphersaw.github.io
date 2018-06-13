@@ -11,13 +11,15 @@ mathjax: true
 
 **[Hash Length Extension Attack](https://en.wikipedia.org/wiki/Length_extension_attack)（[哈希长度扩展攻击](https://zh.wikipedia.org/w/index.php?title=%E9%95%BF%E5%BA%A6%E6%89%A9%E5%B1%95%E6%94%BB%E5%87%BB)）**是针对采用了 [Merkle–Damgård 结构](https://en.wikipedia.org/wiki/Merkle%E2%80%93Damg%C3%A5rd_construction)的哈希函数的攻击手段，如 MD5、SHA-1 和 SHA-2 等。该攻击可以伪造消息散列值，产生新的合法数字签名，对数据的完整性和不可否认性造成严重威胁。
 
-本文以 MD5 为例，在 0x01 节先介绍 MD5 与 Hash Length Extension Attack 的基本原理，在 0x02 节介绍攻击工具 HashPump 的使用，最后在 0x03 节借助相关的 CTF 题目来展示此漏洞的利用方法。阅读本文需要**理解 MD5 加密原理**，以及**掌握 Linux 下的工具使用**。
+本文以 MD5 为例，在 0x01 节先介绍 MD5 与 Hash Length Extension Attack 的基本原理，在 0x02 节介绍攻击工具 HashPump 的使用，最后在 0x03 节借助相关的 CTF 题目来展示此漏洞的利用方法。
+
+阅读本文需要**理解 MD5 哈希函数的原理**，以及**在 Linux 下熟练使用命令行工具**。
 
 <!-- more -->
 
 # 0x01 理论基础
 
-为了便于后续理解，所以在介绍 Hash Length Extension Attack 之前，先简单介绍一下 MD5 的加密流程。
+为了便于后续理解，所以在介绍 Hash Length Extension Attack 之前，先简单介绍一下 MD5 的算法流程。
 
 ## MD5 Hash Function
 

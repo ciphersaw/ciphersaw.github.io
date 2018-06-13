@@ -8,7 +8,7 @@ copyright: true
 
 # 0x00 前言
 
-在一次偶然学习 PHP eval() 函数的过程中，发现[官方文档](http://php.net/manual/zh/function.eval.php)对该函数的示例说明很有意思，刚开始有点无法理解，想通之后便记录下此次辛酸的思考历程。
+在一次偶然学习 PHP **eval() 函数**的过程中，发现[官方文档](http://php.net/manual/zh/function.eval.php)对该函数的示例说明很有意思，刚开始有点无法理解，想通之后便记录下此次辛酸的思考历程。
 
 <!-- more -->
 

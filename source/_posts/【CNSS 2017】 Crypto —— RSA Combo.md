@@ -9,11 +9,11 @@ mathjax: true
 
 # 0x00 前言
 
-本次 [UESTC CNSS Recruit 2017](https://ctf.cnssuestc.org/) 中，Crypto 方面的题推出了 RSA 套餐，涉及 RSA 加密基本原理与特定情况下对 RSA 的密码攻击，对密码学初学者是个很好的练习机会，在此感谢出题人 [JHSN](http://blog.chrstm.com/) 和 [xris](http://xr1s.me/) 。
+本次 [UESTC CNSS Recruit 2017](https://ctf.cnssuestc.org/) 中，Crypto 方面的题推出了 RSA 套餐，涉及 **RSA 加密算法原理**与**特定情况下对 RSA 的密码攻击**，对密码学初学者是个很好的练习机会，在此感谢出题人 [JHSN](http://blog.chrstm.com/) 和 [xris](http://xr1s.me/) 。
 
 <!-- more -->
 
-此 RSA 套餐一共四题，前两题是 RSA 加密基本原理，后两题是 RSA 密码攻击。
+此 RSA 套餐一共四题，前两题涉及 RSA 加密算法原理，后两题涉及 RSA 密码攻击。
 
 RSA 公钥密码体制于 1977 年由 Ron Rivest、Adi Shamir、Leonard Adleman 一起提出，并以三人的姓氏首字母拼接命名，现已成为公钥密码的国际标准，是目前应用最广泛的公钥密码体制之一。RSA 是基于大整数因子分解问题的公钥密码，因此阅读本文需要有**数论**基础，并且所有代码选用 **Python**，便于大整数运算。
 

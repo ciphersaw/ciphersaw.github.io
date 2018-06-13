@@ -12,7 +12,7 @@ categories: [InfoSec,Pentest]
 
 从实验手册上给出的工具提示可看出，本次渗透貌似更注重**端口扫描**与**社会工程学的运用**，其实大可不必被其限制了思路，当作一种参考方向即可，按照以往的渗透方法一样能达到目的。
 
-简单介绍一下靶机环境：主站为**秋潮个人摄影网站管理系统**，主站下还有一个 [LeadBBS](http://www.leadbbs.com/index.asp) 论坛，均采用 **ASP** 后端脚本语言与 **Microsoft Office Access** 数据库，此类小型 CMS 一般都没有官网，且漏洞较多无人维护，只能从各大软件平台下载源码；服务器系统为 **Windows Server 2003 Enterprise Edition**，如果没打好补丁，此系统也是漏洞百出。显然，靶机采用了经典网站服务器的标配 **Windows + IIS + ASP + Access** 。
+简单介绍一下靶机环境：主站为**秋潮个人摄影网站管理系统**，主站下还有一个 **[LeadBBS](http://www.leadbbs.com/index.asp) 论坛**，均采用 **ASP** 后端脚本语言与 **Microsoft Office Access** 数据库，此类小型 CMS 一般都没有官网，且漏洞较多无人维护，只能从各大软件平台下载源码；服务器系统为 **Windows Server 2003 Enterprise Edition**，如果没打好补丁，此系统也是漏洞百出。显然，靶机采用了经典网站服务器的标配 **Windows + IIS + ASP + Access** 。
 
 可见，本实验的渗透方法与靶机环境与 [【i春秋】渗透测试入门 —— 我很简单，请不要欺负我](https://ciphersaw.github.io/2018/03/20/%E3%80%90i%E6%98%A5%E7%A7%8B%E3%80%91%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8%20%E2%80%94%E2%80%94%20%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95%EF%BC%8C%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/) 中的大同小异，因此可作为本文的参考。
 
