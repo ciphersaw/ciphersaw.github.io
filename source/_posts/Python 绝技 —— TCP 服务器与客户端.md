@@ -75,11 +75,11 @@ def tcplink(conn, addr):
 	conn.send(b"Welcome!\n")
 	while True:
 		conn.send(b"What's your name?")
-		data = conn.recv(1024).decode()
-		if data == "exit":
+		data = conn.recv(1024)
+		if data == b"exit":
 			conn.send(b"Good bye!\n")
 			break
-		conn.send(b"Hello %s!\n" % data.encode())
+		conn.send(b"Hello %s!\n" % data)
 	conn.close()
 	print("Connection from %s:%s is closed" % addr)
 
