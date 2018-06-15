@@ -95,12 +95,12 @@ while True:
 ```
 
 - Line 6：定义一个 tcplink() 函数，第一个 *conn* 参数为服务器与客户端交互数据的套接字对象，第二个 *addr* 参数为客户端的 IP 地址与端口号，用二元组 (host, port) 表示。
-- Line 8：连接成功后，向客户端发送问候信息 `"Welcome!\n"`。
+- Line 8：连接成功后，向客户端发送欢迎信息 `b"Welcome!\n"`。
 - Line 9：进入与客户端交互数据的循环阶段。
-- Line 10：向客户端发送询问信息 `"What's your name?"`。
-- Line 11：接收客户端发来的非空字符串。
-- Line 12：如果非空字符串为 `"exit"`，则向客户端发送结束信息 `"Good bye!\n"`，并结束与客户端交互数据的循环阶段。
-- Line 15：如果非空字符串不为 `"exit"`，则向客户端发送问候信息 `"Hello %s!\n"`，其中 `%s` 是客户端发来的非空字符串。
+- Line 10：向客户端发送询问信息 `b"What's your name?"`。
+- Line 11：接收客户端发来的 bytes 对象。
+- Line 12：若 bytes 对象为 `b"exit"`，则向客户端发送结束响应信息 `b"Good bye!\n"`，并结束与客户端交互数据的循环阶段。
+- Line 15：若 bytes 对象不为 `b"exit"`，则向客户端发送问候响应信息 `b"Hello %s!\n"`，其中 `%s` 是客户端发来的 bytes 对象。
 - Line 16：关闭套接字，不再向客户端发送数据。
 - Line 19：创建 socket 对象，第一个参数为 *socket.AF_INET*，代表采用 IPv4 协议用于网络通信，第二个参数为 *socket.SOCK_STREAM*，代表采用 TCP 协议用于面向连接的网络通信。
 - Line 20：向 socket 对象绑定服务器主机地址 ("127.0.0.1", 6000)，即本地主机的 TCP 6000 端口。
@@ -138,15 +138,15 @@ s.close()
 
 - Line 5：创建 socket 对象，第一个参数为 *socket.AF_INET*，代表采用 IPv4 协议用于网络通信，第二个参数为 *socket.SOCK_STREAM*，代表采用 TCP 协议用于面向连接的网络通信。
 - Line 6：向 ("127.0.0.1", 6000) 主机发起连接请求，即本地主机的 TCP 6000 端口。
-- Line 7：连接成功后，接收服务器发送过来的问候信息 `"Welcome!\n"`。
-- Line 9：创建一个非空字符串变量 data，并赋初值为 `"client"`（只要是非空字符串即可），用于判断是否接收来自服务器发来的询问信息 `"What's your name?"`。
+- Line 7：连接成功后，接收服务器发来的欢迎信息 `b"Welcome!\n"`，并转换为字符串后打印输出。
+- Line 9：创建一个非空字符串变量 data，并赋初值为 `"client"`（只要是非空字符串即可），用于判断是否接收来自服务器发来的询问信息 `b"What's your name?"`。
 - Line 10：进入与服务器交互数据的循环阶段。
-- Line 12：当用户的输入非空且不等于 `"exit"`（记为非法字符串）时，则接收服务器发来的询问信息。
-- Line 13：要求用户输入名字，一条合法字符串即可。
-- Line 14：当用户输入非空，则重新开始循环，要求用户重新输入合法字符串。
-- Line 16：当用户输入合法字符串时，则将字符串转换为 bytes 对象后发送至服务器。
-- Line 17：接收服务器的响应数据，并将 bytes 对象转换为字符串后打印输出。
-- Line 18：当用户输入字符串 `"exit"` 时，则结束与服务器交互数据的循环阶段，即将关闭套接字。
+- Line 11：当变量 data 非空时，则接收服务器发来的询问信息。
+- Line 13：要求用户输入名字。
+- Line 14：当用户的输入为空时，则重新开始循环，要求用户重新输入。
+- Line 16：当用户的输入非空时，则将字符串转换为 bytes 对象后发送至服务器。
+- Line 17：接收服务器的响应数据，并将响应的 bytes 对象转换为字符串后打印输出。
+- Line 18：当用户的输入为 `"exit"` 时，则终止与服务器交互数据的循环阶段，即将关闭套接字。
 - Line 21：关闭套接字，不再向服务器发送数据。
 
 # 0x05 TCP 进程间通信
@@ -160,9 +160,9 @@ s.close()
 ![one_server_vs_one_client](http://oyhh4m1mt.bkt.clouddn.com/Python_%E7%BB%9D%E6%8A%80_TCP_%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8E%E5%AE%A2%E6%88%B7%E7%AB%AF/one_server_vs_one_client.png)
 
 1. 在其中一个 PowerShell 中运行命令 `python3 ./tcp_server.py`，服务器显示 `Waiting for connection...`，并监听本地主机的 TCP 6000 端口，进入等待连接状态；
-2. 在另一个 PowerShell 中运行命令 `python3 ./tcp_client.py`，服务器显示 `Accept new connection from 127.0.0.1:42101`，完成与本地主机的 TCP 42101 端口建立通信连接，并向客户端发送问候信息与询问信息，客户端接收到信息后打印输出；
+2. 在另一个 PowerShell 中运行命令 `python3 ./tcp_client.py`，服务器显示 `Accept new connection from 127.0.0.1:42101`，完成与本地主机的 TCP 42101 端口建立通信连接，并向客户端发送欢迎信息与询问信息，客户端接收到信息后打印输出；
 3. 若客户端向服务器发送字符串 `Alice` 与 `Bob`，则收到服务器的问候响应信息；
-4. 若客户端向服务器发送空字符串，则要求重新输入字符串；
+4. 若客户端向服务器发送空字符串，则被要求重新输入；
 5. 若客户端向服务器发送字符串 `exit`，则收到服务器的结束响应信息；
 6. 客户端与服务器之间的通信连接已关闭，服务器显示 `Connection from 127.0.0.1:42101 is closed`，并继续监听客户端的连接请求。
 
@@ -171,7 +171,7 @@ s.close()
 ![one_server_vs_multiple_clients](http://oyhh4m1mt.bkt.clouddn.com/Python_%E7%BB%9D%E6%8A%80_TCP_%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8E%E5%AE%A2%E6%88%B7%E7%AB%AF/one_server_vs_multiple_clients.png)
 
 1. 在其中一个 PowerShell 中运行命令 `python3 ./tcp_server.py`，服务器显示 `Waiting for connection...`，并监听本地主机的 TCP 6000 端口，进入等待连接状态；
-2. 在另三个 PowerShell 中分别运行命令 `python3 ./tcp_client.py`，服务器同时与本地主机的 TCP 42719、42721、42722 端口建立通信连接，并分别向客户端发送问候信息与询问信息，客户端接收到信息后打印输出；
+2. 在另三个 PowerShell 中分别运行命令 `python3 ./tcp_client.py`，服务器同时与本地主机的 TCP 42719、42721、42722 端口建立通信连接，并分别向客户端发送欢迎信息与询问信息，客户端接收到信息后打印输出；
 3. 三台客户端分别向服务器发送字符串 `Client1`、`Client2`、`Client3`，并收到服务器的问候响应信息；
 4. 所有客户端分别向服务器发送字符串 `exit`，并收到服务器的结束响应信息；
 5. 所有客户端与服务器之间的通信连接已关闭，服务器继续监听客户端的连接请求。
@@ -180,7 +180,7 @@ s.close()
 
 ## socket 模块
 
-此小节介绍上述代码中用到的 [socket 模块内置函数](https://docs.python.org/3/library/socket.html#functions)，也是 socket 编程的核心函数。
+本节介绍上述代码中用到的[内建模块 socket](https://docs.python.org/3/library/socket.html)，是 Python 网络编程的核心模块。
 
 ### socket() 函数
 
@@ -195,9 +195,7 @@ socket.socket(family=AF_INET, type=SOCK_STREAM, proto=0, fileno=None)
 - *proto* 参数代表套接字的协议，默认值为 *0*，一般忽略该参数，除非 *family* 参数为 *AF_CAN*，则 *proto* 参数需设置为 *CAN_RAW* 或 *CAN_BCM*。
 - *fileno* 参数代表套接字的文件描述符，默认值为 *None*，若设置了该参数，则其他三个参数将会被忽略。
 
-## socket 对象
-
-此小节介绍上述代码中用到的 [socket 对象内置函数](https://docs.python.org/3/library/socket.html#socket-objects)，也是 socket 编程的常见函数。注意，以下函数原型中的「socket」是指 socket 对象，而不是 socket 模块。
+创建完套接字对象后，需使用对象的内置函数完成网络通信过程。**注意，以下函数原型中的「socket」是指 socket 对象，而不是上述的 socket 模块。**
 
 ### bind() 函数
 
@@ -237,18 +235,18 @@ socket.connect(address)
 socket.accept()
 ```
 
-accept() 函数的返回值是一个二元组 (conn, address)，其中 conn 是服务器用来与客户端交互数据的套接字对象，address 是客户端的 IP 地址与端口号，用二元组 (host, port) 表示。
+accept() 函数的返回值是二元组 (conn, address)，其中 conn 是服务器用来与客户端交互数据的套接字对象，address 是客户端的 IP 地址与端口号，用二元组 (host, port) 表示。
 
 ### send() 函数
 
-[send() 函数](https://docs.python.org/3/library/socket.html#socket.socket.send)用于向远程套接字对象发送数据。注意，本机的套接字必须与远程的套接字成功连接后才能使用该函数，否则会报错。可见，send() 函数只能用于 TCP 进程间通信，而对于 UDP 进程间通信应该用 sendto() 函数。函数原型如下：
+[send() 函数](https://docs.python.org/3/library/socket.html#socket.socket.send)用于向远程套接字对象发送数据。注意，本机套接字必须与远程套接字成功连接后才能使用该函数，否则会报错。可见，send() 函数只能用于 TCP 进程间通信，而对于 UDP 进程间通信应该用 sendto() 函数。函数原型如下：
 
 ```python
 socket.send(bytes[, flags])
 ```
 
 - *bytes* 参数代表即将发送的 [bytes 对象](https://docs.python.org/3/library/stdtypes.html#bytes-objects)数据。例如，对于字符串 `"hello world!"` 而言，需要用 encode() 函数转换为 bytes 对象 `b"hello world!"` 才能进行网络传输。
-- *flags* 可选参数用于设置 send() 函数的特殊功能，默认值为 *0*，也可由一个或多个预定义值组成，用位或操作符 `|` 隔开。详情可参考 Unix 函数手册中的 [send(2)](https://linux.die.net/man/2/send)，*flags* 参数的常见取值有 MSG_OOB、MSG_PEEK、MSG_WAITALL 等。
+- *flags* 可选参数用于设置 send() 函数的特殊功能，默认值为 *0*，也可由一个或多个预定义值组成，用位或操作符 `|` 隔开。详情可参考 Unix 函数手册中的 [send(2)](https://linux.die.net/man/2/send)，*flags* 参数的常见取值有 MSG_OOB、MSG_EOR 、MSG_DONTROUTE等。
 
 send() 函数的返回值是发送数据的字节数。
 
@@ -275,7 +273,7 @@ socket.close()
 
 ## threading 模块
 
-此小节介绍上述代码中用到的 threading 模块内置类，也是 Python 多线程编程的核心。
+本节介绍上述代码中用到的[内建模块 threading](https://docs.python.org/3/library/threading.html)，是 Python 多线程的核心模块。
 
 ### Thread() 类
 
@@ -292,16 +290,14 @@ class threading.Thread(group=None, target=None, name=None, args=(), kwargs={}, *
 - *kwargs* 参数代表 *target* 参数指向函数的关键字参数，用字典（dict）表示，默认值为空字典 `{}`。
 - *daemon* 参数用于标示进程是否为守护进程。若设置为 *True*，则标示为守护进程；若设置为 *False*，则标示为非守护进程；若设置为 *None*，则继承当前父线程的 *daemon* 参数值。
 
-## threading 对象
-
-此小节介绍上述代码中用到的 threading 对象内置函数，也是多线程编程的必用函数。注意，以下函数原型中的「threading」是指 threading 对象，而不是 threading 模块。
+创建完线程对象后，需使用对象的内置函数控制多线程活动。
 
 ### start() 函数
 
 [start() 函数](https://docs.python.org/3/library/threading.html#threading.Thread.start)用于开启线程活动。函数原型如下：
 
 ```python
-threading.start()
+Thread.start()
 ```
 
 注意，每个线程对象只能调用一次 start() 函数，否则会导致 [RuntimeError](https://docs.python.org/3/library/exceptions.html#RuntimeError) 错误。
