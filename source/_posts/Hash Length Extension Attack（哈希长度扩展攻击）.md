@@ -25,44 +25,60 @@ mathjax: true
 
 [MD5](https://en.wikipedia.org/wiki/MD5) 算法由美国麻省理工密码学家 [Ronald Rivest](https://en.wikipedia.org/wiki/Ron_Rivest) 在 MD2、MD3 与 MD4 的基础上设计而成，并在 1992 年公开发表，在规范 [RFC 1321](https://tools.ietf.org/html/rfc1321) 中作了详尽阐述。
 
-MD5 算法的输入为长度小于 $2^{64} \ bit$ 的消息比特串，输出为固定 $128 \ bit$ 的消息散列值。输入的数据以 $512 \ bit$ 为分组进行处理。MD5 算法流程如下图所示。
+MD5 算法的输入为长度小于 $2^{64} \ bit$ 的消息比特串，输出为固定 $128 \ bit$ 的消息散列值，输入数据需要以 $512 \ bit$ 为单位进行分组。
+
+MD5 算法的流程图如下：
 
 ![md5_process](http://oyhh4m1mt.bkt.clouddn.com/Hash_Length_Extension_Attack/md5_process.jpg)
 
-其中 $L$ 是消息比特串；$N$ 是消息扩充后的分组个数；$M_i$ 是第 $i$ 个分组，$0 \le i \le N-1$；$IV$ 是 $128 \ bit$ 的初始链接变量，由 4 个 $32 \ bit$ 的寄存器构成；$CV_i$ 是链接变量，代表第 $i$ 个分组单元的输入，而最后一个单元 $B_{N-1}$ 的输出 $CV_N$ 即为消息的散列值。算法具体流程如下：
+-  $L$ 是消息比特串的原始长度；
+
+-  $N$ 是消息扩充后的分组个数；
+
+-  $M_i$ 是消息扩充后的第 $i$ 个分组，$0 \le i \le N-1$；
+
+-  $IV$ 是 $128 \ bit$ 的初始链接变量，由 4 个 $32 \ bit$ 的寄存器构成；
+
+-  $CV_i$ 是链接变量，代表 $M_i$ 分组单元的输入，也是 $M_{i-1}$ 分组单元的输出，$1 \le i \le N-1$。**注意，最后一个分组单元 $M_{N-1}$ 的输出 $CV_N$ 即为消息的散列值。**
+
+MD5 算法的具体流程描述如下：
 
 ### （1）附加填充
 
-先填充一个“1”比特和若干个“0”比特使消息长度在模 512 下与 448 同余，再将消息的原始长度用一个 $64 \ bit$ 的整型表示，以[小端字节序（Little-Endian）](https://en.wikipedia.org/wiki/Endianness#Little)的方式继续填充，使得扩充后的消息长度为 $512 \ bit$ 的整数倍，可表示为：
+先填充一个「1」比特和若干个「0」比特使消息长度在模 512 下与 448 同余，再将消息的原始长度用一个 $64 \ bit$ 的整型表示，以[小端字节序（Little-Endian）](https://en.wikipedia.org/wiki/Endianness#Little)的方式继续填充，使得扩充后的消息长度为 $512 \ bit$ 的整数倍，可表示为：
 
 $$
 \begin{cases}
-L + padding_1 + padding_2 = N \times 512  \\
-L + padding_1 \equiv 448 \ mod \ 512  \\
+L + padding\_seq + padding\_len = N \times 512  \\
+L + padding\_seq \equiv 448 \ mod \ 512  \\
 \end{cases}
 $$
 
-其中 $L$ 是消息比特串；$padding_1$ 是比特串 "$100 \cdots 00$" 的长度；$padding_2$ 恒为 $64 \ bit$，代表原始消息长度。各自的取值范围如下：
+- $L$ 是消息比特串的原始长度；
+- $padding\_seq$ 是比特串「$100 \cdots 00$」的长度；
+- $padding\_len$ 恒为 $64 \ bit$，代表原始消息长度。
+
+各自的取值范围如下：
 
 $$
 \begin{cases}
 0 \le L \lt 2^{64}  \\
-0 \lt padding_1 \le 512  \\
-padding_2 = 64
+1 \le padding\_seq \le 512  \\
+padding\_len = 64
 \end{cases}
 $$
 
-下面举例说明，假设要对字符串“hello world”进行附加填充：
+下面举例说明，假设要对字符串「hello world」进行附加填充：
 
 ![example1](http://oyhh4m1mt.bkt.clouddn.com/Hash_Length_Extension_Attack/example1.jpg)
 
-可见消息比特串长度为 $11 \ Byte$，即 $88 \ bit$，因此在第 $89 \ bit$ 处填充"1"比特，然后填充“0”比特直至长度为 $448 \ bit$，而原始长度 $88 \ bit$ 的十六进制为 $0x58 \ bit$，根据小端原则应放在低地址 $0x00000038$ 处，而高地址全部为 $0x00$。
+可见消息比特串长度为 $11 \ Byte$，即 $88 \ bit$，因此在第 $89 \ bit$ 处填充「1」比特，然后填充「0」比特直至长度为 $448 \ bit$，而原始长度 $88 \ bit$ 的十六进制为 $0x58 \ bit$，根据小端原则应放在低地址 $0x00000038$ 处，而高地址全部为 $0x00$。
 
 **注意，附加填充对任何消息比特串来说都是必须的，即使消息原始长度恰为 $448 \ bit$：**
 
 ![example2](http://oyhh4m1mt.bkt.clouddn.com/Hash_Length_Extension_Attack/example2.jpg)
 
-即使消息比特串长度为 $56 \ Byte$，即 $448 \ bit$，也要在第 $449 \ bit$ 处填充"1"比特，然后填充“0”比特直至下一分组单元长度为 $448 \ bit$，而原始长度 $448 \ bit$ 的十六进制为 $0x01B0 \ bit$，根据小端原则低地址 $0x00000078$ 处为 $0xB0$，$0x00000079$ 处为 $0x01$，而高地址全部为 $0x00$。
+即使消息比特串长度为 $56 \ Byte$，即 $448 \ bit$，也要在第 $449 \ bit$ 处填充「1」比特，然后填充「0」比特直至下一分组单元长度为 $448 \ bit$，而原始长度 $448 \ bit$ 的十六进制为 $0x01C0 \ bit$，根据小端原则低地址 $0x00000078$ 处为 $0xC0$，$0x00000079$ 处为 $0x01$，而高地址全部为 $0x00$。
 
 ### （2）初始链接变量
 
@@ -90,7 +106,7 @@ $$
 
 ### （3）分组单元迭代压缩
 
-每个分组单元 $M_i$ 的迭代压缩由 4 轮组成，将 $512 \ bit$ 的分组单元均分为 16 个子分组参与每轮的 16 步函数运算，每步函数的输入为 4 个 $32 \ bit$ 的整型变量和 1 个 $32 \ bit$ 的子分组，输出也为 4 个 $32 \ bit$ 的整型变量，作为下一步函数的输入。经过 4 轮共 64 步函数运算后，将 4 个 $32 \ bit$ 寄存器中的结果分别与相应输入链接变量在模 $2^{32}$ 下相加，即得到该分组单元的输出链接变量。若为最后一个分组，则输出为消息的散列值。
+每个分组单元 $M_i$ 的迭代压缩由 4 轮组成，将 $512 \ bit$ 的分组单元均分为 16 个子分组参与每轮 16 次的步函数运算，每次步函数的输入为 4 个 $32 \ bit$ 的整型变量和 1 个 $32 \ bit$ 的子分组，输出也为 4 个 $32 \ bit$ 的整型变量，作为下一次步函数的输入。经过 4 轮共 64 次的步函数运算后，将 4 个 $32 \ bit$ 寄存器中的结果分别与相应输入链接变量在模 $2^{32}$ 下相加，即得到该分组单元的输出链接变量。若为最后一个分组，则输出为消息的散列值。
 
 ![iteration](http://oyhh4m1mt.bkt.clouddn.com/Hash_Length_Extension_Attack/iteration.jpg)
 
@@ -98,7 +114,7 @@ $$
 
 ### （4）步函数
 
-MD5 迭代压缩算法每一轮都包含 16 步函数运算，同一轮中的步函数使用相同的非线性函数，不同轮之间非线性函数是不同的。设输入 $B、C、D$ 是 3 个 $32 \ bit$ 的整型变量，输出是 1 个 $32 \ bit$ 的整型变量，则每一轮的非线性函数 $F、G、H、I$ 分别定义如下：
+MD5 迭代压缩算法每一轮都包含 16 次的步函数运算，同一轮中的步函数使用相同的非线性函数，不同轮之间非线性函数是不同的。设输入 $B、C、D$ 是 3 个 $32 \ bit$ 的整型变量，输出是 1 个 $32 \ bit$ 的整型变量，则每一轮的非线性函数 $F、G、H、I$ 分别定义如下：
 
 $$
 \begin{cases}
@@ -113,48 +129,62 @@ $$
 
 ![step_function](http://oyhh4m1mt.bkt.clouddn.com/Hash_Length_Extension_Attack/step_function.jpg)
 
-其中 $M[j]$ 表示分组单元 $M_i$ 的第 $j$ 个 $32 \ bit$ 子分组，$0 \le j \le 15$；$<<< s$ 表示循环左移 $s$ 位；$T[i]$ 是一个伪随机常数，$1 \le i \le 64$，用于消除输入数据的规律性，其构造方法与具体取值请见规范 RFC 1321。
+- $M[j]$ 表示当前分组单元 $M$ 的第 $j$ 个 $32 \ bit$ 子分组，$0 \le j \le 15$；
+- $<<< s$ 表示循环左移 $s$ 位；
+- $T[i]$ 是一个伪随机常数，用于消除输入数据的规律性，$1 \le i \le 64$，$i$ 对应着 4 轮共 64 次步函数的执行顺序，其构造方法与具体取值请见规范 [RFC 1321](https://tools.ietf.org/html/rfc1321)。
 
-上图为步函数的流程，先取输入整型变量 $B、C、D$ 作为参数执行一次非线性函数，将结果依次加上 $A、M[j]、T[i]$，再将结果循环左移 $s$ 位后加上 $B$，把最终结果赋值给 $B$，而 $B、C、D$ 的输入值依次赋值给 $C、D、A$，得到输出整型变量，作为下一次步函数的输入。上述加法均在模 $2^{32}$ 下。
+上图为步函数的具体流程：先取输入整型变量 $B、C、D$ 作为参数执行一次非线性函数，将结果依次加上 $A、M[j]、T[i]$，再将结果循环左移 $s$ 位后加上 $B$，把最终结果赋值给 $B$，而 $B、C、D$ 的输入值依次赋值给 $C、D、A$，得到本次步函数的输出，同时也作为下一次步函数的输入。上述加法运算均在模 $2^{32}$ 下。
 
 ## Hash Length Extension Attack
 
 ### 漏洞原理
 
-**Hash Length Extension Attack** 适用于采用了 Merkle–Damgård 结构的哈希函数，在攻击者不知道 $secret$ 的情况下，已知 $message1$ 与 $MD5(secret \ || \ message1)$，可以推算出 $MD5(secret \ || \ message1 \ || \ padding1 \ || \ message2)$ 的值。
+**Hash Length Extension Attack** 适用于采用了 Merkle–Damgård 结构的哈希函数，攻击者在不知道 $secret$ 的情况下，若已知 $message1$ 与 $MD5(secret \ || \ message1)$，可以推算出 $MD5(secret \ || \ message1 \ || \ padding1 \ || \ message2)$ 的值。
 
-其中 $||$ 是字符串连接符；$message1$ 是用户需要计算散列值的明文消息；$secret$ 是哈希运算中与明文消息一起计算的私密字符串，相当于消息认证码中的 $key$，或者加“盐”哈希中的 $salt$；$padding1$ 是计算 $MD5(secret \ || \ message1)$ 时的填充字节；$message2$ 是攻击者构造的任意字符串。
+- $||$ 是字符串连接符；
+- $message1$ 是用户需要计算散列值的明文消息；
+- $secret$ 是哈希运算中与明文消息一起计算的私密字符串，相当于消息认证码中的 $key$，或者加「盐」哈希中的 $salt$；
+- $padding1$ 是计算 $MD5(secret \ || \ message1)$ 时的附加填充；
+- $message2$ 是攻击者构造的任意字符串。
 
-**注意，由于要根据 $MD5(secret \ || \ message1)$ 推算 $MD5(secret \ || \ message1 \ || \ padding1 \ || \ message2)$，因此 $secret$ 和 $message1$ 的长度必须知道。换句话说，需要知道 $(secret \ || \ message1 \ || \ padding1)$ 有多少字节才能构造出 $padding2$，即计算 $MD5(secret \ || \ message1 \ || \ padding1 \ || \ message2)$ 时的填充字节，因为 $padding2$ 包含了 $(secret \ || \ message1 || \ padding1 \ || \ message2)$ 的总长度。**
+**注意，由于要根据 $MD5(secret \ || \ message1)$ 推算 $MD5(secret \ || \ message1 \ || \ padding1 \ || \ message2)$，因此 $secret$ 和 $message1$ 的长度必须知道。换句话说，需要知道 $(secret \ || \ message1 \ || \ padding1)$ 有多少字节才能构造出 $padding2$，即计算 $MD5(secret \ || \ message1 \ || \ padding1 \ || \ message2)$ 时的附加填充，因为 $padding2$ 包含了 $(secret \ || \ message1 || \ padding1 \ || \ message2)$ 的总长度。**
 
 道哥在《白帽子讲Web安全》的 **[Understanding MD5 Length Extension Attack](http://blog.chinaunix.net/uid-27070210-id-3255947.html)** 一文中对此攻击作了详细叙述，本文就其中的 PoC 举例作出讲解。
 
 ![poc](http://oyhh4m1mt.bkt.clouddn.com/Hash_Length_Extension_Attack/poc.jpg)
 
-为了方便说明，上图 PoC 中只有 $secret$，省略了 $message1$。可见，此处的 $secret$ 为随机产生的一个小数字符串，长度为 $18 \ Byte$，即 $144 \ bit$， $MD5(secret)$ 与 $padding1$ 如上图所示，任意值 $message2$ 此处取为“Welcome to Secrypt Agency!”，攻击得到的散列值与 $MD5(secret \ || \ padding1 \ || \ message2)$ 相等，表示攻击成功。
+为了方便说明，上图 PoC 中只有 $secret$，省略了 $message1$。可见，此处的 $secret$ 为随机产生的一个小数字符串，长度为 $18 \ Byte$，即 $144 \ bit$， $MD5(secret)$ 与 $padding1$ 如上图所示，任意值 $message2$ 此处取为「Welcome to Secrypt Agency!」。攻击后得到的散列值与 $MD5(secret \ || \ padding1 \ || \ message2)$ 相等，表示攻击成功。
 
-**注意，这里的 $h0、h1、h2、h3$ 分别为上述的 $A、B、C、D$，并且用有符号 $32 \ bit$ 整型数表示。**如 run time = 0 时的 $h0$：
+**注意，这里的 $h0、h1、h2、h3$ 分别为上述的 $A、B、C、D$，并且用 $32 \ bit$ 有符号整型数表示。**如 run time = 0 时的 $h0$：
 
-$$h0 = 841628852 = 0x322a3cb4$$
+$$
+h0 = 841628852 = 0x322a3cb4
+$$
 
-其小端字节序正好对应散列值的前 $4 \ Byte$，即 $b43c2a32$。对于负数，其补码表示的正数与其在模 $2^{32}$ 下同余的正数相等，如 run time = 0 时的 $h2$：
+其小端字节序正好对应散列值的第 $1$ ~ $4 \ Byte$，即 $0xb43c2a32$。对于负数，其补码表示的正数与其在模 $2^{32}$ 下同余的正数相等，如 run time = 0 时的 $h2$：
 
-$$h2 = -474181071 \equiv 3820786225 \ mod \ 2^{32} = 0xe3bc9231$$
+$$
+h2 = -474181071 \equiv 3820786225 \ mod \ 2^{32} = 0xe3bc9231
+$$
 
-其小端字节序对应散列值的第 $9$ ~ $12 \ Byte$，即 $3192bce3$。
+其小端字节序对应散列值的第 $9$ ~ $12 \ Byte$，即 $0x3192bce3$。
 
-此处纠正 Understanding MD5 Length Extension Attack 文中 PoC 源代码中的一处错误，在 md5_le.js 文件的 159 行，`i = parseInt(m_len / 64) + 1` 并非恒成立，当 `m_len % 64 >= 56` 时，附加填充将会多占用一个字节，此时应为 `i = parseInt(m_len / 64) + 2`。**解决方案：在循环前先判断变量 i 的取值。**
+此处纠正 Understanding MD5 Length Extension Attack 文中 PoC 源代码中的一处错误，在 md5_le.js 文件的 159 行：
 
 ``` javascript
 for (i = parseInt(m_len/64)+1; i < databytes.length / 64; i++)
 ```
+
+其中 `i = parseInt(m_len / 64) + 1` 并非恒成立，当 $56 \le m\_len \ \% \ 64 \lt 64$ 时，附加填充将会多占用一个字节，此时应为 `i = parseInt(m_len / 64) + 2`。
+
+**解决方案：在循环前先判断变量 `m_len` 的范围，再决定变量 `i` 的取值。**
 
 ### 漏洞修复
 
 Hash Length Extension Attack 是 Merkle–Damgård 结构的固有缺陷，只要采用了此结构的哈希函数都会存在此漏洞。因此没有药到病除的方法，只有以下几条权宜之计供参考：
 
 1.  **采用 HAMC、SHA-3 等**非 Merkle–Damgård 结构或不受其影响的哈希算法；
-2.  **将 $secret$ 值放在参数末尾。**若已知 $MD5(message1 \ || \ secret)$，要求出 $MD5(message1 \ || \ secret \ || \ padding1 \ || \ message2)$ 是很困难的，因为 $secret$ 的附加策略是在参数末尾，所以只会得到 $MD5(message1 \ || \ padding1^{'} \ || \ message2 \ || \ secret)$，在 $secret$ 未知的情况下是求不出该值的。
+2.  **将 $secret$ 值放在输入参数末尾。**若已知 $MD5(message1 \ || \ secret)$，想求出 $MD5(message1 \ || \ secret \ || \ padding1 \ || \ message2)$ 是很困难的，因为 $secret$ 的附加策略是在输入参数末尾，所以只会得到 $MD5(message1 \ || \ padding1^{'} \ || \ message2 \ || \ secret)$，在 $secret$ 未知的情况下是求不出该值的。
 
 # 0x02 HashPump
 
@@ -193,7 +223,7 @@ HashPump [-h help] [-t test] [-s signature] [-d data] [-a additional] [-k keylen
 
 ## 【实验吧 CTF】 Web —— 让我进去
 
-此题结合了 PHP 的代码审计与 Hash Length Extension Attack，难度中等，需要的基础知识有：**PHP、Linux、HTTP协议、MD5加密原理**。相关链接如下：
+此题结合了 PHP 的代码审计与 Hash Length Extension Attack，难度中等，需要的基础知识有：**PHP、Linux、HTTP协议、MD5加密原理。**相关链接如下：
 
 - 题目链接：[http://www.shiyanbar.com/ctf/1848](http://www.shiyanbar.com/ctf/1848)
 - 解题链接：[http://ctf5.shiyanbar.com/web/kzhan.php](http://ctf5.shiyanbar.com/web/kzhan.php)
@@ -214,13 +244,13 @@ HashPump [-h help] [-t test] [-s signature] [-d data] [-a additional] [-k keylen
 
 ![lmi_source2](http://oyhh4m1mt.bkt.clouddn.com/Hash_Length_Extension_Attack/lmi_source2.jpg)
 
-由以下语句可知 Cookie `sample-hash` 原来是 `$secret` 与 “adminadmin” 连接而成的字符串的 MD5 散列值，即上述的 $MD5(secret || message1)$， `$secret` 为 $15 \ Byte$ 长的字符串 $secret$，“adminadmin” 为 $message1$。
+由以下语句可知 Cookie `sample-hash` 原来是 `$secret` 与「adminadmin」连接而成的字符串的 MD5 散列值，即上述的 $MD5(secret || message1)$， $secret$ 为 $15 \ Byte$ 长的字符串变量 `$secret`，$message1$ 为字符串「adminadmin」 。
 
 ``` php
 setcookie("sample-hash", md5($secret . urldecode("admin" . "admin")), time() + (60 * 60 * 24 * 7));
 ```
 
-又由以下核心语句，得知爆 flag 的条件是设置一个新 Cookie `getmein`，它的值要与 `$secret + $username + $password` 组成的字符串的 MD5 散列值相等，但前面还有一个限制条件：`$username` 的值要等于 “admin”，且 `$password` 不能等于 “admin”。想到这里，就可知此题是要用 Hash Length Extension Attack 来伪造新的散列值绕过验证。
+又由以下核心语句，得知爆 flag 的条件是设置一个新 Cookie `getmein`，它的值要与 `$secret + $username + $password` 组成的字符串的 MD5 散列值相等，但前面还有一个限制条件：**`$username` 的值要等于「admin」，且 `$password` 不能等于「admin」。**想到这里，就可知此题是要用 Hash Length Extension Attack 来伪造新的散列值绕过验证。
 
 ``` php
 if (!empty($_COOKIE["getmein"])) {
@@ -242,7 +272,15 @@ if (!empty($_COOKIE["getmein"])) {
 
 ![lmi_hashpump](http://oyhh4m1mt.bkt.clouddn.com/Hash_Length_Extension_Attack/lmi_hashpump.jpg)
 
-其中 **Input Signature** 是 $MD5(secret \ || \ message1)$，**Input Data** 是 $message1$，**Input Key Length** 等于 15，**Input Data to Add** 是 $message2$。得到的结果 `ca78a24c34c2e13331e7b0425b567b09` 为 $MD5(secret \ || \ message1 \ || \ padding1 \ || \ message2)$。
+- **Input Signature** 是 $MD5(secret \ || \ message1)$，此处为 `sample-hash` 的取值`571580b26c65f306376d4f64e53cb5c7`；
+
+- **Input Data** 是 $message1$，此处为字符串「adminadmin」；
+
+- **Input Key Length** 是 $secret$ 的长度，此处为 15；
+
+- **Input Data to Add** 是 $message2$，此处设为字符串「ciphersaw」。
+
+可见，得到了 $MD5(secret \ || \ message1 \ || \ padding1 \ || \ message2)$ 的结果为 `ca78a24c34c2e13331e7b0425b567b09` 。
 
 最后，我们只要构造攻击 payload，在 Username 和 Password 框中输入，再创建一个新 Cookie `getmein = ca78a24c34c2e13331e7b0425b567b09`，Submit 后即能得到 flag 。构造的 payload 如下：
 
