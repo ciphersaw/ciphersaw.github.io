@@ -26,6 +26,10 @@ The original articles in my blog  are classified by index below.
 - [【Bugku CTF】 Web —— never give up](https://ciphersaw.github.io/2017/12/26/%E3%80%90Bugku%20CTF%E3%80%91%20Web%20%E2%80%94%E2%80%94%20never%20give%20up/)
 - [【Bugku CTF】 Web —— welcome to bugkuctf](https://ciphersaw.github.io/2018/01/03/%E3%80%90Bugku%20CTF%E3%80%91%20Web%20%E2%80%94%E2%80%94%20welcome%20to%20bugkuctf/)
 
+### Misc
+
+- [【巅峰极客 2018】 Misc —— warmup](https://ciphersaw.github.io/2018/07/29/%E3%80%90%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A2%202018%E3%80%91%20Misc%20%E2%80%94%E2%80%94%20warmup/)
+
 ## Programming
 
 ### Python
