@@ -158,6 +158,8 @@ Session() 的创建过程如下：
 提示需要你再快些，显然必须要用编程语言辅助完成了。下面直接上 Python 脚本解题：
 
 ``` python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 import requests
 import base64 
 
@@ -200,6 +202,8 @@ print(requests.post(url, data = post).text)
 > 此处注意第 6 行的 base64 解码，因为经过第一次 base64 解码后，仍然还是一段 base64 编码，所以要再解码一次。**解题过程中，要自行动手查看每一次解码后的值，才能选择合适的方法去获得最终 key 值。**
 
 ``` python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 import requests
 import base64 
 
@@ -217,6 +221,8 @@ print(requests.post(url, data = post).text)
 嗯，眉头一紧，发现事情并不简单。下面看看 GET 请求与 POST 请求的请求头与响应头是否内有玄机：
 
 ``` python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 import requests
 import base64 
 
@@ -240,6 +246,8 @@ print('POST Response Headers:\n', post_responese.headers, '\n')
 接下来引入会话对象 Session()，稍作修改就能保证 GET 请求与 POST 请求在同一个会话中了：
 
 ``` python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 import requests
 import base64
 
@@ -258,6 +266,8 @@ print(s.post(url, data = post).text)
 虽然到此即可结束，但为了验证以上两次请求真的在同一会话内，我们再次查看请求头与响应头：
 
 ``` python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 import requests
 import base64 
 
@@ -282,6 +292,8 @@ print('POST Response Headers:\n', post_responese.headers, '\n')
 既然只需要保持两次请求中 Cookie 属性相同，那能不能构造 Cookie 属性通过普通的 `get` 与 `post` 方法完成呢？答案是可以的。请见如下代码：
 
 ``` python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 import requests
 import base64
 
@@ -320,6 +332,8 @@ print(requests.post(url, data = post, cookies = cookie).text)
 从页面内容中截取表达式，可以用 string 自带的 `split()` 函数，但必须先要知道表达式两边的字符串，以其作为分隔符；也可以用正则表达式，仅需知道表达式本身的特征即可。此处用正则表达式更佳。先放上题解脚本，再来慢慢解析：
 
 ``` python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 import requests
 import re
 
