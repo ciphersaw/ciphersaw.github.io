@@ -2,7 +2,7 @@
 title: 【Bugku CTF】 Web —— welcome to bugkuctf
 copyright: true
 date: 2018-01-03 22:40:23
-tags: [bugku,CTF,writeup,audit,php]
+tags: [bugku,CTF,writeup,web,audit,php]
 categories: [InfoSec,Web]
 ---
 

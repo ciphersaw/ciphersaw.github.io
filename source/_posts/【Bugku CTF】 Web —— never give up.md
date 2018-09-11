@@ -2,7 +2,7 @@
 title: 【Bugku CTF】 Web —— never give up
 copyright: true
 date: 2017-12-26 14:22:46
-tags: [bugku,CTF,writeup,audit,php]
+tags: [bugku,CTF,writeup,web,audit,php]
 categories: [InfoSec,Web]
 ---
 
