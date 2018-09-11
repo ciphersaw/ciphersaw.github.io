@@ -170,11 +170,11 @@ post = {'key': key}
 print(requests.post(url, data = post).text)
 ```
 
-第 4 行是 URL 地址的字符串；
-第 5 行是获得 GET 请求的响应头；
-第 6 行是先将响应头中 FLAG 属性的值 用base64 解码，得到的结果为 `bytes-like objects` 类型，再用 `decode()` 解码得到字符串，最后用 `split(':')` 分离冒号两边的值，返回的 `list` 对象中的第二个元素即为要提交的 key 值；
-第 7 行是构造 POST 请求中 `data` 参数的 `dict` 类型变量；
-第 8 行提交带有 `data` 参数的 POST 请求，最终打印响应页面的内容。
+- Line 6：URL 地址的字符串；
+- Line 7：获得 GET 请求的响应头；
+- Line 8：先将响应头中 FLAG 属性的值 用base64 解码，得到的结果为 `bytes-like objects` 类型，再用 `decode()` 解码得到字符串，最后用 `split(':')` 分离冒号两边的值，返回的 `list` 对象中的第二个元素即为要提交的 key 值；
+- Linr 9：构造 POST 请求中 `data` 参数的 `dict` 类型变量；
+- Line 10：提交带有 `data` 参数的 POST 请求，最终打印响应页面的内容。
 
 执行完脚本后，即可看到返回的最终 flag：
 
@@ -199,7 +199,7 @@ print(requests.post(url, data = post).text)
 
 发现 flag 属性，其值同样是一段 base64 编码。这里就不手工解码再提交 POST 请求了，直接用上一题的 Python 脚本试试：
 
-> 此处注意第 6 行的 base64 解码，因为经过第一次 base64 解码后，仍然还是一段 base64 编码，所以要再解码一次。**解题过程中，要自行动手查看每一次解码后的值，才能选择合适的方法去获得最终 key 值。**
+> 此处注意第 8 行的 base64 解码，因为经过第一次 base64 解码后，仍然还是一段 base64 编码，所以要再解码一次。**解题过程中，要自行动手查看每一次解码后的值，才能选择合适的方法去获得最终 key 值。**
 
 ``` python
 #!/usr/bin/env python3
@@ -306,9 +306,9 @@ cookie = {"PHPSESSID": PHPSESSID}
 print(requests.post(url, data = post, cookies = cookie).text)
 ```
 
-第 8 行获得 GET 请求响应头中 Set-Cookie 属性的 PHPSESSID 值，该语句如何构造请自行分析 Set-Cookie 属性字符串值的结构；
-第 9 行用第 7 行相同方法构造 POST 请求中 `cookies` 参数的 `dict` 类型变量；
-第 10 行提交带有 `data` 参数与 `cookies` 参数的 POST 请求，最终打印响应页面的内容。
+- Line 10：获得 GET 请求响应头中 Set-Cookie 属性的 PHPSESSID 值，该语句如何构造请自行分析 Set-Cookie 属性字符串值的结构；
+- Line 11：构造 POST 请求中 `cookies` 参数的 `dict` 类型变量；
+- Line 12：提交带有 `data` 参数与 `cookies` 参数的 POST 请求，最终打印响应页面的内容。
 
 毫无疑问，以上代码的结果也是最终的 flag。
 
@@ -349,11 +349,11 @@ print(s.post(url, data = post).text)
 
 有关 requests 的部分此处不细讲，唯一要注意的是，与上一篇 writeup 一样，要利用会话对象 Session()，否则提交结果的时候，重新生成了一个新的表达式，结果自然错误。
 
-第 7 行是利用[正则表达式](http://www.runoob.com/python3/python3-reg-expressions.html)截取响应内容中的算术表达式。首先引入 re 模块，其次用 `search()` 匹配算术表达式，匹配成功后用 `group()` 返回算术表达式的字符串。（想掌握正则表达式，还是要**多看、多想、多练**，毕竟应用场合非常之广）
+- Line 9：是利用[正则表达式](http://www.runoob.com/python3/python3-reg-expressions.html)截取响应内容中的算术表达式。首先引入 re 模块，其次用 `search()` 匹配算术表达式，匹配成功后用 `group()` 返回算术表达式的字符串。（想掌握正则表达式，还是要**多看、多想、多练**，毕竟应用场合非常之广）
 
 > **search() 的第一个参数是匹配的正则表达式，第二个参数是要匹配的字符串。**其中 `\d+`代表一个或多个数字；`[+\-*]` 匹配一个加号，或一个减号，或一个乘号，注意减号在中括号内是特殊字符，要用反斜杠转义；`(\d+[+\-*])+`代表一个或多个由数字与运算符组成的匹配组；最后再加上剩下的一个数字 `(\d+)`。
 
-第 9 行在获得算术表达式的字符串后，直接利用 Python 的內建方法 [`eval()`](https://docs.python.org/3/library/functions.html#eval) 来计算出结果，简单、暴力、快捷。
+- Line 11：在获得算术表达式的字符串后，直接利用 Python 的內建方法 [`eval()`](https://docs.python.org/3/library/functions.html#eval) 来计算出结果，简单、暴力、快捷。
 
 执行完上述脚本，就有一定的概率可以获得 flag 了：
 
