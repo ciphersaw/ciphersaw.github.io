@@ -54,7 +54,7 @@ RSA 公私密钥对的生成，由以下四个步骤完成：
 
 # 0x01 Easy RSA
 
-![easy_rsa](http://oyhh4m1mt.bkt.clouddn.com/CNSS_2017_Crypto_RSA_Combo/easy_rsa.png)
+![easy_rsa](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/CNSS_2017_Crypto_RSA_Combo/easy_rsa.png)
 
 ```
 p: 0xddb9fe428c938abdce551751b299feed367c97b52b17062d
@@ -89,7 +89,7 @@ flag: cnss{U_must_kn0w_ASC11_and_R5a}
 
 # 0x02 RSA Cool
 
-![easy_rsa](http://oyhh4m1mt.bkt.clouddn.com/CNSS_2017_Crypto_RSA_Combo/rsa_cool.png)
+![easy_rsa](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/CNSS_2017_Crypto_RSA_Combo/rsa_cool.png)
 
 ```
 p: 0xf5621a5fd44994f720c1b971fea84f63
@@ -126,7 +126,7 @@ flag: cnss{Riv3st_Sham1r_4dleman}
 ```
 # 0x03 RSA Cooler
 
-![easy_rsa](http://oyhh4m1mt.bkt.clouddn.com/CNSS_2017_Crypto_RSA_Combo/rsa_cooler.png)
+![easy_rsa](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/CNSS_2017_Crypto_RSA_Combo/rsa_cooler.png)
 
 ```
     public key 1:
@@ -207,7 +207,7 @@ flag: cnss{RSA_c0mmOn_moduIu5_4tk}
 
 # 0x04 RSA Coolest
 
-![easy_rsa](http://oyhh4m1mt.bkt.clouddn.com/CNSS_2017_Crypto_RSA_Combo/rsa_coolest.png)
+![easy_rsa](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/CNSS_2017_Crypto_RSA_Combo/rsa_coolest.png)
 
 ```
     public key 1:

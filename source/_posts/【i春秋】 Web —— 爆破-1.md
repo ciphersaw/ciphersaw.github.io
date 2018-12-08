@@ -17,7 +17,7 @@ mathjax: true
 
 <!-- more -->
 
-![question](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_Web_%E7%88%86%E7%A0%B4_1/question.png)
+![question](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_Web_%E7%88%86%E7%A0%B4_1/question.png)
 
 # 0x01 爆破六位变量？
 
@@ -61,4 +61,4 @@ show_source(__FILE__);
 
 因此，只需构造 payload `hello=GLOBALS` 提交 GET 请求，即可获得 flag，同时也看到了传说中的某六位变量 `$d3f0f8`。
 
-![flag](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_Web_%E7%88%86%E7%A0%B4_1/flag.png)
+![flag](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_Web_%E7%88%86%E7%A0%B4_1/flag.png)

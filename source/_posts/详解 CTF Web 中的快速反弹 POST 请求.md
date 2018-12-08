@@ -133,27 +133,27 @@ Session() 的创建过程如下：
 - 题目链接：[http://www.shiyanbar.com/ctf/1854](http://www.shiyanbar.com/ctf/1854)
 - 解题链接：[http://ctf5.shiyanbar.com/web/10/10.php](http://ctf5.shiyanbar.com/web/10/10.php)
 
-![syb_fast_question](http://oyhh4m1mt.bkt.clouddn.com/%E8%AF%A6%E8%A7%A3_CTF_Web_%E4%B8%AD%E7%9A%84%E5%BF%AB%E9%80%9F%E5%8F%8D%E5%BC%B9_POST_%E8%AF%B7%E6%B1%82/syb_fast_question.png)
+![syb_fast_question](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E8%AF%A6%E8%A7%A3_CTF_Web_%E4%B8%AD%E7%9A%84%E5%BF%AB%E9%80%9F%E5%8F%8D%E5%BC%B9_POST_%E8%AF%B7%E6%B1%82/syb_fast_question.png)
 
 进入解题链接，发现如下提示：
 
-![syb_fast_page](http://oyhh4m1mt.bkt.clouddn.com/%E8%AF%A6%E8%A7%A3_CTF_Web_%E4%B8%AD%E7%9A%84%E5%BF%AB%E9%80%9F%E5%8F%8D%E5%BC%B9_POST_%E8%AF%B7%E6%B1%82/syb_fast_page.png)
+![syb_fast_page](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E8%AF%A6%E8%A7%A3_CTF_Web_%E4%B8%AD%E7%9A%84%E5%BF%AB%E9%80%9F%E5%8F%8D%E5%BC%B9_POST_%E8%AF%B7%E6%B1%82/syb_fast_page.png)
 
  “没有一种武术是不可击败的，拥有最快的速度才能保持长胜，你必须竭尽所能做到最快。” 换句话说，如果我们没有天下第一的手速，还是借助工具来解题吧。再看看源码有没什么新发现：
 
-![syb_fast_page_source](http://oyhh4m1mt.bkt.clouddn.com/%E8%AF%A6%E8%A7%A3_CTF_Web_%E4%B8%AD%E7%9A%84%E5%BF%AB%E9%80%9F%E5%8F%8D%E5%BC%B9_POST_%E8%AF%B7%E6%B1%82/syb_fast_page_source.png)
+![syb_fast_page_source](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E8%AF%A6%E8%A7%A3_CTF_Web_%E4%B8%AD%E7%9A%84%E5%BF%AB%E9%80%9F%E5%8F%8D%E5%BC%B9_POST_%E8%AF%B7%E6%B1%82/syb_fast_page_source.png)
 
 提示说请用 POST 请求提交你发现的信息，请求参数的键值是 key。最后按照常规思路看看响应头：
 
-![syb_fast_response_header](http://oyhh4m1mt.bkt.clouddn.com/%E8%AF%A6%E8%A7%A3_CTF_Web_%E4%B8%AD%E7%9A%84%E5%BF%AB%E9%80%9F%E5%8F%8D%E5%BC%B9_POST_%E8%AF%B7%E6%B1%82/syb_fast_response_header.png)
+![syb_fast_response_header](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E8%AF%A6%E8%A7%A3_CTF_Web_%E4%B8%AD%E7%9A%84%E5%BF%AB%E9%80%9F%E5%8F%8D%E5%BC%B9_POST_%E8%AF%B7%E6%B1%82/syb_fast_response_header.png)
 
 结果发现有一个 FLAG 属性，其值是一段 base64 编码。在用 Python 脚本解题之前，为了打消部分同学的疑虑，先看看纯手工解码再提交 POST 请求会有什么效果：
 
-![syb_fast_submit_key](http://oyhh4m1mt.bkt.clouddn.com/%E8%AF%A6%E8%A7%A3_CTF_Web_%E4%B8%AD%E7%9A%84%E5%BF%AB%E9%80%9F%E5%8F%8D%E5%BC%B9_POST_%E8%AF%B7%E6%B1%82/syb_fast_submit_key.png)
+![syb_fast_submit_key](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E8%AF%A6%E8%A7%A3_CTF_Web_%E4%B8%AD%E7%9A%84%E5%BF%AB%E9%80%9F%E5%8F%8D%E5%BC%B9_POST_%E8%AF%B7%E6%B1%82/syb_fast_submit_key.png)
 
 将 FLAG 值进行 base64 解码后，在 Firefox 下用 [New Hackbar](https://addons.mozilla.org/zh-CN/firefox/addon/new-hackbar/) 工具提交 POST 请求：
 
-![syb_fast_fail_page](http://oyhh4m1mt.bkt.clouddn.com/%E8%AF%A6%E8%A7%A3_CTF_Web_%E4%B8%AD%E7%9A%84%E5%BF%AB%E9%80%9F%E5%8F%8D%E5%BC%B9_POST_%E8%AF%B7%E6%B1%82/syb_fast_fail_page.png)
+![syb_fast_fail_page](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E8%AF%A6%E8%A7%A3_CTF_Web_%E4%B8%AD%E7%9A%84%E5%BF%AB%E9%80%9F%E5%8F%8D%E5%BC%B9_POST_%E8%AF%B7%E6%B1%82/syb_fast_fail_page.png)
 
 提示需要你再快些，显然必须要用编程语言辅助完成了。下面直接上 Python 脚本解题：
 
@@ -178,7 +178,7 @@ print(requests.post(url, data = post).text)
 
 执行完脚本后，即可看到返回的最终 flag：
 
-![syb_fast_flag](http://oyhh4m1mt.bkt.clouddn.com/%E8%AF%A6%E8%A7%A3_CTF_Web_%E4%B8%AD%E7%9A%84%E5%BF%AB%E9%80%9F%E5%8F%8D%E5%BC%B9_POST_%E8%AF%B7%E6%B1%82/syb_fast_flag.png)
+![syb_fast_flag](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E8%AF%A6%E8%A7%A3_CTF_Web_%E4%B8%AD%E7%9A%84%E5%BF%AB%E9%80%9F%E5%8F%8D%E5%BC%B9_POST_%E8%AF%B7%E6%B1%82/syb_fast_flag.png)
 
 ## 【Bugku CTF】 Web —— Web6
 
@@ -187,15 +187,15 @@ print(requests.post(url, data = post).text)
 - 题目链接：[http://123.206.31.85/challenges#Web6](http://123.206.31.85/challenges#Web6)
 - 解题链接：[http://120.24.86.145:8002/web6/](http://120.24.86.145:8002/web6/)
 
-![bugku_fast_question](http://oyhh4m1mt.bkt.clouddn.com/%E8%AF%A6%E8%A7%A3_CTF_Web_%E4%B8%AD%E7%9A%84%E5%BF%AB%E9%80%9F%E5%8F%8D%E5%BC%B9_POST_%E8%AF%B7%E6%B1%82/bugku_fast_question.png)
+![bugku_fast_question](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E8%AF%A6%E8%A7%A3_CTF_Web_%E4%B8%AD%E7%9A%84%E5%BF%AB%E9%80%9F%E5%8F%8D%E5%BC%B9_POST_%E8%AF%B7%E6%B1%82/bugku_fast_question.png)
 
 进入解题链接，直接查看源码：
 
-![bugku_fast_page_source](http://oyhh4m1mt.bkt.clouddn.com/%E8%AF%A6%E8%A7%A3_CTF_Web_%E4%B8%AD%E7%9A%84%E5%BF%AB%E9%80%9F%E5%8F%8D%E5%BC%B9_POST_%E8%AF%B7%E6%B1%82/bugku_fast_page_source.png)
+![bugku_fast_page_source](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E8%AF%A6%E8%A7%A3_CTF_Web_%E4%B8%AD%E7%9A%84%E5%BF%AB%E9%80%9F%E5%8F%8D%E5%BC%B9_POST_%E8%AF%B7%E6%B1%82/bugku_fast_page_source.png)
 
 发现 POST 请求参数的键值为 margin，最后看看响应头：
 
-![bugku_fast_response_header](http://oyhh4m1mt.bkt.clouddn.com/%E8%AF%A6%E8%A7%A3_CTF_Web_%E4%B8%AD%E7%9A%84%E5%BF%AB%E9%80%9F%E5%8F%8D%E5%BC%B9_POST_%E8%AF%B7%E6%B1%82/bugku_fast_response_header.png)
+![bugku_fast_response_header](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E8%AF%A6%E8%A7%A3_CTF_Web_%E4%B8%AD%E7%9A%84%E5%BF%AB%E9%80%9F%E5%8F%8D%E5%BC%B9_POST_%E8%AF%B7%E6%B1%82/bugku_fast_response_header.png)
 
 发现 flag 属性，其值同样是一段 base64 编码。这里就不手工解码再提交 POST 请求了，直接用上一题的 Python 脚本试试：
 
@@ -216,7 +216,7 @@ print(requests.post(url, data = post).text)
 
 结果如下，果然没那么容易得到 flag：
 
-![bugku_fast_fail_without_session](http://oyhh4m1mt.bkt.clouddn.com/%E8%AF%A6%E8%A7%A3_CTF_Web_%E4%B8%AD%E7%9A%84%E5%BF%AB%E9%80%9F%E5%8F%8D%E5%BC%B9_POST_%E8%AF%B7%E6%B1%82/bugku_fast_fail_without_session.png)
+![bugku_fast_fail_without_session](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E8%AF%A6%E8%A7%A3_CTF_Web_%E4%B8%AD%E7%9A%84%E5%BF%AB%E9%80%9F%E5%8F%8D%E5%BC%B9_POST_%E8%AF%B7%E6%B1%82/bugku_fast_fail_without_session.png)
 
 嗯，眉头一紧，发现事情并不简单。下面看看 GET 请求与 POST 请求的请求头与响应头是否内有玄机：
 
@@ -241,7 +241,7 @@ print('POST Response Headers:\n', post_responese.headers, '\n')
 
 不出所料，结果如下，原来是 GET 请求和 POST 请求的响应头都有 Set-Cookie 属性，并且值不相同，即不在同一个会话中，各自响应头中的 flag 值也不等：
 
-![bugku_fast_fail_headers](http://oyhh4m1mt.bkt.clouddn.com/%E8%AF%A6%E8%A7%A3_CTF_Web_%E4%B8%AD%E7%9A%84%E5%BF%AB%E9%80%9F%E5%8F%8D%E5%BC%B9_POST_%E8%AF%B7%E6%B1%82/bugku_fast_fail_headers.png)
+![bugku_fast_fail_headers](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E8%AF%A6%E8%A7%A3_CTF_Web_%E4%B8%AD%E7%9A%84%E5%BF%AB%E9%80%9F%E5%8F%8D%E5%BC%B9_POST_%E8%AF%B7%E6%B1%82/bugku_fast_fail_headers.png)
 
 接下来引入会话对象 Session()，稍作修改就能保证 GET 请求与 POST 请求在同一个会话中了：
 
@@ -261,7 +261,7 @@ print(s.post(url, data = post).text)
 
 与上一题代码的区别是：此处用会话对象 Session() 的 `get` 和 `post` 方法，而不是直接用 requests 模块里的，这样可以保持 GET 请求与 POST 请求在同一个会话中。将同一会话中的 key 值作为 POST 请求参数提交，最终得到 flag：
 
-![bugku_fast_flag](http://oyhh4m1mt.bkt.clouddn.com/%E8%AF%A6%E8%A7%A3_CTF_Web_%E4%B8%AD%E7%9A%84%E5%BF%AB%E9%80%9F%E5%8F%8D%E5%BC%B9_POST_%E8%AF%B7%E6%B1%82/bugku_fast_flag.png)
+![bugku_fast_flag](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E8%AF%A6%E8%A7%A3_CTF_Web_%E4%B8%AD%E7%9A%84%E5%BF%AB%E9%80%9F%E5%8F%8D%E5%BC%B9_POST_%E8%AF%B7%E6%B1%82/bugku_fast_flag.png)
 
 虽然到此即可结束，但为了验证以上两次请求真的在同一会话内，我们再次查看请求头与响应头：
 
@@ -287,7 +287,7 @@ print('POST Response Headers:\n', post_responese.headers, '\n')
 
 结果如下，GET 请求中响应头的 Set-Cookie 属性与 POST 请求中请求头的 Cookie 属性相同，表明两次请求确实在同一会话中。
 
-![bugku_fast_success_headers](http://oyhh4m1mt.bkt.clouddn.com/%E8%AF%A6%E8%A7%A3_CTF_Web_%E4%B8%AD%E7%9A%84%E5%BF%AB%E9%80%9F%E5%8F%8D%E5%BC%B9_POST_%E8%AF%B7%E6%B1%82/bugku_fast_success_headers.png)
+![bugku_fast_success_headers](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E8%AF%A6%E8%A7%A3_CTF_Web_%E4%B8%AD%E7%9A%84%E5%BF%AB%E9%80%9F%E5%8F%8D%E5%BC%B9_POST_%E8%AF%B7%E6%B1%82/bugku_fast_success_headers.png)
 
 既然只需要保持两次请求中 Cookie 属性相同，那能不能构造 Cookie 属性通过普通的 `get` 与 `post` 方法完成呢？答案是可以的。请见如下代码：
 
@@ -319,15 +319,15 @@ print(requests.post(url, data = post, cookies = cookie).text)
 - 题目链接：[http://123.206.31.85/challenges#秋名山老司机](http://123.206.31.85/challenges#秋名山老司机)
 - 解题链接：[http://120.24.86.145:8002/qiumingshan/](http://120.24.86.145:8002/qiumingshan/)
 
-![bugku_qiuming_driver](http://oyhh4m1mt.bkt.clouddn.com/%E8%AF%A6%E8%A7%A3_CTF_Web_%E4%B8%AD%E7%9A%84%E5%BF%AB%E9%80%9F%E5%8F%8D%E5%BC%B9_POST_%E8%AF%B7%E6%B1%82/bugku_qiuming_driver.png)
+![bugku_qiuming_driver](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E8%AF%A6%E8%A7%A3_CTF_Web_%E4%B8%AD%E7%9A%84%E5%BF%AB%E9%80%9F%E5%8F%8D%E5%BC%B9_POST_%E8%AF%B7%E6%B1%82/bugku_qiuming_driver.png)
 
 打开解题连接，老规矩先看源码：
 
-![bugku_qiuming_page_source](http://oyhh4m1mt.bkt.clouddn.com/%E8%AF%A6%E8%A7%A3_CTF_Web_%E4%B8%AD%E7%9A%84%E5%BF%AB%E9%80%9F%E5%8F%8D%E5%BC%B9_POST_%E8%AF%B7%E6%B1%82/bugku_qiuming_page_source.png)
+![bugku_qiuming_page_source](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E8%AF%A6%E8%A7%A3_CTF_Web_%E4%B8%AD%E7%9A%84%E5%BF%AB%E9%80%9F%E5%8F%8D%E5%BC%B9_POST_%E8%AF%B7%E6%B1%82/bugku_qiuming_page_source.png)
 
 题意很明确，要求在 2 秒内计算给出表达式的值...呃，然后呢？刷新页面再看看，噢噢，然后再将计算结果用 POST 请求反弹回服务器，请求参数的 key 值为 `value`：
 
-![bugku_qiuming_hint](http://oyhh4m1mt.bkt.clouddn.com/%E8%AF%A6%E8%A7%A3_CTF_Web_%E4%B8%AD%E7%9A%84%E5%BF%AB%E9%80%9F%E5%8F%8D%E5%BC%B9_POST_%E8%AF%B7%E6%B1%82/bugku_qiuming_hint.png)
+![bugku_qiuming_hint](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E8%AF%A6%E8%A7%A3_CTF_Web_%E4%B8%AD%E7%9A%84%E5%BF%AB%E9%80%9F%E5%8F%8D%E5%BC%B9_POST_%E8%AF%B7%E6%B1%82/bugku_qiuming_hint.png)
 
 从页面内容中截取表达式，可以用 string 自带的 `split()` 函数，但必须先要知道表达式两边的字符串，以其作为分隔符；也可以用正则表达式，仅需知道表达式本身的特征即可。此处用正则表达式更佳。先放上题解脚本，再来慢慢解析：
 
@@ -357,6 +357,6 @@ print(s.post(url, data = post).text)
 
 执行完上述脚本，就有一定的概率可以获得 flag 了：
 
-![bugku_qiuming_flag](http://oyhh4m1mt.bkt.clouddn.com/%E8%AF%A6%E8%A7%A3_CTF_Web_%E4%B8%AD%E7%9A%84%E5%BF%AB%E9%80%9F%E5%8F%8D%E5%BC%B9_POST_%E8%AF%B7%E6%B1%82/bugku_qiuming_flag.png)
+![bugku_qiuming_flag](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E8%AF%A6%E8%A7%A3_CTF_Web_%E4%B8%AD%E7%9A%84%E5%BF%AB%E9%80%9F%E5%8F%8D%E5%BC%B9_POST_%E8%AF%B7%E6%B1%82/bugku_qiuming_flag.png)
 
 为什么说是一定概率呢？读者们自行尝试便知，据我观察，当计算结果超出一定长度时，服务器就不响应了。在此猜想：可能客户端 Python 脚本计算错误，也可能服务器端 PHP 脚本对大数计算有误差，还可能在 POST 请求过程中令大整数发生改变。至于是哪种，还请高手解答。

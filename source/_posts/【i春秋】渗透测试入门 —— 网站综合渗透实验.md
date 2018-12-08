@@ -21,7 +21,7 @@ categories: [InfoSec,Pentest]
 
 <!-- more -->
 
-![guide](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/guide.png)
+![guide](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/guide.png)
 
 # 0x01 后台管理员「linhai」的密码是？
 
@@ -39,19 +39,19 @@ categories: [InfoSec,Pentest]
 
 打开工具，依次点击 **SQL注入 -> 批量扫描注入点 -> 添加网址**，填入主站 URL `http://www.test/ichunqiu/`，保存后点击 **批量分析注入点**：
 
-![domain_info](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/domain_info.png)
+![domain_info](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/domain_info.png)
 
 分析完毕后，可见又是一堆数字型 SQL 注入，以第 3 个注入点为例，右键点击 **检测注入**：
 
-![domain_injectable](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/domain_injectable.png)
+![domain_injectable](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/domain_injectable.png)
 
 接着会自动跳转至 **SQL注入猜解检测** 选项卡，再点击 **开始检测**，证实了 `http://www.test.ichunqiu/see.asp?id=480&titleid=102` 确实是一个可用的注入点：
 
-![domain_verification](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/domain_verification.png)
+![domain_verification](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/domain_verification.png)
 
 确认可注入后，点击 **猜解表名** 后得到 3 张表，接着选中 `admin` 表，点击 **猜解列名** 后得到 3 个列名，在所有列名前打上钩，点解 **猜解内容** 后即可得到管理员的账号为 `linhai`，16 位的密码哈希值为 `d7e15730ef9708c0`。至此，通过明小子工具成功地获取了管理员的账号密码。
 
-![domain_result](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/domain_result.png)
+![domain_result](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/domain_result.png)
 
 ### SQLMap
 
@@ -77,19 +77,19 @@ categories: [InfoSec,Pentest]
 
 结果显示 `id` 与 `titleid` 参数均为**基于布尔的盲注（boolean-based blind）**，并且返回了一些服务器相关信息，如：服务器操作系统为 **Windows 2003 或 Windows XP**，Web 应用程序采用了 **APS.NET、Microsoft IIS 6.0、ASP** 等建站技术，后端数据库数理系统为 **Microsoft Access**。以上对服务器相关信息的收集有助于后续更高效精准的渗透。
 
-![sqlmap_info](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/sqlmap_info.png)
+![sqlmap_info](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/sqlmap_info.png)
 
 知道了后端数据库是 Microsoft Access 后，可以跳过（3）或（4）直接进行（5），输入命令 `python sqlmap.py -u "http://www.test.ichunqiu/see.asp?id=480&titleid=102" --tables`，若询问「需要检测常用表名是否存在？」填 `Y`，询问「需要的线程数量？」填最大值 `10`。等待扫描全部结束后，得到了包含 `admin` 表在内的 4 张表。
 
-![sqlmap_tables](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/sqlmap_tables.png)
+![sqlmap_tables](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/sqlmap_tables.png)
 
 继续执行（6）中的命令，输入 `python sqlmap.py -u "http://www.test.ichunqiu/see.asp?id=480&titleid=102" -T "admin" --columns`，若询问「需要检测常用列名是否存在？」填 `Y`，询问「需要的线程数量？」填最大值 `10`。等待扫描全部结束后，得到了 `admin` 与 `password` 等 3 个字段。
 
-![sqlmap_columns](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/sqlmap_columns.png)
+![sqlmap_columns](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/sqlmap_columns.png)
 
 最后执行（7）中的命令，输入 `python sqlmap.py -u "http://www.test.ichunqiu/see.asp?id=480&titleid=102" -T "admin" -C "admin,password" --dump`，等待其枚举完毕，若询问「需要临时保存结果的哈希值？」填 `N`，询问「需要用字典攻击来破解结果？」填 `n`，最终可得到管理员的账号密码。
 
-![sqlmap_result](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/sqlmap_result.png)
+![sqlmap_result](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/sqlmap_result.png)
 
 ## SQL 手工注入
 
@@ -104,7 +104,7 @@ categories: [InfoSec,Pentest]
 
 打开 HackBar 工具，我们对 `admin`、`news`、`config` 等常见表名进行猜解，发现均能正常显示：
 
-![manual_tables](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/manual_tables.png)
+![manual_tables](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/manual_tables.png)
 
 ### Step 2：猜解列数
 
@@ -116,9 +116,9 @@ categories: [InfoSec,Pentest]
 
 经过简单测试，可以确定查询数据的列数为 2：
 
-![manual_num_true](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/manual_num_true.png)
+![manual_num_true](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/manual_num_true.png)
 
-![manual_num_false](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/manual_num_false.png)
+![manual_num_false](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/manual_num_false.png)
 
 ### Step 3：找出显位点
 
@@ -128,15 +128,15 @@ categories: [InfoSec,Pentest]
 
 由于目标数据库只有 2 列，简单测试后即可发现第 1 列为显位点：
 
-![manual_points](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/manual_points.png)
+![manual_points](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/manual_points.png)
 
 ### Step 4：猜解列名
 
 最后一步，就是用猜想的列名去替换显位点，如果猜想正确，则页面会显示数据内容，否则出现异常。我们对 `user`、`username`、`account`、`admin`、`pwd`、`password`、`key`、`credit` 等常见列名进行猜解，终于从 `admin`、`password` 两列中读取到管理员的账号密码：
 
-![manual_admin](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/manual_admin.png)
+![manual_admin](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/manual_admin.png)
 
-![manual_password](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/manual_password.png)
+![manual_password](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/manual_password.png)
 
 ## 社工字典攻击
 
@@ -144,29 +144,29 @@ categories: [InfoSec,Pentest]
 
 将主站所有页面都浏览一遍，在页面底部均能发现以下信息：管理员的 QQ 号为 **1957692**，Email 为 **linhai0812@21cn.com**，并由此推算出生日期是 **8 月 21 日**，还发现了主站的**管理入口**：
 
-![linhai_email_qq](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/linhai_email_qq.png)
+![linhai_email_qq](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/linhai_email_qq.png)
 
 还在 **摄影论坛** 选项卡中发现一个用 LeadBBS 搭建的论坛，习惯性地用账号 `admin` 与密码 `admin` 尝试登录，居然成功进去了（若尝试失败，直接注册一个账号也是能登录进去查看相关信息的），并在 **论坛信息 -> 论坛管理团队** 中发现「linhai」为论坛管理人员：
 
-![linhai_manager](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/linhai_manager.png)
+![linhai_manager](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/linhai_manager.png)
 
  点击「linhai」查看其相关信息，在 **签名栏** 中发现他生于唐山大地震，即 **1976 年**：
 
-![linhai_born](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/linhai_born.png)
+![linhai_born](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/linhai_born.png)
 
 以上是在网站上能挖掘到关于「linhai」的全部信息，接下来打开工具箱【社工辅助】中的**亦思想社会工程学字典生成器**，将收集的信息填入，点击 **生成字典**，在本目录下打开字典 **mypass.txt**，即可看到一系列密码的猜测值：
 
-![dict](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/dict.png)
+![dict](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/dict.png)
 
 再打开【破解工具】->【MD5】中的 **MD5Crack2**，在 **破解单个密文** 栏中填入上文获取的密码哈希值 `d7e15730ef9708c0`，在 **使用字典 -> 字典一** 中点击 **浏览**，选中刚才生成的社工字典（在 **文件类型** 中选择 **文本文件(*.txt)** 即可看到文本文件），点击 **开始**，成功破解后即可看到管理员的密码明文 `linhai19760812`：
 
-![md5crack2](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/md5crack2.png)
+![md5crack2](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/md5crack2.png)
 
 由于模拟渗透环境的特殊性，该密码哈希值经常被提交至各大 MD5 破解网站，因此用在线的  [MD5解密工具](http://www.dmd5.com/md5-decrypter.jsp) 也能得到管理员的密码明文：
 
 > 小贴士：一般来说，复杂的管理员密码，是很难通过在线破解立即查询到明文的，除非之前被提交查询过，这时只能通过其他手段获取密码明文。
 
-![linhai_password](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/linhai_password.png)
+![linhai_password](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/linhai_password.png)
 
 # 0x02 LeadBBS 论坛可否获得 webshell？
 
@@ -174,15 +174,15 @@ categories: [InfoSec,Pentest]
 
 浏览了整个论坛，发现只在 **我的控制面板 -> 修改用户资料** 页面中有写入与上传功能。先尝试将一句话木马 `<%Eval Request("cmd")%>` 写入用户资料，不出意外的话 `<`、`>`、`"` 等符号均被转义为 [HTML 字符实体](http://www.w3school.com.cn/html/html_entities.asp)，木马写入失败：
 
-![bbs_html_entity](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/bbs_html_entity.png)
+![bbs_html_entity](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/bbs_html_entity.png)
 
 再尝试上传图片功能，将 C 盘下的 `工具.ico` 改名为 `test.asp;gj.jpg`，目的是利用 IIS 解析漏洞，将图片解析为 ASP 脚本文件。点击 **选择文件**，选中 `test.asp;gj.jpg` 后点击 **上传**：
 
-![bbs_uploading](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/bbs_uploading.png)
+![bbs_uploading](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/bbs_uploading.png)
 
 发现文件被重新随机命名，因此想控制文件名利用解析漏洞，也以失败而告终：
 
-![bbs_uploaded](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/bbs_uploaded.png)
+![bbs_uploaded](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/bbs_uploaded.png)
 
 此外，笔者还用了 Burp Suite 工具抓包改包，试图构造畸形目录触发解析漏洞，但在图片上传的包中也没发现可控的上传路径，故尝试失败。有兴趣的读者可自行尝试，此处就不演示了。
 
@@ -194,7 +194,7 @@ categories: [InfoSec,Pentest]
 
 > 小贴士：若 CMS 保留默认设置，即使主站页面没给出后台管理入口，也能通过后台扫描工具，或搜索该 CMS 的默认后台管理路径来获得。
 
-![login_back](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/login_back.png)
+![login_back](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/login_back.png)
 
 由于主站是个小众 CMS，在未能获取有效漏洞信息，以及没有对其代码审计的情况下，应该对所有页面中可能出现写入或上传漏洞的地方进行黑盒测试。下面以几个测试点为例，演示黑盒测试的过程。
 
@@ -202,7 +202,7 @@ categories: [InfoSec,Pentest]
 
 在 **图片管理 -> 添加图片** 页面，发现可以上传图片，先将【我的文档】->【图片收藏】->【示例图片】目录中的 `Winter.jpg` 复制到 C 盘目录下，方便后续使用，然后在页面填写相关信息，并在 **图片一** 中选择 `Winter.jpg` 后点击 **上传**：
 
-![backend_add_picture](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/backend_add_picture.png)
+![backend_add_picture](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/backend_add_picture.png)
 
 上传之后，在 **管理图片** 与 **推荐组图** 页面中均未能发现 `Winter.jpg`，由此推断添加图片功能被禁用了。
 
@@ -210,61 +210,61 @@ categories: [InfoSec,Pentest]
 
 在 **系统管理 -> 文章图片** 页面，发现可以写入文章，遂尝试写入一句话木马：
 
-![backend_write_article](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/backend_write_article.png)
+![backend_write_article](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/backend_write_article.png)
 
 写入之后，打开文章，同样发现 `<`、`>`、`"` 等符号均被转义为 HTML 字符实体，木马写入失败：
 
-![backend_write_article_escape](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/backend_write_article_escape.png)
+![backend_write_article_escape](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/backend_write_article_escape.png)
 
 ## Success：系统变量设置 + 备份数据库
 
 在 **设置管理 -> 系统变量设置** 页面，发现可以写入设置信息，以及上传图片。不过，在尝试写入一句话木马时，点击 **设置** 却得到了错误信息：
 
-![backend_setting_error](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/backend_setting_error.png)
+![backend_setting_error](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/backend_setting_error.png)
 
 此路不通，心里莫名一紧，只剩下最后的上传图片功能了。点击 **上传图片**，选择 `Winter.jpg`，哟嘿，居然能成功上传：
 
-![backend_upload](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/backend_upload.png)
+![backend_upload](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/backend_upload.png)
 
 带着一点小激动，继续点击 **生成代码**，发现图片的路径也给显示出来了：
 
-![backend_upload_path](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/backend_upload_path.png)
+![backend_upload_path](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/backend_upload_path.png)
 
 这说明有戏啊！接着探索，在 **数据管理 -> 备份/恢复数据库** 页面发现，似乎能把指定文件通过备份转换为 ASP 脚本文件：
 
-![backend_backup_default](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/backend_backup_default.png)
+![backend_backup_default](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/backend_backup_default.png)
 
 二话不说，先试一波。从默认备份路径可看出，当前路径应该在 `/admin/` 下，所以数据库路径为 `upfiles/201841631359.jpg`，备份的数据库路径为 `upfiles/201841631359.asp`：
 
-![backend_backup_picture](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/backend_backup_picture.png)
+![backend_backup_picture](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/backend_backup_picture.png)
 
 成功备份后，访问 URL `http://www.test.ichunqiu/admin/upfiles/201841631359.asp`，得到 ASP 脚本解析错误信息：
 
-![backend_backup_error](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/backend_backup_error.png)
+![backend_backup_error](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/backend_backup_error.png)
 
 因为该 ASP 脚本是由图片文件转化而来，解析错误是理所当然啊！这也进一步证实：**通过备份数据库可以将目标文件转换了 ASP 脚本**。
 
 找到方向后，开始制作图片马，不过注意，**不能通过 `copy` 命令或文本编辑器将一句话木马附在真正的图片后，否则会出现解析错误。**因此，必须将木马插在文本文件中，再把后缀名改成图片格式即可。为了图片马能成功上传，最好填充大量文本信息，为了使文本文件的大小更接近图片文件：
 
-![backend_trojan](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/backend_trojan.png)
+![backend_trojan](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/backend_trojan.png)
 
 重复上述步骤，将图片马通过备份数据库转换成 ASP 脚本后，访问 URL `http://www.test.ichunqiu/admin/upfiles/201841637712.asp`，看到如下页面，说明图片马上传成功：
 
-![backend_trojan_uploaded](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/backend_trojan_uploaded.png)
+![backend_trojan_uploaded](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/backend_trojan_uploaded.png)
 
 ## 菜刀连接获取 webshell
 
 下面的操作相信大家已轻车熟路，在工具箱【webshell】目录下拔出[中国菜刀](http://www.zhongguocaidao.com/)，在 **添加SHELL** 中填入目标 URL 与请求参数后保存：
 
-![chopper_trojan](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/chopper_trojan.png)
+![chopper_trojan](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/chopper_trojan.png)
 
 双击 shell 记录，成功连接网站的文件管理系统：
 
-![chopper_file_manager](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/chopper_file_manager.png)
+![chopper_file_manager](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/chopper_file_manager.png)
 
 然后搜索网站根目录下所有文件，查找有关 SQL Server 数据库的用户信息，最终在 `/conn_old.asp` 文件中发现账户 `sa` 的密码为 `linhai123456woaini`：
 
-![chopper_conn_old](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/chopper_conn_old.png)
+![chopper_conn_old](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/chopper_conn_old.png)
 
 **注意：以上发现的 SQL Server 数据库账号密码，与主站目前在用的 Microsoft Access 数据库无任何关系，只是作为考察信息检索能力的题目而存在。从文件名亦可得知，这是主站连接数据库的旧配置信息。**
 
@@ -274,11 +274,11 @@ categories: [InfoSec,Pentest]
 
 右击 `bear.asp` 将其下载至桌面，并改名为 `bear.mdb`。打开明小子注入工具，依次点击 **数据库管理 -> 文件 -> 打开数据库**，选中桌面上的 `bear.mdb` 文件后打开：
 
-![domain_open_bear_mdb](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/domain_open_bear_mdb.png)
+![domain_open_bear_mdb](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/domain_open_bear_mdb.png)
 
 在数据库中发现了 `admin` 表，以及主站后台管理员「linhai」的账号密码，从而证实了 `bear.asp` 文件为主站的后台数据库。
 
-![domain_bear_mdb](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/domain_bear_mdb.png)
+![domain_bear_mdb](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/domain_bear_mdb.png)
 
 # 0x04 目标服务器系统的管理员密码是？
 
@@ -292,33 +292,33 @@ categories: [InfoSec,Pentest]
 
 首先将工具箱【提权工具】->【windows】目录中的三款工具，在菜刀的文件管理页面空白处，右键点击 **上传文件** 至服务器 `C:\wmpub` 目录下，接着右击 cmd.exe，选择 **虚拟终端** 进入到命令行交互界面：
 
-![chopper_upload](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/chopper_upload.png)
+![chopper_upload](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/chopper_upload.png)
 
 输入 `systeminfo` 命令，获取服务器系统相关信息，得知系统为 Microsoft Windows Server 2003 Enterprise Edition SP2，且只安装了一个补丁程序，即可猜测该系统存在 CVE-2009-0079 漏洞：
 
-![systeminfo](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/systeminfo.png)
+![systeminfo](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/systeminfo.png)
 
 接着切换到 `C:\wmpub` 目录，输入 `churrasco "net user ichunqiu key /add"` 命令，添加一个名为 `ichunqiu`、密码为 `key` 的用户：
 
-![churrasco_user](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/churrasco_user.png)
+![churrasco_user](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/churrasco_user.png)
 
 再输入 `churrasco "net localgroup administrators ichunqiu /add"`命令，将 `ichunqiu` 用户添加到 `administrators` 用户组：
 
-![churrasco_localgroup](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/churrasco_localgroup.png)
+![churrasco_localgroup](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/churrasco_localgroup.png)
 
 > 小贴士：可通过 `net user` 与 `net localgroup administrators` 查看命令是否执行成功。
 
 最后输入 `churrasco 3389` 命令，打开 3389 端口及远程桌面服务：
 
-![churrasco_3389](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/churrasco_3389.png)
+![churrasco_3389](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/churrasco_3389.png)
 
 确认提权成功后，在本机上点击 **开始 -> 运行**，输入 [`mstsc`](https://baike.baidu.com/item/mstsc)，远程计算机地址为 `172.16.12.2`（在实验场景拓扑图上可见）：
 
-![mstsc](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/mstsc.png)
+![mstsc](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/mstsc.png)
 
 正常情况下会弹出远程桌面，输入用户名 `ichunqiu` 与密码 `key`，即可成功登录远程服务器：
 
-![login_server](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/login_server.png)
+![login_server](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/login_server.png)
 
 进入到远程主机桌面，此时可以通过 [pwdump 工具](http://www.openwall.com/passwords/windows-pwdump) 获取管理员密码的哈希值，常见的 pwdump 工具有 Pwdump7、QuarksPwDump、Cain & Abel 等。
 
@@ -326,27 +326,27 @@ categories: [InfoSec,Pentest]
 
 下面以 [**Pwdump7**](http://www.tarasco.org/security/pwdump_7/index.html) 为例进行演示，先将实验工具箱【提权工具】->【hash】->【Pwdump7】文件夹下的 **Pwdump7.exe** 与 **libeay32.dll** 两个文件通过菜刀上传至服务器 `C:\wmpub` 目录，再回到远程主机桌面点击【开始】 -> 【我的电脑】，进入上传点打开 cmd.exe，直接输入 `pwdump7` 命令即可获得所有用户的密码哈希值，其中 `3C8D6C158F6FB3D1FDCFC2AFB2D1BE34` 是 LM 哈希，`594B9CD2577A5AC2BE0CA522D5EC6ACE` 是 NTLM 哈希：
 
-![pwdump7](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/pwdump7.png)
+![pwdump7](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/pwdump7.png)
 
  最后，打开在线哈希值破解工具 [Objectif Sécurité ](http://www.objectif-securite.ch/)，在主页点击 **OPHCRACK** 选项卡，将 NTLM 哈希 `594B9CD2577A5AC2BE0CA522D5EC6ACE` 填入第一个文本框，点击 **GO** 解密后，即得管理员系统密码的明文 `88hvpebv`：
 
-![objectif](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/objectif.png)
+![objectif](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/objectif.png)
 
 # 0x05 文末彩蛋
 
 当我们拥有了服务器管理员账号 `Administrator` 与密码 `88hvpebv` 后，可以打开上帝视角来回顾一下靶机渗透环境，对之前渗透过程中遇到的有趣现象有更深入的理解。
 
-![login_server_admin](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/login_server_admin.png)
+![login_server_admin](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/login_server_admin.png)
 
 ## 直接查看 SSMS 账户的密码？
 
 进入到远程服务器的管理员桌面后，发现了数据库集成环境 **SQL Server Management Studio**，心想是否能直接通过该 IDE 查看到账户 `sa` 的密码呢？于是打开 SSMS，点击 **连接(C)** 进入数据库服务器，在 **ADMIN-508BF95B0 -> 安全性 -> 登录名** 路径下找到账户 `sa`：
 
-![ssms_user](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/ssms_user.png)
+![ssms_user](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/ssms_user.png)
 
 双击 `sa` 账户，发现在登录属性中只能看到其密码的 `*` 号隐藏值：
 
-![ssms_sa](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/ssms_sa.png)
+![ssms_sa](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/ssms_sa.png)
 
 搜索了许多相关资料后才知道，**只能通过 SSMS 修改密码，但不能查看原密码**，否则安全性怎么保证呢？想了想确实也是，因此账户 `sa` 的密码除了在主站数据库配置文件中作为敏感信息泄露外，目前暂无他法，若读者们找到了其他途径获得密码，还请分享交流。
 
@@ -354,7 +354,7 @@ categories: [InfoSec,Pentest]
 
 通过菜刀在主站 `/bbs/Data/` 目录下发现了数据库 `dtxy.mdb` 的备份文件 `dtxy.asp`，与上文类似，将其下载至桌面，并改名为 `dtxy.mdb`，点击右键查看其属性，**如果发现其大小为 0 字节，则说明下载失败。**此时若用明小子注入工具打开，则会**弹出输入数据库密码的提示，实际上是由于识别了无效的数据库文件**：
 
-![dtxy_error](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/dtxy_error.png)
+![dtxy_error](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/dtxy_error.png)
 
 笔者在实验过程中时而下载成功，时而失败，原因至今不明。经过反复试验，这里提供两种解决方法，供大家参考：
 
@@ -374,15 +374,15 @@ categories: [InfoSec,Pentest]
 
 通过以上两种方法，即可成功查看数据库 `dtxy.asp` 中的内容。双击 `LeadBBS_User` 表，即可看到论坛所有用户的相关信息：
 
-![dtxy_user](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/dtxy_user.png)
+![dtxy_user](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/dtxy_user.png)
 
 其中，用户 `linhai` 的密码哈希值为 `e10adc3949ba59abbe56e057f20f883e`，解密后得到密码明文 `123456`：
 
-![dtxy_linhai_password](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/dtxy_linhai_password.png)
+![dtxy_linhai_password](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/dtxy_linhai_password.png)
 
 还可验证管理员用户 `Admin` 的密码哈希值 `21232f297a57a5a743894a0e4a801fc3`，解密后确实为 `admin`，与之前的猜测一致：
 
-![dtxy_admin_password](http://oyhh4m1mt.bkt.clouddn.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/dtxy_admin_password.png)
+![dtxy_admin_password](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/dtxy_admin_password.png)
 
 事实上，整个 Web 应用程序**最有价值**的就是这张表，里面包含所有用户的隐私信息，不仅能实现任意用户登录，而且还能通过撞库威胁其他 Web 应用上的账户，甚至利用钓鱼或社工手段骗取钱财。**因此，该表通常也是黑产的终极目标，也是互联网企业最核心的用户资产，其重要性不言而喻。**
 
