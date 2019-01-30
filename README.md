@@ -43,3 +43,9 @@ The original articles in my blog  are classified by index below.
 ### PHP
 
 - [玩转 PHP eval() 中的单双引号](https://ciphersaw.github.io/2017/11/16/%E7%8E%A9%E8%BD%AC%20PHP%20eval()%20%E4%B8%AD%E7%9A%84%E5%8D%95%E5%8F%8C%E5%BC%95%E5%8F%B7/)
+
+## Technique
+
+### Microsoft Word
+
+- [Microsoft Word 2013 公式自动编号与交叉引用](https://ciphersaw.me/2019/01/30/Microsoft%20Word%202013%20%E5%85%AC%E5%BC%8F%E8%87%AA%E5%8A%A8%E7%BC%96%E5%8F%B7%E4%B8%8E%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8/)
