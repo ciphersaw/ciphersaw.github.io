@@ -2,7 +2,7 @@
 title: Microsoft Word 2013 公式自动编号与交叉引用
 date: 2019-01-30 19:00:53
 tags: [microsoft,word]
-categories: [Technique,Microsoft Word]
+categories: [Tips,Microsoft Word]
 copyright: true
 mathjax: true
 ---
@@ -125,6 +125,8 @@ mathjax: true
 
 ![name_chapter_pattern](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Microsoft_Word_2013_%E5%85%AC%E5%BC%8F%E8%87%AA%E5%8A%A8%E7%BC%96%E5%8F%B7%E4%B8%8E%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8/name_chapter_pattern.png)
 
+将以上两种公式编号的模板保存至自动图文集后，即可在 **自动图文集** 中选择所需模板，最后记得要替换模板内的默认公式。
+
 # 0x05 交叉引用
 
 >  小贴士：[交叉引用](https://en.wikipedia.org/wiki/Cross-reference)是指在 Microsoft Word 文档中引用其他位置的内容，例如编号项、标题、脚注、尾注、题注、书签、表格、公式等，引用的内容可随着被引用主体的改变而改变。
@@ -141,7 +143,7 @@ mathjax: true
 
 ![inserted_cross_reference](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Microsoft_Word_2013_%E5%85%AC%E5%BC%8F%E8%87%AA%E5%8A%A8%E7%BC%96%E5%8F%B7%E4%B8%8E%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8/inserted_cross_reference.png)
 
-接下来讨论一种常见情况，假设在公式（1）前面新插入一个圆面积计算公式，这时会出现两个公式（1）：
+接下来讨论一种常见情况，假设在公式（1）前面新插入一个圆面积计算公式 $S  = π r^2$，这时会出现两个公式（1）：
 
 ![insert_new_formula](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Microsoft_Word_2013_%E5%85%AC%E5%BC%8F%E8%87%AA%E5%8A%A8%E7%BC%96%E5%8F%B7%E4%B8%8E%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8/insert_new_formula.png)
 
