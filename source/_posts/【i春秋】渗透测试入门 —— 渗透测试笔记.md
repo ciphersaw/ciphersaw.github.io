@@ -8,7 +8,7 @@ categories: [InfoSec,Pentest]
 
 # 0x00 前言
 
-本题算是一道较为综合的渗透题，要求对两个服务器系统进行渗透，第一个是**基于[齐博 CMS](http://www.php168.com/index.htm) 的信息资讯平台** `http://www.test.ichunqiu`，第二个是**基于 [Discuz!](http://www.discuz.net/forum.php) 的论坛社区** `http://bbs.test.ichunqiu`。这两个 CMS 同样能在网上找到许多漏洞，常用作渗透测试的练习靶机。
+本题算是一道较为综合的渗透题，要求对两个服务器系统进行渗透，第一个是**基于[齐博 CMS](http://www.qibosoft.com/index.htm) 的信息资讯平台** `http://www.test.ichunqiu`，第二个是**基于 [Discuz!](http://www.discuz.net/forum.php) 的论坛社区** `http://bbs.test.ichunqiu`。这两个 CMS 同样能在网上找到许多漏洞，常用作渗透测试的练习靶机。
 
 根据提示，第 1 题要求找到咨询平台的管理员账号密码；第 2 题需要登录服务器后台，并插入木马，再用[中国菜刀](http://www.zhongguocaidao.com/)连接，继而找到在管理员桌面上的 flag 文件；第 3 题要求在论坛社区的数据库中找到 admin 账户的 `salt` 值。
 

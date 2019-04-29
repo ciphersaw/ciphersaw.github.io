@@ -71,7 +71,7 @@ categories: [InfoSec,Pentest]
 
 第二个漏洞也是由于 `/system/modules/member/index.php` 中的编辑函数 `edit_save()` 过滤不严，可绕过限制造成 SQL 注入。同样地，此处不研究漏洞原理，只对该漏洞进行利用，详情可参考：
 
-> [xdcms通用型全版本注入漏洞](http://wooyun.jozxing.cc/static/bugs/wooyun-2013-043334.html)
+> [xdcms通用型全版本注入漏洞](http://www.anquan.us/static/bugs/wooyun-2013-043334.html)
 
 利用刚刚注册好的 **sql_injection** 账户登录，准备对 **资料管理 -> 基本资料** 中的 **姓名** 进行修改：
 

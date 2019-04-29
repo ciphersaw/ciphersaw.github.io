@@ -80,7 +80,7 @@ show_source(__FILE__);
 
 针对 POST 请求同样适用，请读者自行验证。
 
-将页面显示的新值传入 `value` 参数后，按上述方法手动循环 10 次，即可满足输出 flag 的条件，但只仅对于次数少的情况有效，如果循环 100 次，还想继续手动操作吗？这时，使用 Python 的**第三方开源库 [Requests](http://www.python-requests.org/en/master/)** 编写自动化脚本，即可轻松解决问题，基本用法可参考：
+将页面显示的新值传入 `value` 参数后，按上述方法手动循环 10 次，即可满足输出 flag 的条件，但只仅对于次数少的情况有效，如果循环 100 次，还想继续手动操作吗？这时，使用 Python 的**第三方开源库 [Requests](https://2.python-requests.org/en/master/)** 编写自动化脚本，即可轻松解决问题，基本用法可参考：
 
 > [详解 CTF Web 中的快速反弹 POST 请求](https://ciphersaw.github.io/2017/12/16/%E8%AF%A6%E8%A7%A3%20CTF%20Web%20%E4%B8%AD%E7%9A%84%E5%BF%AB%E9%80%9F%E5%8F%8D%E5%BC%B9%20POST%20%E8%AF%B7%E6%B1%82/)
 
@@ -148,7 +148,7 @@ burp = {"http": "127.0.0.1:8080"}
 response = s.post(url, data = payload, proxies = burp)
 ```
 
-- 构造 POST 请求中 [`proxies` 代理参数](http://docs.python-requests.org/en/master/user/advanced/#proxies)的 `dict` 类型变量，其中 `http` 是代理访问 URL 的协议类型，`127.0.0.1:8080` 是 Burp Suite 的本地监听地址与端口号。
+- 构造 POST 请求中 [`proxies` 代理参数](https://2.python-requests.org//en/master/user/advanced/#proxies)的 `dict` 类型变量，其中 `http` 是代理访问 URL 的协议类型，`127.0.0.1:8080` 是 Burp Suite 的本地监听地址与端口号。
 
 将 Burp Suite 开启 Intercept 模式，运行上述脚本即可看到：
 
