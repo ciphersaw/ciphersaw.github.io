@@ -25,6 +25,7 @@ The original articles in my blog  are classified by index below.
 - [【实验吧 CTF】 Web —— 忘记密码了](https://ciphersaw.github.io/2017/09/28/%E3%80%90%E5%AE%9E%E9%AA%8C%E5%90%A7%20CTF%E3%80%91%20Web%20%E2%80%94%E2%80%94%20%E5%BF%98%E8%AE%B0%E5%AF%86%E7%A0%81%E4%BA%86/)
 - [【Bugku CTF】 Web —— never give up](https://ciphersaw.github.io/2017/12/26/%E3%80%90Bugku%20CTF%E3%80%91%20Web%20%E2%80%94%E2%80%94%20never%20give%20up/)
 - [【Bugku CTF】 Web —— welcome to bugkuctf](https://ciphersaw.github.io/2018/01/03/%E3%80%90Bugku%20CTF%E3%80%91%20Web%20%E2%80%94%E2%80%94%20welcome%20to%20bugkuctf/)
+- [【WeChall】 Training：WWW-Basics](https://ciphersaw.github.io/2019/04/30/%E3%80%90WeChall%E3%80%91%20Training%EF%BC%9AWWW-Basics/)
 - [【i春秋】 Web —— 爆破-1](https://ciphersaw.github.io/2018/08/27/%E3%80%90i%E6%98%A5%E7%A7%8B%E3%80%91%20Web%20%E2%80%94%E2%80%94%20%E7%88%86%E7%A0%B4-1/)
 - [【i春秋】 Web —— 爆破-2](https://ciphersaw.github.io/2018/08/31/%E3%80%90i%E6%98%A5%E7%A7%8B%E3%80%91%20Web%20%E2%80%94%E2%80%94%20%E7%88%86%E7%A0%B4-2/)
 - [【i春秋】 Web —— 爆破-3](https://ciphersaw.github.io/2018/09/11/%E3%80%90i%E6%98%A5%E7%A7%8B%E3%80%91%20Web%20%E2%80%94%E2%80%94%20%E7%88%86%E7%A0%B4-3/)
