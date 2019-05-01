@@ -10,6 +10,7 @@ The original articles in my blog  are classified by index below.
 
 - [Hash Length Extension Attack（哈希长度扩展攻击）](https://ciphersaw.github.io/2017/11/12/Hash%20Length%20Extension%20Attack%EF%BC%88%E5%93%88%E5%B8%8C%E9%95%BF%E5%BA%A6%E6%89%A9%E5%B1%95%E6%94%BB%E5%87%BB%EF%BC%89/)
 - [【CNSS 2017】 Crypto —— RSA Combo](https://ciphersaw.github.io/2017/10/27/%E3%80%90CNSS%202017%E3%80%91%20Crypto%20%E2%80%94%E2%80%94%20RSA%20Combo/)
+- [【WeChall】 Training：GPG](https://ciphersaw.github.io/2019/05/01/%E3%80%90WeChall%E3%80%91%20Training%EF%BC%9AGPG/)
 
 ### Pentest
 
