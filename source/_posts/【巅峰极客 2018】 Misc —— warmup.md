@@ -2,7 +2,7 @@
 title: 【巅峰极客 2018】 Misc —— warmup
 copyright: true
 date: 2018-07-29 21:08:54
-tags: [巅峰极客,CTF,writeup,steganography,encoding,crypto]
+tags: [巅峰极客,CTF,Writeup,Steganography,Encoding,Crypto]
 categories: [InfoSec,Misc]
 ---
 

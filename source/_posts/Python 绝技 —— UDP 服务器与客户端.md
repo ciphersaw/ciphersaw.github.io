@@ -2,7 +2,7 @@
 title: Python 绝技 —— UDP 服务器与客户端
 copyright: true
 date: 2018-06-15 09:38:58
-tags: [python,network,udp,socket,tool,doc]
+tags: [Python,Network,UDP,Socket,Server,Client,API]
 categories: [Programming,Python]
 ---
 

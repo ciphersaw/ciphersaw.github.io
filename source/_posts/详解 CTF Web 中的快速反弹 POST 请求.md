@@ -2,7 +2,7 @@
 title: 详解 CTF Web 中的快速反弹 POST 请求
 copyright: true
 date: 2017-12-16 13:35:20
-tags: [CTF,writeup,web,http,python,实验吧,bugku]
+tags: [CTF,Writeup,Web,HTTP,Python,API,实验吧,Bugku]
 categories: [InfoSec,Web]
 ---
 

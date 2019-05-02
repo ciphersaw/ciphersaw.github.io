@@ -2,7 +2,7 @@
 title: 【WeChall】 Training：WWW-Basics
 copyright: true
 date: 2019-04-30 14:54:15
-tags: [wechall,CTF,writeup,VPS,linux,bash,web,http,python]
+tags: [WeChall,CTF,Writeup,VPS,Linux,Bash,Web,HTTP,Python]
 categories: [InfoSec,Web]
 ---
 

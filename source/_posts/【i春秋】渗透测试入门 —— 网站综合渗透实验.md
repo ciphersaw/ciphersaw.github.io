@@ -2,7 +2,7 @@
 title: 【i春秋】渗透测试入门 —— 网站综合渗透实验
 copyright: true
 date: 2018-04-15 10:19:43
-tags: [i春秋,pentest,exploit,writeup,CMS,crypto,social engineering,web,asp,database,sqli,trojan,vulnerability,privilege,cmd]
+tags: [i春秋,Pentest,Exploit,Writeup,CMS,Crypto,Social Engineering,Web,ASP,Database,SQLi,Trojan,Vulnerability,Privilege,CMD]
 categories: [InfoSec,Pentest]
 ---
 

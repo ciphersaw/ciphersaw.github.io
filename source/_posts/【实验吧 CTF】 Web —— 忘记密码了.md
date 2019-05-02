@@ -1,7 +1,7 @@
 ---
 title: 【实验吧 CTF】 Web —— 忘记密码了
 date: 2017-09-28 16:13:00
-tags: [实验吧,CTF,writeup,audit,php]
+tags: [实验吧,CTF,Writeup,Audit,PHP,Vim]
 categories: [InfoSec,Web]
 copyright: true
 ---
@@ -43,7 +43,7 @@ copyright: true
 <meta http-equiv=refresh content=0.5;URL="./step1.php">check error!
 ```
 - 跟 step1.php 同样存在关于 admin 和 editor 信息
-- 代码下半部分惊奇地发现一个表单，并且得到第三个页面 **submit.php**，还知道需要通过 **GET 方法**向该页面发现两个参数 **emailAddress** 和 **token**。
+- 代码下半部分惊奇地发现一个表单，并且得到第三个页面 **submit.php**，还知道需要通过 **GET 方法**向该页面发送两个参数 **emailAddress** 和 **token**。
 
 ![step2_source](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E5%AE%9E%E9%AA%8C%E5%90%A7_CTF_Web_%E5%BF%98%E8%AE%B0%E5%AF%86%E7%A0%81%E4%BA%86/step2_source.jpg)
 
@@ -62,12 +62,12 @@ copyright: true
 
 ![swp](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E5%AE%9E%E9%AA%8C%E5%90%A7_CTF_Web_%E5%BF%98%E8%AE%B0%E5%AF%86%E7%A0%81%E4%BA%86/swp.jpg)
 
-要想输出 \$flag，必须使三个 if 的条件成立：
-1. \$emailAddress 和 \$token 非空
-2. \$token 的长度为 0
-3. \$token 的值为 0
-4. 最后注意 admin 的邮箱地址要填正确，否则 34 行的 \$sql 会赋值失败
+要想输出 `$flag`，必须使三个 if 的条件成立：
+1. `$emailAddress` 和 `$token` 非空
+2. `$token` 的长度为 10
+3. `$token` 的值为 0
+4. 最后注意 admin 的邮箱地址要填正确，否则 37 行 `$r['num']` 的查询返回结果为 0
 
-根据上述条件，就可构建出正确的参数值 **emailAddress=admin@simplexue.com&token=0000000000**，提交后可见 flag：
+根据上述条件，就可构建出正确的参数值 `emailAddress=admin@simplexue.com&token=0000000000`，提交后可见 flag：
 
 ![flag](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E5%AE%9E%E9%AA%8C%E5%90%A7_CTF_Web_%E5%BF%98%E8%AE%B0%E5%AF%86%E7%A0%81%E4%BA%86/flag.jpg)

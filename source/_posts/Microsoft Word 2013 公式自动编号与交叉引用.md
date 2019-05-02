@@ -1,7 +1,7 @@
 ---
 title: Microsoft Word 2013 公式自动编号与交叉引用
 date: 2019-01-30 19:00:53
-tags: [microsoft,word]
+tags: [Microsoft,Word,MathType]
 categories: [Tips,Microsoft Word]
 copyright: true
 mathjax: true

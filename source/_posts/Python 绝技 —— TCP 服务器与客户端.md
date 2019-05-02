@@ -2,7 +2,7 @@
 title: Python 绝技 —— TCP 服务器与客户端
 copyright: true
 date: 2018-05-23 22:33:19
-tags: [python,network,tcp,socket,tool,doc]
+tags: [Python,Network,TCP,Socket,Server,Client,API]
 categories: [Programming,Python]
 ---
 

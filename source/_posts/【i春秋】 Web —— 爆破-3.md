@@ -2,7 +2,7 @@
 title: 【i春秋】 Web —— 爆破-3
 copyright: true
 date: 2018-09-11 23:06:53
-tags: [i春秋,CTF,writeup,web,audit,php,python,http]
+tags: [i春秋,CTF,Writeup,Web,Audit,PHP,Python,HTTP]
 categories: [InfoSec,Web]
 ---
 

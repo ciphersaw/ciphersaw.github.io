@@ -2,7 +2,7 @@
 title: 【WeChall】 Training：GPG
 copyright: true
 date: 2019-05-01 18:29:47
-tags: [wechall,CTF,writeup,crypto,linux,gpg]
+tags: [WeChall,CTF,Writeup,Crypto,Linux,GPG,RSA]
 categories: [InfoSec,Crypto]
 ---
 

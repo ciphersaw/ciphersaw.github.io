@@ -2,7 +2,7 @@
 title: 【i春秋】渗透测试入门 —— 你是会员吗？
 copyright: true
 date: 2018-03-08 09:41:36
-tags: [i春秋,pentest,exploit,writeup,CMS,crypto,web,php,sqli,trojan,vulnerability]
+tags: [i春秋,Pentest,Exploit,Writeup,CMS,Crypto,Web,PHP,SQLi,Trojan,Vulnerability]
 categories: [InfoSec,Pentest]
 ---
 

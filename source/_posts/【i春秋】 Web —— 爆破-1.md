@@ -2,7 +2,7 @@
 title: 【i春秋】 Web —— 爆破-1
 copyright: true
 date: 2018-08-27 22:11:40
-tags: [i春秋,CTF,writeup,web,audit,php,regex]
+tags: [i春秋,CTF,Writeup,Web,Audit,PHP,RegEx]
 categories: [InfoSec,Web]
 mathjax: true
 ---
