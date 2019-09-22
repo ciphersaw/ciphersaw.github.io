@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="TGrgd6itNVDcEjPh_ZJU-fc0-4WWeviPJnz7UOzkj-k" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Web,PHP,API," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="0x00 前言在一次偶然学习 PHP eval() 函数的过程中，发现官方文档对该函数的示例说明很有意思，刚开始有点无法理解，想通之后便记录下此次辛酸的思考历程。">
+<meta name="keywords" content="Web,PHP,API">
+<meta property="og:type" content="article">
+<meta property="og:title" content="玩转 PHP eval() 中的单双引号">
+<meta property="og:url" content="https://ciphersaw.github.io/2017/11/16/玩转 PHP eval() 中的单双引号/index.html">
+<meta property="og:site_name" content="Secrypt Agency">
+<meta property="og:description" content="0x00 前言在一次偶然学习 PHP eval() 函数的过程中，发现官方文档对该函数的示例说明很有意思，刚开始有点无法理解，想通之后便记录下此次辛酸的思考历程。">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2019-05-02T02:22:53.745Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="玩转 PHP eval() 中的单双引号">
+<meta name="twitter:description" content="0x00 前言在一次偶然学习 PHP eval() 函数的过程中，发现官方文档对该函数的示例说明很有意思，刚开始有点无法理解，想通之后便记录下此次辛酸的思考历程。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.2',
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://ciphersaw.github.io/2017/11/16/玩转 PHP eval() 中的单双引号/"/>
+
+
+
+
+
+  <title>玩转 PHP eval() 中的单双引号 | Secrypt Agency</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Secrypt Agency</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Welcome to a platform for network security artists.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-friends">
+          <a href="/friends/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-users"></i> <br />
+            
+            Friends
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="Searching..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://ciphersaw.github.io/2017/11/16/玩转 PHP eval() 中的单双引号/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Cipher Saw">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Secrypt Agency">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">玩转 PHP eval() 中的单双引号</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-11-16T19:17:16+08:00">
+                2017-11-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Programming/" itemprop="url" rel="index">
+                    <span itemprop="name">Programming</span>
+                  </a>
+                </span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Programming/PHP/" itemprop="url" rel="index">
+                    <span itemprop="name">PHP</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2017/11/16/玩转 PHP eval() 中的单双引号/" class="leancloud_visitors" data-flag-title="玩转 PHP eval() 中的单双引号">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">Visitors&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h1><p>在一次偶然学习 PHP <strong>eval() 函数</strong>的过程中，发现<a href="http://php.net/manual/zh/function.eval.php" target="_blank" rel="external">官方文档</a>对该函数的示例说明很有意思，刚开始有点无法理解，想通之后便记录下此次辛酸的思考历程。</p>
+<a id="more"></a>
+<h1 id="0x01-eval-函数"><a href="#0x01-eval-函数" class="headerlink" title="0x01 eval() 函数"></a>0x01 eval() 函数</h1><p>官方文档将 eval() 函数的解释为<strong>「把字符串参数当作 PHP 代码执行」</strong>，说明如下：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mixed <span class="keyword">eval</span> ( string $code )</div></pre></td></tr></table></figure>
+<ul>
+<li>参数 <code>$code</code> 是需要被执行的字符串</li>
+<li>返回值类型 <code>mixed</code> 是指存在多种不同类型的返回值，默认返回 NULL；如果代码中 return 了一个值，则该值也作为函数的返回值返回；如果代码中出现解析错误，则在 PHP7 之前，返回 FALSE，在 PHP7 之后，抛出 ParseError 异常。</li>
+</ul>
+<p>下面说明几点注意事项：</p>
+<ol>
+<li>字符串中代码不要忘记语句末尾的分号；</li>
+<li>return 语句会终止当前字符串的执行；</li>
+<li>eval() 函数中任何的变量定义或修改，都会在函数结束后被保留；</li>
+<li>若在代码执行过程中产生致命错误，则整个脚本都会终止。</li>
+</ol>
+<p>接下来就是有趣的例子 —— 简单的文本合并：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span></div><div class="line">$string = <span class="string">'cup'</span>;</div><div class="line">$name = <span class="string">'coffee'</span>;</div><div class="line">$str = <span class="string">'This is a $string with my $name in it.'</span>;</div><div class="line"><span class="keyword">echo</span> $str. <span class="string">"\n"</span>;</div><div class="line"><span class="keyword">eval</span>(<span class="string">"\$str = \"$str\";"</span>);</div><div class="line"><span class="keyword">echo</span> $str. <span class="string">"\n"</span>;</div><div class="line"><span class="meta">?&gt;</span></div></pre></td></tr></table></figure>
+<p>输出结果为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">This is a $string with my $name in it.</div><div class="line">This is a cup with my coffee in it.</div></pre></td></tr></table></figure>
+<p>刚开始看到输出结果，百思不得其解，<code>eval(&quot;\$str = \&quot;$str\&quot;;&quot;);</code> 语句不就把字符串 <code>&quot;\$str = \&quot;$str\&quot;;&quot;</code> 当成 PHP 代码来执行吗？如果去掉 eval() 函数后直接执行 <code>$str = &quot;$str&quot;;</code> 语句，为什么输出结果就变成了 <code>This is a $string with my $name in it.</code> 呢？</p>
+<h1 id="0x02-示例解析"><a href="#0x02-示例解析" class="headerlink" title="0x02 示例解析"></a>0x02 示例解析</h1><p>要理解上述现象，首先要知道以下两条规则：</p>
+<h2 id="Rule-1：单引号内不解析变量，双引号内解析变量"><a href="#Rule-1：单引号内不解析变量，双引号内解析变量" class="headerlink" title="Rule 1：单引号内不解析变量，双引号内解析变量"></a><strong>Rule 1：单引号内不解析变量，双引号内解析变量</strong></h2><p>下面给出 Rule 1 的 PoC：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span> </div><div class="line">$name = <span class="string">'Alice'</span>;</div><div class="line">$x = <span class="string">'hello $name'</span>;  <span class="comment">//单引号内变量不被解析</span></div><div class="line">$y = <span class="string">"hello $name"</span>;  <span class="comment">//双引号内变量会被解析</span></div><div class="line"><span class="keyword">echo</span> $x, <span class="string">'&lt;br /&gt;'</span>;</div><div class="line"><span class="keyword">echo</span> $y, <span class="string">'&lt;br /&gt;'</span>;	</div><div class="line"><span class="meta">?&gt;</span></div></pre></td></tr></table></figure>
+<p>结果输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">hello $name</div><div class="line">hello Alice</div></pre></td></tr></table></figure>
+<p>因此在 <code>eval(&quot;\$str = \&quot;$str\&quot;;&quot;);</code> 语句中，<code>\$str</code> 是为了变量不被解析成字符串，<code>\&quot;</code> 是为了转义内层的双引号，避免与外层的双引号闭合。</p>
+<h2 id="Rule-2：PHP-字符串中嵌套引号的解析是由外向里的，且只解析一次"><a href="#Rule-2：PHP-字符串中嵌套引号的解析是由外向里的，且只解析一次" class="headerlink" title="Rule 2：PHP 字符串中嵌套引号的解析是由外向里的，且只解析一次"></a><strong>Rule 2：PHP 字符串中嵌套引号的解析是由外向里的，且只解析一次</strong></h2><p>换句话说，即只解析最外层的引号，下面给出 Rule 2 的 PoC：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span> </div><div class="line">$name = <span class="string">'Alice'</span>;</div><div class="line"></div><div class="line">$x = <span class="string">'hello $name'</span>;      <span class="comment">//单引号内变量不被解析</span></div><div class="line"><span class="keyword">echo</span> $x, <span class="string">'&lt;br /&gt;'</span>;       <span class="comment">//直接输出变量$x，即字符串hello $name</span></div><div class="line"><span class="keyword">echo</span> <span class="string">'$x'</span>, <span class="string">'&lt;br /&gt;'</span>;     <span class="comment">//变量$x在单引号内不被解析，故输出字符串$x</span></div><div class="line"><span class="keyword">echo</span> <span class="string">"$x"</span>, <span class="string">'&lt;br /&gt;'</span>;     <span class="comment">//变量$x在双引号内会被解析，故输出$x的值，即字符串hello $name</span></div><div class="line"><span class="keyword">echo</span> <span class="string">"'$x'"</span>, <span class="string">'&lt;br /&gt;'</span>;   <span class="comment">//只有双引号起作用，变量$x会被解析，故输出字符串'hello $name'</span></div><div class="line"><span class="keyword">echo</span> <span class="string">'"$x"'</span>, <span class="string">'&lt;br /&gt;'</span>;   <span class="comment">//只有单引号起作用，变量$x不被解析，故输出字符串"$x"</span></div><div class="line"><span class="keyword">echo</span> <span class="string">"'\$x'"</span>, <span class="string">'&lt;br /&gt;'</span>;  <span class="comment">//只有双引号起作用，变量$x被转义而不被解析，故输出字符串'$x'</span></div><div class="line"><span class="keyword">echo</span> <span class="string">'"\$x"'</span>, <span class="string">'&lt;br /&gt;'</span>;  <span class="comment">//只有单引号起作用，变量$x不被解析，故输出字符串"\$x"</span></div><div class="line"><span class="keyword">echo</span> <span class="string">'\'$x\''</span>, <span class="string">'&lt;br /&gt;'</span>; <span class="comment">//只有外层单引号起作用，内层单引号需转义，变量$x不被解析，故输出字符串'\$x'</span></div><div class="line"><span class="keyword">echo</span> <span class="string">"\"$x\""</span>, <span class="string">'&lt;br /&gt;'</span>; <span class="comment">//只有外层双引号起作用，内层双引号需转义，变量$x会被解析，故输出字符串"hello $name"</span></div><div class="line"></div><div class="line"><span class="keyword">echo</span> <span class="string">"&lt;br /&gt;"</span>;</div><div class="line"></div><div class="line">$y = <span class="string">"hello $name"</span>;      <span class="comment">//双引号内变量会被解析</span></div><div class="line"><span class="keyword">echo</span> $y, <span class="string">'&lt;br /&gt;'</span>;       <span class="comment">//直接输出变量$y的实际值，即字符串hello Alice</span></div><div class="line"><span class="keyword">echo</span> <span class="string">'$y'</span>, <span class="string">'&lt;br /&gt;'</span>;     <span class="comment">//变量$y在单引号内不被解析，故输出字符串$y</span></div><div class="line"><span class="keyword">echo</span> <span class="string">"$y"</span>, <span class="string">'&lt;br /&gt;'</span>;     <span class="comment">//变量$y在双引号内会被解析，故输出$y的值，即字符串hello Alice</span></div><div class="line"><span class="keyword">echo</span> <span class="string">"'$y'"</span>, <span class="string">'&lt;br /&gt;'</span>;   <span class="comment">//只有双引号起作用，变量$y会被解析，故输出字符串'hello Alice'</span></div><div class="line"><span class="keyword">echo</span> <span class="string">'"$y"'</span>, <span class="string">'&lt;br /&gt;'</span>;   <span class="comment">//只有单引号起作用，变量$y不被解析，故输出字符串"$y"</span></div><div class="line"><span class="keyword">echo</span> <span class="string">"'\$y'"</span>, <span class="string">'&lt;br /&gt;'</span>;  <span class="comment">//只有双引号起作用，变量$y被转义而不被解析，故输出字符串'$y'</span></div><div class="line"><span class="keyword">echo</span> <span class="string">'"\$y"'</span>, <span class="string">'&lt;br /&gt;'</span>;  <span class="comment">//只有单引号起作用，变量$y不被解析，故输出字符串"\$y"</span></div><div class="line"><span class="keyword">echo</span> <span class="string">'\'$y\''</span>, <span class="string">'&lt;br /&gt;'</span>; <span class="comment">//只有外层单引号起作用，内层单引号需转义，变量$y不被解析，故输出字符串'\$y'</span></div><div class="line"><span class="keyword">echo</span> <span class="string">"\"$y\""</span>, <span class="string">'&lt;br /&gt;'</span>; <span class="comment">//只有外层双引号起作用，内层双引号需转义，变量$y会被解析，故输出字符串"hello Alice"</span></div><div class="line"><span class="meta">?&gt;</span></div></pre></td></tr></table></figure>
+<p>结果输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">hello $name</div><div class="line">$x</div><div class="line">hello $name</div><div class="line">&apos;hello $name&apos;</div><div class="line">&quot;$x&quot;</div><div class="line">&apos;$x&apos;</div><div class="line">&quot;\$x&quot;</div><div class="line">&apos;$x&apos;</div><div class="line">&quot;hello $name&quot;</div><div class="line"></div><div class="line">hello Alice</div><div class="line">$y</div><div class="line">hello Alice</div><div class="line">&apos;hello Alice&apos;</div><div class="line">&quot;$y&quot;</div><div class="line">&apos;$y&apos;</div><div class="line">&quot;\$y&quot;</div><div class="line">&apos;$y&apos;</div><div class="line">&quot;hello Alice&quot;</div></pre></td></tr></table></figure>
+<p>下面开始分析以下代码，为了方便理解与说明，对官网文档中示例代码的变量名稍作修改，并将 eval() 函数中的字符串语句抽离出来，单独执行：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;?php</span> </div><div class="line">$string = <span class="string">'cup'</span>;</div><div class="line">$name = <span class="string">'coffee'</span>;</div><div class="line">$origin = <span class="string">'This is a $string with my $name in it.'</span>;</div><div class="line"><span class="keyword">echo</span> $origin. <span class="string">"\n"</span>;</div><div class="line"></div><div class="line">$result_1 = <span class="string">"$origin"</span>;</div><div class="line"><span class="keyword">echo</span> $result_1. <span class="string">"\n"</span>;</div><div class="line"></div><div class="line"><span class="keyword">eval</span>(<span class="string">"\$result_2 = \"$origin\";"</span>);</div><div class="line"><span class="keyword">echo</span> $result_2. <span class="string">"\n"</span>;</div><div class="line"><span class="meta">?&gt;</span></div></pre></td></tr></table></figure>
+<p>以上代码输出如下，也就是本人困惑的地方：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">This is a $string with my $name in it.</div><div class="line">This is a $string with my $name in it.</div><div class="line">This is a cup with my coffee in it.</div></pre></td></tr></table></figure>
+<ul>
+<li><code>$origin</code> 的输出没有问题，根据 Rule 1 即可理解；</li>
+<li><code>$result_1</code> 的输出为什么不变呢？理解了 <code>$result_1 = &quot;$origin&quot;;</code> 就明白了。根据 Rule1，<code>$origin</code> 会被解析，得到它本身的值，即字符串 <code>&#39;This is a $string with my $name in it.&#39;</code> （注意该字符串两边的引号与 <code>$origin</code> 的相同，此处为单引号），因此 <code>$result_1</code> 的输出与 <code>$origin</code> 一样；</li>
+<li><code>$result_2</code> 为什么会改变，是最难理解的。根据 Rule 2，可知 eval() 函数最外层的双引号会被解析，内层被转义的双引号原封不动，因此函数内执行的语句相当于 <code>$result_2 = &quot;This is a $string with my $name in it.&quot;</code>，注意该字符串两边已变成双引号，故$result_2` 字符串中的变量会被解析。</li>
+</ul>
+<p>讲到这里，肯定有人疑问：不是说解析后字符串两边引号跟 <code>$origin</code> 相同吗？按理说应该是 <code>$result_2 = &quot;&#39;This is a $string with my $name in it.&#39;&quot;</code>，那么输出应该跟 Rule 2 PoC 中的 <code>echo &quot;&#39;$x&#39;&quot;</code> 一样啊！</p>
+<p><strong>请注意，此处因为有个 eval() 函数，所以可以有双层解析，即第一层是解析 eval() 函数最外层的双引号，第二层是解析字符串中的双引号。</strong>类似 <code>echo &quot;&#39;$x&#39;&quot;</code> 的引号嵌套，只有单层解析，因此 <code>result_1</code> 中 <code>&#39;This is a $string with my $name in it.&#39;</code> 的单引号与 <code>$origin</code> 的相同，而 <code>result_2</code> 中 <code>&quot;This is a $string with my $name in it.&quot;</code> 的引号则由第二层的双引号赋予。</p>
+<p>可能还有读者不死心，非要在赋值语句中构造双层解析，那我们就来试试看吧。在 <code>$result_1 = &quot;$origin&quot;;</code> 的基础上，再加个双引号吧，得到 <code>$result_1 = &quot;&quot;$origin&quot;&quot;;</code>，简直完美、帅气、机智…</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">PHP Parse error:  syntax error, unexpected &apos;$origin&apos; (T_VARIABLE)</div></pre></td></tr></table></figure>
+<p>咳咳，已经丧失理智到忘记相邻两个双引号会闭合吗？不行就转义吧，看我骚操作 <code>$result_1 = &quot;\&quot;$origin\&quot;&quot;;</code>，还有 <code>$result_1 = &#39;&#39;$origin&#39;&#39;;</code> 与 <code>$result_1 = &#39;\&#39;$origin\&#39;&#39;;</code>！表演结束了吗？要不送一份 Rule 2 的 PoC 给你参考参考？</p>
+<p>以上故事告诉我们一个道理：<strong>单凭赋值语句是完成不了字符串单双引号转换的</strong>。</p>
+<hr>
+<h1 id="0x03-玩法进阶"><a href="#0x03-玩法进阶" class="headerlink" title="0x03 玩法进阶"></a>0x03 玩法进阶</h1><p>对于官方文档中示例代码的疑惑，看到分割线以上就 OK 了，想再深入理解的可继续看下面的玩法（每个玩法在上例基础上修改，之间互不干扰）：</p>
+<h2 id="玩法-1：将-eval-函数的第二层解析改为单引号："><a href="#玩法-1：将-eval-函数的第二层解析改为单引号：" class="headerlink" title="玩法 1：将 eval() 函数的第二层解析改为单引号："></a><strong>玩法 1：将 eval() 函数的第二层解析改为单引号：</strong></h2><blockquote>
+<p><strong>注意：第二层解析的单引号不需要转义，因为第一层是双引号。</strong></p>
+</blockquote>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">eval</span>(<span class="string">"\$result_2 = '$origin';"</span>);</div></pre></td></tr></table></figure>
+<p>此时输出结果为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">This is a $string with my $name in it.</div><div class="line">This is a $string with my $name in it.</div><div class="line">This is a $string with my $name in it.</div></pre></td></tr></table></figure>
+<p>如果理解了上面 <code>result_2</code> 的输出原理，结果容易理解，即相当于执行了 <code>$result_2 = &#39;This is a $string with my $name in it.&#39;</code>，自然与 <code>$origin</code> 和 <code>result_1</code> 相同。</p>
+<h2 id="玩法-2：将-origin-字符串两边改为双引号："><a href="#玩法-2：将-origin-字符串两边改为双引号：" class="headerlink" title="玩法 2：将 $origin 字符串两边改为双引号："></a><strong>玩法 2：将 <code>$origin</code> 字符串两边改为双引号：</strong></h2><figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$origin = <span class="string">"This is a $string with my $name in it."</span>;</div></pre></td></tr></table></figure>
+<p>此时输出结果为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">This is a cup with my coffee in it.</div><div class="line">This is a cup with my coffee in it.</div><div class="line">This is a cup with my coffee in it.</div></pre></td></tr></table></figure>
+<p>这种情况也容易理解，原始字符串一开始就是双引号，那自然是一直解析到底。</p>
+<h2 id="玩法-3：将-eval-函数的第二层解析改为单引号，并将-origin-字符串两边改为双引号："><a href="#玩法-3：将-eval-函数的第二层解析改为单引号，并将-origin-字符串两边改为双引号：" class="headerlink" title="玩法 3：将 eval() 函数的第二层解析改为单引号，并将 $origin 字符串两边改为双引号："></a><strong>玩法 3：将 eval() 函数的第二层解析改为单引号，并将 <code>$origin</code> 字符串两边改为双引号：</strong></h2><figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$origin = <span class="string">"This is a $string with my $name in it."</span>;</div><div class="line"><span class="keyword">eval</span>(<span class="string">"\$result_2 = '$origin';"</span>);</div></pre></td></tr></table></figure>
+<p>此时输出结果为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">This is a cup with my coffee in it.</div><div class="line">This is a cup with my coffee in it.</div><div class="line">This is a cup with my coffee in it.</div></pre></td></tr></table></figure>
+<p>输出结果与玩法 2 相同，<strong>不过注意一点，就是 eval() 函数第一层转义后，返回值为 <code>$result_2 = &#39;This is a cup with my coffee in it.&#39;</code>，即得到的是所有变量都解析后的字符串</strong>。</p>
+<h2 id="玩法-4：将-eval-函数的第一层解析改为单引号："><a href="#玩法-4：将-eval-函数的第一层解析改为单引号：" class="headerlink" title="玩法 4：将 eval() 函数的第一层解析改为单引号："></a><strong>玩法 4：将 eval() 函数的第一层解析改为单引号：</strong></h2><blockquote>
+<p><strong>注意：第二层解析的双引号不需要转义，因为第一层是单引号，并且单引号内本身就不会转义 <code>$</code>，所以 <code>$</code>  前面的转义字符也可以去除。</strong></p>
+</blockquote>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">eval</span>(<span class="string">'$result_2 = "$origin";'</span>);</div></pre></td></tr></table></figure>
+<p>此时输出结果为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">This is a $string with my $name in it.</div><div class="line">This is a $string with my $name in it.</div><div class="line">This is a $string with my $name in it.</div></pre></td></tr></table></figure>
+<p>输出结果与玩法 1 相同，但输出原理却不同了。第一层解析时，<code>$origin</code> 是原封不动保留下来的，即 <code>$result_2 = &quot;$origin&quot;</code>，跟 <code>result_1</code> 的情况完全相同。</p>
+<h2 id="玩法-5：将-eval-函数的第一层和第二层解析都改为单引号："><a href="#玩法-5：将-eval-函数的第一层和第二层解析都改为单引号：" class="headerlink" title="玩法 5：将 eval() 函数的第一层和第二层解析都改为单引号："></a><strong>玩法 5：将 eval() 函数的第一层和第二层解析都改为单引号：</strong></h2><blockquote>
+<p><strong>注意：第二层解析的单引号此时需要转义，因为第一层也是单引号。</strong></p>
+</blockquote>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">eval</span>(<span class="string">'$result_2 = \'$origin\';'</span>);</div></pre></td></tr></table></figure>
+<p>此时输出结果为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">This is a $string with my $name in it.</div><div class="line">This is a $string with my $name in it.</div><div class="line">$origin</div></pre></td></tr></table></figure>
+<p>这次的输出结果有点意思，跟玩法 4 一样，在第一层解析时，<code>$origin</code> 原封不动保留下来，即 <code>$result_2 = &#39;$origin&#39;</code>，而且在第二层解析时也要原封不动地输出字符串 <code>$origin</code>。</p>
+<p>还有两种玩法（即分别在玩法 4 和玩法 5 的基础上，将 <code>$origin</code> 字符串两边改为双引号）大同小异，这里就不详述了，有兴趣的读者可以自行推导。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script type="text/javascript" src="http://jslibs.wuxubj.cn/sweetalert_mini/jquery-1.7.1.min.js"></script>
+  <script src="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.mini.css">
+  <p><span>本文标题:</span><a href="/2017/11/16/玩转 PHP eval() 中的单双引号/">玩转 PHP eval() 中的单双引号</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 Cipher Saw 的个人博客">Cipher Saw</a></p>
+  <p><span>发布时间:</span>2017年11月16日 - 19:11</p>
+  <p><span>最后更新:</span>2019年05月02日 - 10:05</p>
+  <p><span>原始链接:</span><a href="/2017/11/16/玩转 PHP eval() 中的单双引号/" title="玩转 PHP eval() 中的单双引号">https://ciphersaw.github.io/2017/11/16/玩转 PHP eval() 中的单双引号/</a>
+    <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://ciphersaw.github.io/2017/11/16/玩转 PHP eval() 中的单双引号/"  aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">署名-非商业性使用-禁止演绎 4.0 国际</a> </p>  
+  <p>转载请保留原文链接及作者，谢谢！</p>
+</div>
+<script> 
+    var clipboard = new Clipboard('.fa-clipboard');
+    clipboard.on('success', $(function(){
+      $(".fa-clipboard").click(function(){
+        swal({   
+          title: "",   
+          text: '复制成功',   
+          html: false,
+          timer: 500,   
+          showConfirmButton: false
+        });
+      });
+    }));  
+</script>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Web/" rel="tag"># Web</a>
+          
+            <a href="/tags/PHP/" rel="tag"># PHP</a>
+          
+            <a href="/tags/API/" rel="tag"># API</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/11/12/Hash Length Extension Attack（哈希长度扩展攻击）/" rel="next" title="Hash Length Extension Attack（哈希长度扩展攻击）">
+                <i class="fa fa-chevron-left"></i> Hash Length Extension Attack（哈希长度扩展攻击）
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/12/16/详解 CTF Web 中的快速反弹 POST 请求/" rel="prev" title="详解 CTF Web 中的快速反弹 POST 请求">
+                详解 CTF Web 中的快速反弹 POST 请求 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zMjUyNS85MDg2"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          
+            <img class="site-author-image" itemprop="image"
+              src="/images/avatar.jpg"
+              alt="Cipher Saw" />
+          
+            <p class="site-author-name" itemprop="name">Cipher Saw</p>
+            <p class="site-description motion-element" itemprop="description">Not to be whom you don't want to be.</p>
+        </div>
+
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">23</span>
+                <span class="site-state-item-name">posts</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">categories</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">56</span>
+                <span class="site-state-item-name">tags</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/ciphersaw" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>GitHub</a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/CipherSaw" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>Twitter</a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-block">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              Links
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://ctf-wiki.github.io/ctf-wiki/" title="CTF Wiki" target="_blank">CTF Wiki</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://www.owasp.org/index.php/Main_Page" title="OWASP" target="_blank">OWASP</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.pentest-standard.org/index.php/Main_Page" title="Pentest Standard" target="_blank">Pentest Standard</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#0x00-前言"><span class="nav-text">0x00 前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x01-eval-函数"><span class="nav-text">0x01 eval() 函数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x02-示例解析"><span class="nav-text">0x02 示例解析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Rule-1：单引号内不解析变量，双引号内解析变量"><span class="nav-text">Rule 1：单引号内不解析变量，双引号内解析变量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Rule-2：PHP-字符串中嵌套引号的解析是由外向里的，且只解析一次"><span class="nav-text">Rule 2：PHP 字符串中嵌套引号的解析是由外向里的，且只解析一次</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x03-玩法进阶"><span class="nav-text">0x03 玩法进阶</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#玩法-1：将-eval-函数的第二层解析改为单引号："><span class="nav-text">玩法 1：将 eval() 函数的第二层解析改为单引号：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#玩法-2：将-origin-字符串两边改为双引号："><span class="nav-text">玩法 2：将 $origin 字符串两边改为双引号：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#玩法-3：将-eval-函数的第二层解析改为单引号，并将-origin-字符串两边改为双引号："><span class="nav-text">玩法 3：将 eval() 函数的第二层解析改为单引号，并将 $origin 字符串两边改为双引号：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#玩法-4：将-eval-函数的第一层解析改为单引号："><span class="nav-text">玩法 4：将 eval() 函数的第一层解析改为单引号：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#玩法-5：将-eval-函数的第一层和第二层解析都改为单引号："><span class="nav-text">玩法 5：将 eval() 函数的第一层和第二层解析都改为单引号：</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-space-shuttle"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Cipher Saw</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" href="https://hexo.io">Hexo</a></div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.2</div>
+
+
+        
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=63761272";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+  
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("KWe6NtO4vhgQR3IfB99JElre-gzGzoHsz", "7nrrRDyHHUMcx03upUALYKIQ");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+  <script type="text/javascript" src="https://tajs.qq.com/stats?sId=63761272" charset="UTF-8"></script>
+</body>
+</html>

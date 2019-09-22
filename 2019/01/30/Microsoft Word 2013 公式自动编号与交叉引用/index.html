@@ -1,0 +1,1402 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="TGrgd6itNVDcEjPh_ZJU-fc0-4WWeviPJnz7UOzkj-k" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Microsoft,Word,MathType," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="0x00 前言在科技论文写作中，必不可少要使用到数学公式，虽然编辑公式简单，但要将一系列公式自动编号，并且在文中交叉引用，成为了科研工作者亟需解决的我问题。本文将采用 Microsoft Word 2013 + MathType，向大家介绍一种一劳永逸的解决方案，在其他版本的 Microsoft Word 中也基本适用。">
+<meta name="keywords" content="Microsoft,Word,MathType">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Microsoft Word 2013 公式自动编号与交叉引用">
+<meta property="og:url" content="https://ciphersaw.github.io/2019/01/30/Microsoft Word 2013 公式自动编号与交叉引用/index.html">
+<meta property="og:site_name" content="Secrypt Agency">
+<meta property="og:description" content="0x00 前言在科技论文写作中，必不可少要使用到数学公式，虽然编辑公式简单，但要将一系列公式自动编号，并且在文中交叉引用，成为了科研工作者亟需解决的我问题。本文将采用 Microsoft Word 2013 + MathType，向大家介绍一种一劳永逸的解决方案，在其他版本的 Microsoft Word 中也基本适用。">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Microsoft_Word_2013_%E5%85%AC%E5%BC%8F%E8%87%AA%E5%8A%A8%E7%BC%96%E5%8F%B7%E4%B8%8E%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8/mathtype_installation.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Microsoft_Word_2013_%E5%85%AC%E5%BC%8F%E8%87%AA%E5%8A%A8%E7%BC%96%E5%8F%B7%E4%B8%8E%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8/formula_edit.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Microsoft_Word_2013_%E5%85%AC%E5%BC%8F%E8%87%AA%E5%8A%A8%E7%BC%96%E5%8F%B7%E4%B8%8E%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8/show_mark.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Microsoft_Word_2013_%E5%85%AC%E5%BC%8F%E8%87%AA%E5%8A%A8%E7%BC%96%E5%8F%B7%E4%B8%8E%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8/new_mark_normal.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Microsoft_Word_2013_%E5%85%AC%E5%BC%8F%E8%87%AA%E5%8A%A8%E7%BC%96%E5%8F%B7%E4%B8%8E%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8/display_mark_normal.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Microsoft_Word_2013_%E5%85%AC%E5%BC%8F%E8%87%AA%E5%8A%A8%E7%BC%96%E5%8F%B7%E4%B8%8E%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8/modify_mark_normal.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Microsoft_Word_2013_%E5%85%AC%E5%BC%8F%E8%87%AA%E5%8A%A8%E7%BC%96%E5%8F%B7%E4%B8%8E%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8/new_mark_chapter.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Microsoft_Word_2013_%E5%85%AC%E5%BC%8F%E8%87%AA%E5%8A%A8%E7%BC%96%E5%8F%B7%E4%B8%8E%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8/display_mark_chapter.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Microsoft_Word_2013_%E5%85%AC%E5%BC%8F%E8%87%AA%E5%8A%A8%E7%BC%96%E5%8F%B7%E4%B8%8E%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8/modify_mark_chapter.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Microsoft_Word_2013_%E5%85%AC%E5%BC%8F%E8%87%AA%E5%8A%A8%E7%BC%96%E5%8F%B7%E4%B8%8E%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8/initiate_pattern.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Microsoft_Word_2013_%E5%85%AC%E5%BC%8F%E8%87%AA%E5%8A%A8%E7%BC%96%E5%8F%B7%E4%B8%8E%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8/tab_middle.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Microsoft_Word_2013_%E5%85%AC%E5%BC%8F%E8%87%AA%E5%8A%A8%E7%BC%96%E5%8F%B7%E4%B8%8E%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8/tab_right.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Microsoft_Word_2013_%E5%85%AC%E5%BC%8F%E8%87%AA%E5%8A%A8%E7%BC%96%E5%8F%B7%E4%B8%8E%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8/complete_pattern.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Microsoft_Word_2013_%E5%85%AC%E5%BC%8F%E8%87%AA%E5%8A%A8%E7%BC%96%E5%8F%B7%E4%B8%8E%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8/format_with_pattern.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Microsoft_Word_2013_%E5%85%AC%E5%BC%8F%E8%87%AA%E5%8A%A8%E7%BC%96%E5%8F%B7%E4%B8%8E%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8/initiate_style_separator.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Microsoft_Word_2013_%E5%85%AC%E5%BC%8F%E8%87%AA%E5%8A%A8%E7%BC%96%E5%8F%B7%E4%B8%8E%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8/insert_style_separator.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Microsoft_Word_2013_%E5%85%AC%E5%BC%8F%E8%87%AA%E5%8A%A8%E7%BC%96%E5%8F%B7%E4%B8%8E%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8/add_quick_access.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Microsoft_Word_2013_%E5%85%AC%E5%BC%8F%E8%87%AA%E5%8A%A8%E7%BC%96%E5%8F%B7%E4%B8%8E%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8/save_normal_pattern.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Microsoft_Word_2013_%E5%85%AC%E5%BC%8F%E8%87%AA%E5%8A%A8%E7%BC%96%E5%8F%B7%E4%B8%8E%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8/name_normal_pattern.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Microsoft_Word_2013_%E5%85%AC%E5%BC%8F%E8%87%AA%E5%8A%A8%E7%BC%96%E5%8F%B7%E4%B8%8E%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8/save_chapter_pattern.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Microsoft_Word_2013_%E5%85%AC%E5%BC%8F%E8%87%AA%E5%8A%A8%E7%BC%96%E5%8F%B7%E4%B8%8E%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8/name_chapter_pattern.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Microsoft_Word_2013_%E5%85%AC%E5%BC%8F%E8%87%AA%E5%8A%A8%E7%BC%96%E5%8F%B7%E4%B8%8E%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8/inserting_cross_reference.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Microsoft_Word_2013_%E5%85%AC%E5%BC%8F%E8%87%AA%E5%8A%A8%E7%BC%96%E5%8F%B7%E4%B8%8E%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8/select_reference.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Microsoft_Word_2013_%E5%85%AC%E5%BC%8F%E8%87%AA%E5%8A%A8%E7%BC%96%E5%8F%B7%E4%B8%8E%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8/inserted_cross_reference.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Microsoft_Word_2013_%E5%85%AC%E5%BC%8F%E8%87%AA%E5%8A%A8%E7%BC%96%E5%8F%B7%E4%B8%8E%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8/insert_new_formula.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Microsoft_Word_2013_%E5%85%AC%E5%BC%8F%E8%87%AA%E5%8A%A8%E7%BC%96%E5%8F%B7%E4%B8%8E%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8/update_cross_reference.png">
+<meta property="og:updated_time" content="2019-05-02T02:15:27.966Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Microsoft Word 2013 公式自动编号与交叉引用">
+<meta name="twitter:description" content="0x00 前言在科技论文写作中，必不可少要使用到数学公式，虽然编辑公式简单，但要将一系列公式自动编号，并且在文中交叉引用，成为了科研工作者亟需解决的我问题。本文将采用 Microsoft Word 2013 + MathType，向大家介绍一种一劳永逸的解决方案，在其他版本的 Microsoft Word 中也基本适用。">
+<meta name="twitter:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Microsoft_Word_2013_%E5%85%AC%E5%BC%8F%E8%87%AA%E5%8A%A8%E7%BC%96%E5%8F%B7%E4%B8%8E%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8/mathtype_installation.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.2',
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://ciphersaw.github.io/2019/01/30/Microsoft Word 2013 公式自动编号与交叉引用/"/>
+
+
+
+
+
+  <title>Microsoft Word 2013 公式自动编号与交叉引用 | Secrypt Agency</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Secrypt Agency</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Welcome to a platform for network security artists.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-friends">
+          <a href="/friends/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-users"></i> <br />
+            
+            Friends
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="Searching..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://ciphersaw.github.io/2019/01/30/Microsoft Word 2013 公式自动编号与交叉引用/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Cipher Saw">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Secrypt Agency">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Microsoft Word 2013 公式自动编号与交叉引用</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-01-30T19:00:53+08:00">
+                2019-01-30
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Tips/" itemprop="url" rel="index">
+                    <span itemprop="name">Tips</span>
+                  </a>
+                </span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Tips/Microsoft-Word/" itemprop="url" rel="index">
+                    <span itemprop="name">Microsoft Word</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2019/01/30/Microsoft Word 2013 公式自动编号与交叉引用/" class="leancloud_visitors" data-flag-title="Microsoft Word 2013 公式自动编号与交叉引用">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">Visitors&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h1><p>在科技论文写作中，必不可少要使用到数学公式，虽然编辑公式简单，但要<strong>将一系列公式自动编号，并且在文中交叉引用</strong>，成为了科研工作者亟需解决的我问题。本文将采用 <strong>Microsoft Word 2013 + MathType</strong>，向大家介绍一种一劳永逸的解决方案，在其他版本的 Microsoft Word 中也基本适用。</p>
+<a id="more"></a>
+<h1 id="0x01-准备工作"><a href="#0x01-准备工作" class="headerlink" title="0x01 准备工作"></a>0x01 准备工作</h1><h2 id="安装-MathType"><a href="#安装-MathType" class="headerlink" title="安装 MathType"></a>安装 MathType</h2><p><a href="http://www.mathtype.cn/" target="_blank" rel="external">MathType</a> 是一款专业的数学公式编辑工具，能与 Microsoft Word 完美结合，加上显示效果不俗，因此成为了广大理科男在 Word 上编辑公式的首选。此外，MathType 是共享软件，有 30 天的试用期，有需要的用户可以购买完整版，不过基本版的功能已满足大部分用户的需求了。</p>
+<p>安装完成后，新建并打开一个 Word 文档 <code>新建 Microsoft Word 文档.docx</code>，正常情况下顶部菜单栏会增加一个 <strong>MathType</strong> 选项，说明已安装成功。</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Microsoft_Word_2013_%E5%85%AC%E5%BC%8F%E8%87%AA%E5%8A%A8%E7%BC%96%E5%8F%B7%E4%B8%8E%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8/mathtype_installation.png" alt="mathtype_installation"></p>
+<h2 id="插入公式"><a href="#插入公式" class="headerlink" title="插入公式"></a>插入公式</h2><p>点击 <strong>MathType -&gt; 内联</strong>，在公式编辑框内输入一个勾股定理表达式 $a^2 + b^2 = c^2$，按下 <strong>Ctrl + S</strong> 保存后关闭编辑框，表达式已在文档中显示。</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Microsoft_Word_2013_%E5%85%AC%E5%BC%8F%E8%87%AA%E5%8A%A8%E7%BC%96%E5%8F%B7%E4%B8%8E%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8/formula_edit.png" alt="formula_edit"></p>
+<h2 id="显示编辑标记"><a href="#显示编辑标记" class="headerlink" title="显示编辑标记"></a>显示编辑标记</h2><p>点击 <strong>开始 -&gt; 显示/隐藏编辑标记</strong>，可显示制表符、分页符、空格等标记，有助于对后续操作的直观理解。</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Microsoft_Word_2013_%E5%85%AC%E5%BC%8F%E8%87%AA%E5%8A%A8%E7%BC%96%E5%8F%B7%E4%B8%8E%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8/show_mark.png" alt="show_mark"></p>
+<h1 id="0x02-插入题注"><a href="#0x02-插入题注" class="headerlink" title="0x02 插入题注"></a>0x02 插入题注</h1><h2 id="无章节序号"><a href="#无章节序号" class="headerlink" title="无章节序号"></a>无章节序号</h2><p>点击 <strong>引用 -&gt; 插入题注 -&gt; 新建标签</strong>，在框内输入左小括号 <code>（</code>：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Microsoft_Word_2013_%E5%85%AC%E5%BC%8F%E8%87%AA%E5%8A%A8%E7%BC%96%E5%8F%B7%E4%B8%8E%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8/new_mark_normal.png" alt="new_mark_normal"></p>
+<p>点击确定后，在 <strong>题注</strong> 内显示 <code>（ 1</code>，在 <strong>标签</strong> 内显示 <code>（</code>：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Microsoft_Word_2013_%E5%85%AC%E5%BC%8F%E8%87%AA%E5%8A%A8%E7%BC%96%E5%8F%B7%E4%B8%8E%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8/display_mark_normal.png" alt="display_mark_normal"></p>
+<p>点击确定后，发现 <code>（</code> 与 <code>1</code> 之间有个小点，此为空格标记（该空格默认自带，无法再编辑题注中删除）。将此空格删除后，并在末尾补充上右小括号 <code>）</code>：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Microsoft_Word_2013_%E5%85%AC%E5%BC%8F%E8%87%AA%E5%8A%A8%E7%BC%96%E5%8F%B7%E4%B8%8E%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8/modify_mark_normal.png" alt="modify_mark_normal"></p>
+<h2 id="有章节序号"><a href="#有章节序号" class="headerlink" title="有章节序号"></a>有章节序号</h2><p>点击 <strong>引用 -&gt; 插入题注 -&gt; 新建标签</strong>，若想在第一章插入题注，则在框内输入左小括号 <code>（1-</code>：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Microsoft_Word_2013_%E5%85%AC%E5%BC%8F%E8%87%AA%E5%8A%A8%E7%BC%96%E5%8F%B7%E4%B8%8E%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8/new_mark_chapter.png" alt="new_mark_chapter"></p>
+<p>点击确定后，在 <strong>题注</strong> 内显示 <code>（1- 1</code>，在 <strong>标签</strong> 内显示 <code>（1-</code>：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Microsoft_Word_2013_%E5%85%AC%E5%BC%8F%E8%87%AA%E5%8A%A8%E7%BC%96%E5%8F%B7%E4%B8%8E%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8/display_mark_chapter.png" alt="display_mark_chapter"></p>
+<p>同样地，点击确定后，将 <code>（1-</code> 与 <code>1</code> 之间的空格删除，并在末尾补充上右小括号 <code>）</code>：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Microsoft_Word_2013_%E5%85%AC%E5%BC%8F%E8%87%AA%E5%8A%A8%E7%BC%96%E5%8F%B7%E4%B8%8E%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8/modify_mark_chapter.png" alt="modify_mark_chapter"></p>
+<p>以上根据有无章节序号，介绍了两种插入题注的风格，读者可按需选用。</p>
+<h1 id="0x03-创建段落样式"><a href="#0x03-创建段落样式" class="headerlink" title="0x03 创建段落样式"></a>0x03 创建段落样式</h1><h2 id="新建样式"><a href="#新建样式" class="headerlink" title="新建样式"></a>新建样式</h2><p>点击 <strong>开始 -&gt; 样式</strong> 中右下角的小箭头，在弹出框的左下角点击 <strong>新建样式</strong>，将新样式编辑框中的 <strong>属性 -&gt; 名称</strong> 改为 <code>公式</code>，并点击左下角的 <strong>格式 -&gt; 制表位</strong>：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Microsoft_Word_2013_%E5%85%AC%E5%BC%8F%E8%87%AA%E5%8A%A8%E7%BC%96%E5%8F%B7%E4%B8%8E%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8/initiate_pattern.png" alt="initiate_pattern"></p>
+<p>在 <strong>制表位位置</strong> 输入 <code>20 字符</code>，将 <strong>对齐方式</strong> 选为 <code>居中</code> 后点击确定：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Microsoft_Word_2013_%E5%85%AC%E5%BC%8F%E8%87%AA%E5%8A%A8%E7%BC%96%E5%8F%B7%E4%B8%8E%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8/tab_middle.png" alt="tab_middle"></p>
+<p>再次点击左下角的 <strong>格式 -&gt; 制表位</strong>，在 <strong>制表位位置</strong> 输入 <code>40 字符</code>，将 <strong>对齐方式</strong> 选为 <code>右对齐</code> 后点击确定：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Microsoft_Word_2013_%E5%85%AC%E5%BC%8F%E8%87%AA%E5%8A%A8%E7%BC%96%E5%8F%B7%E4%B8%8E%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8/tab_right.png" alt="tab_right"></p>
+<p>建议将样式编辑框中的 <strong>格式 -&gt; 中文</strong> 设置为 <code>宋体</code>，将 <strong>格式 -&gt; 西文</strong> 设置为 <code>Times New Roman</code>，最后点击确定，在 <strong>开始 -&gt; 样式</strong> 中出现了刚添加的样式：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Microsoft_Word_2013_%E5%85%AC%E5%BC%8F%E8%87%AA%E5%8A%A8%E7%BC%96%E5%8F%B7%E4%B8%8E%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8/complete_pattern.png" alt="complete_pattern"></p>
+<h2 id="使用样式"><a href="#使用样式" class="headerlink" title="使用样式"></a>使用样式</h2><p>以无章节序号的公式编号为例，将光标放至公式所在行的任意位置，点击 <strong>开始 -&gt; 样式</strong> 中的 <code>公式</code> 后，分别在公式前面、公式与编号之间按下 <strong>Tab</strong> 键（向右的小箭头即为 Tab 标记），出现了公式居中、编号右对齐的效果：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Microsoft_Word_2013_%E5%85%AC%E5%BC%8F%E8%87%AA%E5%8A%A8%E7%BC%96%E5%8F%B7%E4%B8%8E%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8/format_with_pattern.png" alt="format_with_pattern"></p>
+<p>此外，为了在交叉引用时，只引用编号而不引用公式，需要在公式与编号之间添加一个<a href="https://answers.microsoft.com/en-us/office/forum/office_2010-word/ctrlaltenter-function-in-word-2010/3d3f2583-f56a-4aaf-8e38-267c5723eedc" target="_blank" rel="external">样式分隔符</a>。在公式下方另起一空行，按下 <strong>Ctrl + Alt + Enter</strong>，发现在原来的 Enter 标记前，多了一个被虚线框起的 Enter 标记：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Microsoft_Word_2013_%E5%85%AC%E5%BC%8F%E8%87%AA%E5%8A%A8%E7%BC%96%E5%8F%B7%E4%B8%8E%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8/initiate_style_separator.png" alt="initiate_style_separator"></p>
+<p>被虚线框起的 Enter 标记即为样式分隔符，将其复制到公式与编号之间，最终效果如下：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Microsoft_Word_2013_%E5%85%AC%E5%BC%8F%E8%87%AA%E5%8A%A8%E7%BC%96%E5%8F%B7%E4%B8%8E%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8/insert_style_separator.png" alt="insert_style_separator"></p>
+<h1 id="0x04-保存至自动图文集"><a href="#0x04-保存至自动图文集" class="headerlink" title="0x04 保存至自动图文集"></a>0x04 保存至自动图文集</h1><p>完成上述步骤后，已达到基本使用要求，但为了后续的方便使用，最好将公式编号的模板保存至自动图文集中。</p>
+<p>点击 <strong>文件 -&gt; 选项 -&gt; 快速访问工具栏</strong>，在 <strong>选择命令</strong> 下拉框内选择 <code>所有命令</code>，将 <code>自动图文集</code> 添加至快速访问工具栏：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Microsoft_Word_2013_%E5%85%AC%E5%BC%8F%E8%87%AA%E5%8A%A8%E7%BC%96%E5%8F%B7%E4%B8%8E%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8/add_quick_access.png" alt="add_quick_access"></p>
+<p>添加完成后点击确定，在顶部工具栏出现了自动图文集的图标。接着全选公式所在行，再点击 <strong>自动图文集 -&gt; 将所选内容保存到自动图文集库</strong>：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Microsoft_Word_2013_%E5%85%AC%E5%BC%8F%E8%87%AA%E5%8A%A8%E7%BC%96%E5%8F%B7%E4%B8%8E%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8/save_normal_pattern.png" alt="save_normal_pattern"></p>
+<p>此处将<strong>新建构建基块</strong>的名称设置为 <code>公式编号_交叉引用_普通版</code>，点击确定后即可完成：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Microsoft_Word_2013_%E5%85%AC%E5%BC%8F%E8%87%AA%E5%8A%A8%E7%BC%96%E5%8F%B7%E4%B8%8E%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8/name_normal_pattern.png" alt="name_normal_pattern"></p>
+<p>将公式编号由无章节序号更改为有章节序号后，同样全选公式所在行，再点击 <strong>自动图文集 -&gt; 将所选内容保存到自动图文集库</strong>：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Microsoft_Word_2013_%E5%85%AC%E5%BC%8F%E8%87%AA%E5%8A%A8%E7%BC%96%E5%8F%B7%E4%B8%8E%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8/save_chapter_pattern.png" alt="save_chapter_pattern"></p>
+<p>处将<strong>新建构建基块</strong>的名称设置为 <code>公式编号_交叉引用_章节版</code>，点击确定后即可完成：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Microsoft_Word_2013_%E5%85%AC%E5%BC%8F%E8%87%AA%E5%8A%A8%E7%BC%96%E5%8F%B7%E4%B8%8E%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8/name_chapter_pattern.png" alt="name_chapter_pattern"></p>
+<p>将以上两种公式编号的模板保存至自动图文集后，即可在 <strong>自动图文集</strong> 中选择所需模板，最后记得要替换模板内的默认公式。</p>
+<h1 id="0x05-交叉引用"><a href="#0x05-交叉引用" class="headerlink" title="0x05 交叉引用"></a>0x05 交叉引用</h1><blockquote>
+<p> 小贴士：<a href="https://en.wikipedia.org/wiki/Cross-reference" target="_blank" rel="external">交叉引用</a>是指在 Microsoft Word 文档中引用其他位置的内容，例如编号项、标题、脚注、尾注、题注、书签、表格、公式等，引用的内容可随着被引用主体的改变而改变。</p>
+</blockquote>
+<p>继续以无章节序号的公式编号为例，演示如何在文中交叉引用公式编号：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Microsoft_Word_2013_%E5%85%AC%E5%BC%8F%E8%87%AA%E5%8A%A8%E7%BC%96%E5%8F%B7%E4%B8%8E%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8/inserting_cross_reference.png" alt="inserting_cross_reference"></p>
+<p>若想在光标出插入公式（1）的引用，需要点击 <strong>插入 -&gt; 交叉引用</strong>，在 <strong>引用类型</strong> 下拉框内选择 <code>（</code>，在 <strong>引用内容</strong> 下拉框内选择 <code>整项题注</code>，在 <strong>引用哪一个题注</strong> 中选择 <code>（1）</code>：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Microsoft_Word_2013_%E5%85%AC%E5%BC%8F%E8%87%AA%E5%8A%A8%E7%BC%96%E5%8F%B7%E4%B8%8E%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8/select_reference.png" alt="select_reference"></p>
+<p>点击确定后，发现文中确实多了对公式（1）的引用：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Microsoft_Word_2013_%E5%85%AC%E5%BC%8F%E8%87%AA%E5%8A%A8%E7%BC%96%E5%8F%B7%E4%B8%8E%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8/inserted_cross_reference.png" alt="inserted_cross_reference"></p>
+<p>接下来讨论一种常见情况，假设在公式（1）前面新插入一个圆面积计算公式 $S  = π r^2$，这时会出现两个公式（1）：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Microsoft_Word_2013_%E5%85%AC%E5%BC%8F%E8%87%AA%E5%8A%A8%E7%BC%96%E5%8F%B7%E4%B8%8E%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8/insert_new_formula.png" alt="insert_new_formula"></p>
+<p>此时只需要按下 <strong>Ctrl + A</strong> 选择全文，再按下 <strong>F9</strong> <a href="https://support.office.com/en-us/article/update-fields-7339a049-cb0d-4d5a-8679-97c20c643d4e" target="_blank" rel="external">更新域</a>，原来的公式（1）则变为公式（2），完美诠释了「引用的内容可随着被引用主体的改变而改变」这一大优势：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Microsoft_Word_2013_%E5%85%AC%E5%BC%8F%E8%87%AA%E5%8A%A8%E7%BC%96%E5%8F%B7%E4%B8%8E%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8/update_cross_reference.png" alt="update_cross_reference"></p>
+<h1 id="0x06-小结"><a href="#0x06-小结" class="headerlink" title="0x06 小结"></a>0x06 小结</h1><p>在 Microsoft Word 2013 下对公式进行自动编号与交叉引用的方法较多，本文根据笔者自身需求总结而成，以备日后写作之需，若有理解上或操作上的疑惑还请读者不吝告知，谢谢。</p>
+<p>相关参考文章如下：</p>
+<blockquote>
+<p><a href="https://jingyan.baidu.com/article/4dc408486da1e1c8d946f133.html" target="_blank" rel="external">WORD中公式的自动编号和交叉引用方法</a><br><a href="https://blog.csdn.net/wihiw/article/details/64443494" target="_blank" rel="external">在 Word 2013 中编写公式并标号</a><br><a href="https://jingyan.baidu.com/article/948f592421b812d80ef5f971.html" target="_blank" rel="external">Word论文写作如何实现公式居中、编号右对齐</a></p>
+</blockquote>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script type="text/javascript" src="http://jslibs.wuxubj.cn/sweetalert_mini/jquery-1.7.1.min.js"></script>
+  <script src="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.mini.css">
+  <p><span>本文标题:</span><a href="/2019/01/30/Microsoft Word 2013 公式自动编号与交叉引用/">Microsoft Word 2013 公式自动编号与交叉引用</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 Cipher Saw 的个人博客">Cipher Saw</a></p>
+  <p><span>发布时间:</span>2019年01月30日 - 19:01</p>
+  <p><span>最后更新:</span>2019年05月02日 - 10:05</p>
+  <p><span>原始链接:</span><a href="/2019/01/30/Microsoft Word 2013 公式自动编号与交叉引用/" title="Microsoft Word 2013 公式自动编号与交叉引用">https://ciphersaw.github.io/2019/01/30/Microsoft Word 2013 公式自动编号与交叉引用/</a>
+    <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://ciphersaw.github.io/2019/01/30/Microsoft Word 2013 公式自动编号与交叉引用/"  aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">署名-非商业性使用-禁止演绎 4.0 国际</a> </p>  
+  <p>转载请保留原文链接及作者，谢谢！</p>
+</div>
+<script> 
+    var clipboard = new Clipboard('.fa-clipboard');
+    clipboard.on('success', $(function(){
+      $(".fa-clipboard").click(function(){
+        swal({   
+          title: "",   
+          text: '复制成功',   
+          html: false,
+          timer: 500,   
+          showConfirmButton: false
+        });
+      });
+    }));  
+</script>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Microsoft/" rel="tag"># Microsoft</a>
+          
+            <a href="/tags/Word/" rel="tag"># Word</a>
+          
+            <a href="/tags/MathType/" rel="tag"># MathType</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/09/11/【i春秋】 Web —— 爆破-3/" rel="next" title="【i春秋】 Web —— 爆破-3">
+                <i class="fa fa-chevron-left"></i> 【i春秋】 Web —— 爆破-3
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/04/30/【WeChall】 Training：WWW-Basics/" rel="prev" title="【WeChall】 Training：WWW-Basics">
+                【WeChall】 Training：WWW-Basics <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zMjUyNS85MDg2"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          
+            <img class="site-author-image" itemprop="image"
+              src="/images/avatar.jpg"
+              alt="Cipher Saw" />
+          
+            <p class="site-author-name" itemprop="name">Cipher Saw</p>
+            <p class="site-description motion-element" itemprop="description">Not to be whom you don't want to be.</p>
+        </div>
+
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">23</span>
+                <span class="site-state-item-name">posts</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">categories</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">56</span>
+                <span class="site-state-item-name">tags</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/ciphersaw" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>GitHub</a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/CipherSaw" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>Twitter</a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-block">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              Links
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://ctf-wiki.github.io/ctf-wiki/" title="CTF Wiki" target="_blank">CTF Wiki</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://www.owasp.org/index.php/Main_Page" title="OWASP" target="_blank">OWASP</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.pentest-standard.org/index.php/Main_Page" title="Pentest Standard" target="_blank">Pentest Standard</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#0x00-前言"><span class="nav-text">0x00 前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x01-准备工作"><span class="nav-text">0x01 准备工作</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#安装-MathType"><span class="nav-text">安装 MathType</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#插入公式"><span class="nav-text">插入公式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#显示编辑标记"><span class="nav-text">显示编辑标记</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x02-插入题注"><span class="nav-text">0x02 插入题注</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#无章节序号"><span class="nav-text">无章节序号</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#有章节序号"><span class="nav-text">有章节序号</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x03-创建段落样式"><span class="nav-text">0x03 创建段落样式</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#新建样式"><span class="nav-text">新建样式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用样式"><span class="nav-text">使用样式</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x04-保存至自动图文集"><span class="nav-text">0x04 保存至自动图文集</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x05-交叉引用"><span class="nav-text">0x05 交叉引用</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x06-小结"><span class="nav-text">0x06 小结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-space-shuttle"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Cipher Saw</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" href="https://hexo.io">Hexo</a></div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.2</div>
+
+
+        
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=63761272";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+  
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("KWe6NtO4vhgQR3IfB99JElre-gzGzoHsz", "7nrrRDyHHUMcx03upUALYKIQ");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+  <script type="text/javascript" src="https://tajs.qq.com/stats?sId=63761272" charset="UTF-8"></script>
+</body>
+</html>

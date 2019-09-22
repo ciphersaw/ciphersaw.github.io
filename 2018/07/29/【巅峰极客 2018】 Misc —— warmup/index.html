@@ -1,0 +1,1567 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="TGrgd6itNVDcEjPh_ZJU-fc0-4WWeviPJnz7UOzkj-k" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="CTF,Writeup,Crypto,巅峰极客,Steganography,Encoding," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="0x00 前言本届「巅峰极客」网络安全技能挑战赛共有三道 Misc 题，此题是最简单的一道，分值为 100pt，难度不大，涉及图片隐写与三种特殊的编码方式，主要考察选手们对常见 Misc 题知识点的综合运用能力。 题目下载链接如下：  下载链接：warmup.bmp">
+<meta name="keywords" content="CTF,Writeup,Crypto,巅峰极客,Steganography,Encoding">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【巅峰极客 2018】 Misc —— warmup">
+<meta property="og:url" content="https://ciphersaw.github.io/2018/07/29/【巅峰极客 2018】 Misc —— warmup/index.html">
+<meta property="og:site_name" content="Secrypt Agency">
+<meta property="og:description" content="0x00 前言本届「巅峰极客」网络安全技能挑战赛共有三道 Misc 题，此题是最简单的一道，分值为 100pt，难度不大，涉及图片隐写与三种特殊的编码方式，主要考察选手们对常见 Misc 题知识点的综合运用能力。 题目下载链接如下：  下载链接：warmup.bmp">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A2_2018_Misc_warmup/rgb_lsb.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A2_2018_Misc_warmup/red_data_extract.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A2_2018_Misc_warmup/rgb_info.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A2_2018_Misc_warmup/rgb_zsteg.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A2_2018_Misc_warmup/rgb_zsteg_all.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A2_2018_Misc_warmup/short_ook!.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A2_2018_Misc_warmup/ook!.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A2_2018_Misc_warmup/brainfuck.png">
+<meta property="og:updated_time" content="2019-05-02T01:56:05.021Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="【巅峰极客 2018】 Misc —— warmup">
+<meta name="twitter:description" content="0x00 前言本届「巅峰极客」网络安全技能挑战赛共有三道 Misc 题，此题是最简单的一道，分值为 100pt，难度不大，涉及图片隐写与三种特殊的编码方式，主要考察选手们对常见 Misc 题知识点的综合运用能力。 题目下载链接如下：  下载链接：warmup.bmp">
+<meta name="twitter:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A2_2018_Misc_warmup/rgb_lsb.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.2',
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://ciphersaw.github.io/2018/07/29/【巅峰极客 2018】 Misc —— warmup/"/>
+
+
+
+
+
+  <title>【巅峰极客 2018】 Misc —— warmup | Secrypt Agency</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Secrypt Agency</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Welcome to a platform for network security artists.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-friends">
+          <a href="/friends/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-users"></i> <br />
+            
+            Friends
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="Searching..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://ciphersaw.github.io/2018/07/29/【巅峰极客 2018】 Misc —— warmup/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Cipher Saw">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Secrypt Agency">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">【巅峰极客 2018】 Misc —— warmup</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-07-29T21:08:54+08:00">
+                2018-07-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/InfoSec/" itemprop="url" rel="index">
+                    <span itemprop="name">InfoSec</span>
+                  </a>
+                </span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/InfoSec/Misc/" itemprop="url" rel="index">
+                    <span itemprop="name">Misc</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/07/29/【巅峰极客 2018】 Misc —— warmup/" class="leancloud_visitors" data-flag-title="【巅峰极客 2018】 Misc —— warmup">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">Visitors&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h1><p>本届「巅峰极客」网络安全技能挑战赛共有三道 Misc 题，此题是最简单的一道，分值为 100pt，难度不大，涉及<strong>图片隐写</strong>与<strong>三种特殊的编码方式</strong>，主要考察选手们对常见 Misc 题知识点的综合运用能力。 题目下载链接如下：</p>
+<ul>
+<li>下载链接：<a href="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A2_2018_Misc_warmup/warmup.bmp" target="_blank" rel="external">warmup.bmp</a></li>
+</ul>
+<a id="more"></a>
+<h1 id="0x01-LSB-隐写"><a href="#0x01-LSB-隐写" class="headerlink" title="0x01 LSB 隐写"></a>0x01 LSB 隐写</h1><p><a href="https://baike.baidu.com/item/RGB" target="_blank" rel="external"><strong>RGB</strong></a> 色彩模式是工业界的一种颜色标准，通过红（R）、绿（G）、蓝（B）三原色的相互叠加得到各种颜色。</p>
+<p><strong>24 比特模式</strong>是当前最主流的表示方法，即使用三个 8 比特无符号整数分别代表红色、绿色和蓝色，每个像素点用 24 比特表示，可以产生 $2^{24} = 16,777,216$ 种颜色组合。</p>
+<p><strong>LSB 隐写</strong>是指将信息隐藏在每个颜色通道的最低有效位（Least Significant Bit）。由于改变的是每个颜色通道的最低位，对颜色改变的影响极小，因此用肉眼是无法察觉出来的。</p>
+<p>显然，每个像素的三个通道可以隐藏 3 比特信息；每个 ASCII 字符有 8 比特，至少需要三个像素点，若只隐藏在某一个颜色通道，则需要八个像素点。</p>
+<p>下面以<strong>连续八个像素点的红色通道隐藏字符 <code>a</code></strong> 为例进行讲解：</p>
+<table>
+<thead>
+<tr>
+<th>像素序号</th>
+<th>像素隐写前</th>
+<th>隐写信息</th>
+<th>像素隐写后</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>(<strong>35</strong>, 21, 33)</td>
+<td>0</td>
+<td>(<strong>34</strong>, 21, 33)</td>
+</tr>
+<tr>
+<td>2</td>
+<td>(<strong>96</strong>, 89, 52)</td>
+<td>1</td>
+<td>(<strong>97</strong>, 89, 52)</td>
+</tr>
+<tr>
+<td>3</td>
+<td>(<strong>57</strong>, 211, 123)</td>
+<td>1</td>
+<td>(<strong>57</strong>, 211, 123)</td>
+</tr>
+<tr>
+<td>4</td>
+<td>(<strong>48</strong>, 110, 245)</td>
+<td>0</td>
+<td>(<strong>48</strong>, 110, 245)</td>
+</tr>
+<tr>
+<td>5</td>
+<td>(<strong>113</strong>, 201, 97)</td>
+<td>0</td>
+<td>(<strong>112</strong>, 201, 97)</td>
+</tr>
+<tr>
+<td>6</td>
+<td>(<strong>62</strong>, 52, 134)</td>
+<td>0</td>
+<td>(<strong>62</strong>, 52, 134)</td>
+</tr>
+<tr>
+<td>7</td>
+<td>(<strong>168</strong>, 65, 159)</td>
+<td>0</td>
+<td>(<strong>168</strong>, 65, 159)</td>
+</tr>
+<tr>
+<td>8</td>
+<td>(<strong>240</strong>, 76, 193)</td>
+<td>1</td>
+<td>(<strong>241</strong>, 76, 193)</td>
+</tr>
+</tbody>
+</table>
+<p>字符 <code>a</code> 的二进制 ASCII 码是 <code>01100001</code>，每个比特分别隐写在每个像素点红色通道的最低有效位。无论隐写前该颜色通道的值或奇或偶，若隐写信息为 <code>0</code> 比特，则隐写后值为偶数；若隐写信息为 <code>1</code> 比特，则隐写后值为奇数。</p>
+<h1 id="0x02-定位隐写点"><a href="#0x02-定位隐写点" class="headerlink" title="0x02 定位隐写点"></a>0x02 定位隐写点</h1><p><a href="http://www.caesum.com/handbook/stego.htm" target="_blank" rel="external"><strong>Stegsolve</strong></a> 是专用于分析图片隐写的大杀器，用 Java 语言编写，主要功能如下所示：</p>
+<ul>
+<li>显示图片文件的格式信息。</li>
+<li>迅速浏览每个颜色通道的位平面，以及图片的一些简单变换。</li>
+<li>摘取任意颜色通道比特位的信息。</li>
+<li>按特定偏移量移动解析图片。</li>
+<li>剥离动图的每一帧。</li>
+<li>合并两张不同的图片。</li>
+</ul>
+<p>当我们用 Stegsolve 加载图片 warmup.bmp 后，分别在 RGB 通道最低位的位平面上方发现了异常，由此猜测可能存在隐写。</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A2_2018_Misc_warmup/rgb_lsb.png" alt="rgb_lsb"></p>
+<h1 id="0x03-摘取隐写信息"><a href="#0x03-摘取隐写信息" class="headerlink" title="0x03 摘取隐写信息"></a>0x03 摘取隐写信息</h1><h2 id="Stegsolve-摘取数据"><a href="#Stegsolve-摘取数据" class="headerlink" title="Stegsolve 摘取数据"></a>Stegsolve 摘取数据</h2><p>点击 Stegsolve 的 <strong>Analyse -&gt; Data Extract</strong>，在红色通道最低位上打勾，点击 <strong>Preview</strong> 后，即可在提取数据的上方发现隐写信息，最后点击 <strong>Save Bin</strong> 保存为二进制文件 red.bin。</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A2_2018_Misc_warmup/red_data_extract.png" alt="red_data_extract"></p>
+<p>接着对绿色与蓝色通道进行相同操作，分别得到二进制文件 green.bin 和 blue.bin，用文本编辑器打开后，即可摘取数据上方的隐写信息。</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A2_2018_Misc_warmup/rgb_info.png" alt="rgb_info"></p>
+<p>除了使用 Stegsolve 摘取数据外，还可以尝试另一个自动化图片隐写检测工具 zsteg。</p>
+<h2 id="zsteg-摘取数据"><a href="#zsteg-摘取数据" class="headerlink" title="zsteg 摘取数据"></a>zsteg 摘取数据</h2><p><a href="https://github.com/zed-0xff/zsteg" target="_blank" rel="external"><strong>zsteg</strong></a> 是俄罗斯黑客开发的一款开源工具，专用于检测 PNG 与 BMP 格式图片中的隐写信息，用 Ruby 语言开发，主要用法如下所示：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">$ zsteg -h</div><div class="line"></div><div class="line">Usage: zsteg [options] filename.png [param_string]</div><div class="line"></div><div class="line">    -c, --channels X                 channels (R/G/B/A) or any combination, comma separated</div><div class="line">                                     valid values: r,g,b,a,rg,rgb,bgr,rgba,...</div><div class="line">    -l, --<span class="built_in">limit</span> N                    <span class="built_in">limit</span> bytes checked, 0 = no <span class="built_in">limit</span> (default: 256)</div><div class="line">    -b, --bits N                     number of bits (1..8), single value or <span class="string">'1,3,5'</span> or <span class="string">'1-8'</span></div><div class="line">        --lsb                        least significant BIT comes first</div><div class="line">        --msb                        most significant BIT comes first</div><div class="line">    -P, --prime                      analyze/extract only prime bytes/pixels</div><div class="line">    -a, --all                        try all known methods</div><div class="line">    -o, --order X                    pixel iteration order (default: <span class="string">'auto'</span>)</div><div class="line">                                     valid values: ALL,xy,yx,XY,YX,xY,Xy,bY,...</div><div class="line">    -E, --extract NAME               extract specified payload, NAME is like <span class="string">'1b,rgb,lsb'</span></div><div class="line"></div><div class="line">    -v, --verbose                    Run verbosely (can be used multiple <span class="built_in">times</span>)</div><div class="line">    -q, --quiet                      Silent any warnings (can be used multiple <span class="built_in">times</span>)</div><div class="line">    -C, --[no-]color                 Force (or <span class="built_in">disable</span>) color output (default: auto)</div><div class="line"></div><div class="line">PARAMS SHORTCUT</div><div class="line">	zsteg fname.png 2b,b,lsb,xy  ==&gt;  --bits 2 --channel b --lsb --order xy</div></pre></td></tr></table></figure>
+<p>在 Kali Linux 中，自带 Ruby 的包管理器 RubyGems，因此直接用以下命令安装后即可使用：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ gem install zsteg</div></pre></td></tr></table></figure>
+<p>切换至图片 warmup.bmp 所在目录下，分别输入以下命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">$ zsteg warmup.bmp --bits 1 --channel r --lsb --order xy --limit 2048</div><div class="line">$ zsteg warmup.bmp --bits 1 --channel g --lsb --order xy --limit 2048</div><div class="line">$ zsteg warmup.bmp --bits 1 --channel b --lsb --order xy --limit 2048</div></pre></td></tr></table></figure>
+<ul>
+<li><code>--bits 1</code>：每次只摘取颜色通道中的第 1 个比特。</li>
+<li><code>--channel r</code>：只摘取红色通道的比特位。</li>
+<li><code>--lsb</code>：按最低有效位优先的顺序进行摘取。</li>
+<li><code>--order xy</code>：按照从左至右、从上至下的顺序对图像素点进行摘取。</li>
+<li><code>--limit 2048</code>：最多摘取输出 2048 字节。</li>
+</ul>
+<p>即可自动摘取出隐写在图片内的信息：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A2_2018_Misc_warmup/rgb_zsteg.png" alt="rgb_zsteg"></p>
+<p>仔细的读者还会发现，有一个懒人专属的选项 <code>--all</code>，可将所有可能的摘取方法都尝试一遍：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ zsteg warmup.bmp --all</div></pre></td></tr></table></figure>
+<p>最终在结果中挑选出可能的隐写信息：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A2_2018_Misc_warmup/rgb_zsteg_all.png" alt="rgb_zsteg_all"></p>
+<h1 id="0x04-辨识特殊编码"><a href="#0x04-辨识特殊编码" class="headerlink" title="0x04 辨识特殊编码"></a>0x04 辨识特殊编码</h1><p>上述分别由 RGB 通道得到的隐写信息，属于三种特殊的编码方式，同时也是  <a href="https://www.splitbrain.org/personal" target="_blank" rel="external">Andreas Gohr</a> 的开源项目，可在其博客上的 <a href="https://www.splitbrain.org/services/ook" target="_blank" rel="external">Brainfuck/Ook! Obfuscation/Encoding</a> 在线工具中解码。</p>
+<p>以上编码方式的实现，读者不必知道其原理，只需在做题过程中能辨识出来是哪种编码即可，解码的工作留给工具完成。</p>
+<h2 id="Short-Ook"><a href="#Short-Ook" class="headerlink" title="Short Ook!"></a>Short Ook!</h2><p>由 red.bin 得到的隐写信息如下所示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">..... ..... ..... ..... !?!!. ?.... ..... ..... ..... .?.?! .?... .!...</div><div class="line">..... ..... !.?.. ..... !?!!. ?!!!! !!?.? !.?!! !!!.. ..... ..... .!.?.</div><div class="line">..... ...!? !!.?. ..... ..?.? !.?.. ..... .!.?. ..... ...!? !!.?! !!!!!</div><div class="line">!!?.? !.?!! !!!!! !!!!! !!!.! !!!!. ?.... ..... ....! ?!!.? !!!!! !!!!!</div><div class="line">!!?.? !.?!! !!!!! !!!!! !!!!! .!!!! !.!!! !!!!! !.... ..... !.!!! .....</div><div class="line">..!.! !!!!! !!!!! !!!!! !!!.? .</div></pre></td></tr></table></figure>
+<p>以上编码方式称为 <strong>Short Ook!</strong>，其包含的字符集如下所示：</p>
+<table>
+<thead>
+<tr>
+<th>字符</th>
+<th>含义</th>
+<th>ASCII 码</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>!</td>
+<td>叹号</td>
+<td>33（\x21）</td>
+</tr>
+<tr>
+<td>.</td>
+<td>句号</td>
+<td>46（\x2E）</td>
+</tr>
+<tr>
+<td>?</td>
+<td>问号</td>
+<td>63（\x3F）</td>
+</tr>
+</tbody>
+</table>
+<p>将上述隐写信息用工具解码后得到字符串 <code>flag{db640436-</code>：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A2_2018_Misc_warmup/short_ook!.png" alt="short_ook!"></p>
+<h2 id="Ook"><a href="#Ook" class="headerlink" title="Ook!"></a>Ook!</h2><p>由 green.bin 得到的隐写信息如下所示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook!</div><div class="line">Ook? Ook! Ook! Ook. Ook? Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook.</div><div class="line">Ook. Ook. Ook. Ook. Ook? Ook. Ook? Ook! Ook. Ook? Ook. Ook. Ook. Ook. Ook.</div><div class="line">Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook! Ook. Ook. Ook. Ook! Ook. Ook! Ook!</div><div class="line">Ook! Ook! Ook! Ook! Ook! Ook! Ook! Ook! Ook! Ook. Ook. Ook. Ook. Ook. Ook.</div><div class="line">Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook! Ook. Ook? Ook. Ook. Ook. Ook. Ook.</div><div class="line">Ook. Ook. Ook! Ook? Ook! Ook! Ook. Ook? Ook! Ook! Ook! Ook! Ook! Ook! Ook?</div><div class="line">Ook. Ook? Ook! Ook. Ook? Ook! Ook! Ook! Ook! Ook! Ook! Ook! Ook. Ook. Ook.</div><div class="line">Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook! Ook. Ook!</div><div class="line">Ook! Ook! Ook! Ook! Ook! Ook! Ook! Ook! Ook. Ook. Ook. Ook. Ook. Ook. Ook.</div><div class="line">Ook. Ook. Ook. Ook. Ook! Ook. Ook! Ook! Ook! Ook! Ook! Ook! Ook! Ook! Ook!</div><div class="line">Ook! Ook! Ook. Ook! Ook! Ook! Ook! Ook! Ook! Ook! Ook. Ook? Ook. Ook. Ook.</div><div class="line">Ook. Ook. Ook. Ook. Ook! Ook? Ook! Ook! Ook. Ook? Ook. Ook. Ook. Ook. Ook.</div><div class="line">Ook. Ook? Ook. Ook? Ook! Ook. Ook? Ook. Ook. Ook. Ook. Ook! Ook. Ook! Ook!</div><div class="line">Ook! Ook! Ook! Ook! Ook! Ook! Ook! Ook! Ook! Ook. Ook! Ook. Ook. Ook. Ook.</div><div class="line">Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook! Ook. Ook? Ook.</div></pre></td></tr></table></figure>
+<p>以上编码方式称为 <strong>Ook!</strong>，其包含的字符集如下所示：</p>
+<table>
+<thead>
+<tr>
+<th>字符</th>
+<th>含义</th>
+<th>ASCII 码</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>!</td>
+<td>叹号</td>
+<td>33（\x21）</td>
+</tr>
+<tr>
+<td>.</td>
+<td>句号</td>
+<td>46（\x2E）</td>
+</tr>
+<tr>
+<td>?</td>
+<td>问号</td>
+<td>63（\x3F）</td>
+</tr>
+<tr>
+<td>O</td>
+<td>大写字母 O</td>
+<td>79（\x4F）</td>
+</tr>
+<tr>
+<td>k</td>
+<td>小写字母 k</td>
+<td>107（\x6B）</td>
+</tr>
+<tr>
+<td>o</td>
+<td>小写字母 o</td>
+<td>111（\x6F）</td>
+</tr>
+</tbody>
+</table>
+<p>将上述隐写信息用工具解码后得到字符串 <code>7839-4050-8339</code>：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A2_2018_Misc_warmup/ook!.png" alt="ook!"></p>
+<h2 id="Brainfuck"><a href="#Brainfuck" class="headerlink" title="Brainfuck"></a>Brainfuck</h2><p>由 blue.bin 得到的隐写信息如下所示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">+++++ +[-&gt;+ +++++ &lt;]&gt;++ +++++ ++.&lt;+ ++[-&gt; +++&lt;] &gt;+.-- .&lt;+++ +++[- &gt;++++</div><div class="line">++&lt;]&gt; +++++ +++.&lt; +++++ +[-&gt;- ----- &lt;]&gt;-- --.-- .---- -.&lt;++ +++++ [-&gt;++</div><div class="line">+++++ &lt;]&gt;++ +.--- .&lt;+++ +++[- &gt;---- --&lt;]&gt; ----- ----- ..--. &lt;++++ ++[-&gt;</div><div class="line">+++++ +&lt;]&gt;+ +++++ +++++ +.&lt;++ +++[- &gt;++++ +&lt;]&gt;+ .&lt;</div></pre></td></tr></table></figure>
+<p>以上编码方式称为 <strong>Brainfuck</strong>，其包含的字符集如下所示：</p>
+<table>
+<thead>
+<tr>
+<th>字符</th>
+<th>含义</th>
+<th>ASCII 码</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>+</td>
+<td>加号</td>
+<td>43（\x2B）</td>
+</tr>
+<tr>
+<td>-</td>
+<td>减号</td>
+<td>45（\x2D）</td>
+</tr>
+<tr>
+<td>.</td>
+<td>句号</td>
+<td>46（\x2E）</td>
+</tr>
+<tr>
+<td>&lt;</td>
+<td>小于号</td>
+<td>60（\x3C）</td>
+</tr>
+<tr>
+<td>&gt;</td>
+<td>大于号</td>
+<td>62（\x3E）</td>
+</tr>
+<tr>
+<td>[</td>
+<td>左方括号</td>
+<td>91（\x5B）</td>
+</tr>
+<tr>
+<td>]</td>
+<td>右方括号</td>
+<td>93（\x5D）</td>
+</tr>
+</tbody>
+</table>
+<p>将上述隐写信息用工具解码后得到字符串 <code>-75a972fc553c}</code>：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A2_2018_Misc_warmup/brainfuck.png" alt="brainfuck"></p>
+<h1 id="0x05-总结"><a href="#0x05-总结" class="headerlink" title="0x05 总结"></a>0x05 总结</h1><p>对以上三种编码进行解码后，将得到的字符串拼接起来即得到本题的 flag：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">flag&#123;db640436-7839-4050-8339-75a972fc553c&#125;</div></pre></td></tr></table></figure>
+<p>笔者借助此题，将常见的图片隐写分析方法与特殊的编码方式进行了总结，既有助于初学者学习理解，也方便自己日后查看。文中的不足或错误之后还望读者多多包涵，不吝赐教。</p>
+<p>最后贴出两篇较好的 writeup 供读者学习：</p>
+<blockquote>
+<p><a href="https://ihomura.cn/2018/07/25/WriteUp-%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A2-Misc/" target="_blank" rel="external">WriteUp:巅峰极客 Misc</a><br><a href="http://120.79.189.7/?p=453" target="_blank" rel="external">巅峰极客第一场CTF部分writeup</a></p>
+</blockquote>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script type="text/javascript" src="http://jslibs.wuxubj.cn/sweetalert_mini/jquery-1.7.1.min.js"></script>
+  <script src="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.mini.css">
+  <p><span>本文标题:</span><a href="/2018/07/29/【巅峰极客 2018】 Misc —— warmup/">【巅峰极客 2018】 Misc —— warmup</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 Cipher Saw 的个人博客">Cipher Saw</a></p>
+  <p><span>发布时间:</span>2018年07月29日 - 21:07</p>
+  <p><span>最后更新:</span>2019年05月02日 - 09:05</p>
+  <p><span>原始链接:</span><a href="/2018/07/29/【巅峰极客 2018】 Misc —— warmup/" title="【巅峰极客 2018】 Misc —— warmup">https://ciphersaw.github.io/2018/07/29/【巅峰极客 2018】 Misc —— warmup/</a>
+    <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://ciphersaw.github.io/2018/07/29/【巅峰极客 2018】 Misc —— warmup/"  aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">署名-非商业性使用-禁止演绎 4.0 国际</a> </p>  
+  <p>转载请保留原文链接及作者，谢谢！</p>
+</div>
+<script> 
+    var clipboard = new Clipboard('.fa-clipboard');
+    clipboard.on('success', $(function(){
+      $(".fa-clipboard").click(function(){
+        swal({   
+          title: "",   
+          text: '复制成功',   
+          html: false,
+          timer: 500,   
+          showConfirmButton: false
+        });
+      });
+    }));  
+</script>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/CTF/" rel="tag"># CTF</a>
+          
+            <a href="/tags/Writeup/" rel="tag"># Writeup</a>
+          
+            <a href="/tags/Crypto/" rel="tag"># Crypto</a>
+          
+            <a href="/tags/巅峰极客/" rel="tag"># 巅峰极客</a>
+          
+            <a href="/tags/Steganography/" rel="tag"># Steganography</a>
+          
+            <a href="/tags/Encoding/" rel="tag"># Encoding</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/06/15/Python 绝技 —— UDP 服务器与客户端/" rel="next" title="Python 绝技 —— UDP 服务器与客户端">
+                <i class="fa fa-chevron-left"></i> Python 绝技 —— UDP 服务器与客户端
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/08/27/【i春秋】 Web —— 爆破-1/" rel="prev" title="【i春秋】 Web —— 爆破-1">
+                【i春秋】 Web —— 爆破-1 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zMjUyNS85MDg2"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          
+            <img class="site-author-image" itemprop="image"
+              src="/images/avatar.jpg"
+              alt="Cipher Saw" />
+          
+            <p class="site-author-name" itemprop="name">Cipher Saw</p>
+            <p class="site-description motion-element" itemprop="description">Not to be whom you don't want to be.</p>
+        </div>
+
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">23</span>
+                <span class="site-state-item-name">posts</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">categories</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">56</span>
+                <span class="site-state-item-name">tags</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/ciphersaw" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>GitHub</a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/CipherSaw" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>Twitter</a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-block">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              Links
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://ctf-wiki.github.io/ctf-wiki/" title="CTF Wiki" target="_blank">CTF Wiki</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://www.owasp.org/index.php/Main_Page" title="OWASP" target="_blank">OWASP</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.pentest-standard.org/index.php/Main_Page" title="Pentest Standard" target="_blank">Pentest Standard</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#0x00-前言"><span class="nav-text">0x00 前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x01-LSB-隐写"><span class="nav-text">0x01 LSB 隐写</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x02-定位隐写点"><span class="nav-text">0x02 定位隐写点</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x03-摘取隐写信息"><span class="nav-text">0x03 摘取隐写信息</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Stegsolve-摘取数据"><span class="nav-text">Stegsolve 摘取数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#zsteg-摘取数据"><span class="nav-text">zsteg 摘取数据</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x04-辨识特殊编码"><span class="nav-text">0x04 辨识特殊编码</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Short-Ook"><span class="nav-text">Short Ook!</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ook"><span class="nav-text">Ook!</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Brainfuck"><span class="nav-text">Brainfuck</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x05-总结"><span class="nav-text">0x05 总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-space-shuttle"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Cipher Saw</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" href="https://hexo.io">Hexo</a></div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.2</div>
+
+
+        
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=63761272";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+  
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("KWe6NtO4vhgQR3IfB99JElre-gzGzoHsz", "7nrrRDyHHUMcx03upUALYKIQ");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+  <script type="text/javascript" src="https://tajs.qq.com/stats?sId=63761272" charset="UTF-8"></script>
+</body>
+</html>

@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="TGrgd6itNVDcEjPh_ZJU-fc0-4WWeviPJnz7UOzkj-k" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="CTF,Writeup,Crypto,RSA,CNSS," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="0x00 前言本次 UESTC CNSS Recruit 2017 中，Crypto 方面的题推出了 RSA 套餐，涉及 RSA 加密算法原理与特定情况下对 RSA 的密码攻击，对密码学初学者是个很好的练习机会，在此感谢出题人 JHSN 和 xris 。">
+<meta name="keywords" content="CTF,Writeup,Crypto,RSA,CNSS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【CNSS 2017】 Crypto —— RSA Combo">
+<meta property="og:url" content="https://ciphersaw.github.io/2017/10/27/【CNSS 2017】 Crypto —— RSA Combo/index.html">
+<meta property="og:site_name" content="Secrypt Agency">
+<meta property="og:description" content="0x00 前言本次 UESTC CNSS Recruit 2017 中，Crypto 方面的题推出了 RSA 套餐，涉及 RSA 加密算法原理与特定情况下对 RSA 的密码攻击，对密码学初学者是个很好的练习机会，在此感谢出题人 JHSN 和 xris 。">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/CNSS_2017_Crypto_RSA_Combo/easy_rsa.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/CNSS_2017_Crypto_RSA_Combo/rsa_cool.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/CNSS_2017_Crypto_RSA_Combo/rsa_cooler.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/CNSS_2017_Crypto_RSA_Combo/rsa_coolest.png">
+<meta property="og:updated_time" content="2019-05-02T01:41:06.471Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="【CNSS 2017】 Crypto —— RSA Combo">
+<meta name="twitter:description" content="0x00 前言本次 UESTC CNSS Recruit 2017 中，Crypto 方面的题推出了 RSA 套餐，涉及 RSA 加密算法原理与特定情况下对 RSA 的密码攻击，对密码学初学者是个很好的练习机会，在此感谢出题人 JHSN 和 xris 。">
+<meta name="twitter:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/CNSS_2017_Crypto_RSA_Combo/easy_rsa.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.2',
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://ciphersaw.github.io/2017/10/27/【CNSS 2017】 Crypto —— RSA Combo/"/>
+
+
+
+
+
+  <title>【CNSS 2017】 Crypto —— RSA Combo | Secrypt Agency</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Secrypt Agency</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Welcome to a platform for network security artists.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-friends">
+          <a href="/friends/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-users"></i> <br />
+            
+            Friends
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="Searching..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://ciphersaw.github.io/2017/10/27/【CNSS 2017】 Crypto —— RSA Combo/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Cipher Saw">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Secrypt Agency">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">【CNSS 2017】 Crypto —— RSA Combo</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-10-27T22:11:08+08:00">
+                2017-10-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/InfoSec/" itemprop="url" rel="index">
+                    <span itemprop="name">InfoSec</span>
+                  </a>
+                </span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/InfoSec/Crypto/" itemprop="url" rel="index">
+                    <span itemprop="name">Crypto</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2017/10/27/【CNSS 2017】 Crypto —— RSA Combo/" class="leancloud_visitors" data-flag-title="【CNSS 2017】 Crypto —— RSA Combo">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">Visitors&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h1><p>本次 <a href="https://ctf.cnssuestc.org/" target="_blank" rel="external">UESTC CNSS Recruit 2017</a> 中，Crypto 方面的题推出了 RSA 套餐，涉及 <strong>RSA 加密算法原理</strong>与<strong>特定情况下对 RSA 的密码攻击</strong>，对密码学初学者是个很好的练习机会，在此感谢出题人 <a href="http://blog.chrstm.com/" target="_blank" rel="external">JHSN</a> 和 <a href="http://xr1s.me/" target="_blank" rel="external">xris</a> 。</p>
+<a id="more"></a>
+<p>此 RSA 套餐一共四题，前两题涉及 RSA 加密算法原理，后两题涉及 RSA 密码攻击。</p>
+<p>RSA 公钥密码体制于 1977 年由 Ron Rivest、Adi Shamir、Leonard Adleman 一起提出，并以三人的姓氏首字母拼接命名，现已成为公钥密码的国际标准，是目前应用最广泛的公钥密码体制之一。RSA 是基于大整数因子分解问题的公钥密码，因此阅读本文需要有<strong>数论</strong>基础，并且所有代码选用 <strong>Python</strong>，便于大整数运算。</p>
+<p>下面先介绍 RSA 加解密算法的过程，需要用到的几个数论知识，请读者自行学习理解。</p>
+<h2 id="RSA-密钥对的生成"><a href="#RSA-密钥对的生成" class="headerlink" title="RSA 密钥对的生成"></a>RSA 密钥对的生成</h2><p>RSA 公私密钥对的生成，由以下四个步骤完成：</p>
+<ol>
+<li>选取两个<strong>大素数</strong> $p$ 和 $q$ （目前安全标准要求 $p$、$q$ 长度相差不能太大，且至少有 $512 bits$；</li>
+<li>计算乘积 $n = p \times q$ 和 $\varphi\left(n\right) = \left(p-1\right)\left(q-1\right)$，其中 $\varphi\left(n\right)$ 是<strong>欧拉函数</strong>；</li>
+<li>随机选取整数 $e$ 作为公钥，$1 &lt; e &lt; \varphi\left(n\right)$，并且要求 $gcd\left(e,\varphi\left(n\right)\right) = 1$，即 $e$ 与 $\varphi\left(n\right)$ 互素，<strong>最大公约数</strong>为 $1$；</li>
+<li>用<strong>扩展欧几里得算法</strong>计算私钥 $d$，满足 $d \times e \equiv 1 \ mod \ \varphi\left(n\right)$，即 $d \equiv e^{-1} \ mod \ \varphi\left(n\right)$，称 $d$ 是 $e$ 在模 $\varphi\left(n\right)$ 下的<strong>乘法逆元</strong>。</li>
+</ol>
+<p>此时得到公钥 $\left(e,n\right)$ 与 私钥 $d$。应注意，用户需要公开公钥 $\left(e,n\right)$，而只需保留私钥 $d$，两个大素数 $p$ 和 $q$ 已不再需要，最好销毁，但千万不能泄露。</p>
+<h2 id="RSA-加密算法"><a href="#RSA-加密算法" class="headerlink" title="RSA 加密算法"></a>RSA 加密算法</h2><p>加密时首先将明文消息字符串转换为二进制编码，用十六进制表示，然后将明文比特串分组，每个分组的十进制数必须小于 $n$，即每个分组的比特数不大于 $\log_2 n $，最后对每个明文分组进行加密运算，过程如下：</p>
+<ol>
+<li>获得接收方的公钥 $\left(e,n\right)$；</li>
+<li>将明文 $M$ 划分为 $N$ 个明文分组 $M = m_1m_2 \cdots m_N$，其中每个分组长度为 $L$（$L &lt; \log_2 n$）；</li>
+<li>对明文分组进行加密运算，每个分组对应的密文为 $c_i = {m_i}^{e} \ mod \ n$，其中 $1 \le i \le N$，加密后得密文分组 $C = c_1c_2 \cdots c_N$；</li>
+<li>将密文 $C$ 发送给接收方。</li>
+</ol>
+<h2 id="RSA-解密算法"><a href="#RSA-解密算法" class="headerlink" title="RSA 解密算法"></a>RSA 解密算法</h2><p>解密时首先将密文比特串恢复成明文比特串，再对其进行相应的字符编码，即可得到明文消息，过程如下：</p>
+<ol>
+<li>接收方收到密文 $C$ 后，先按照分组长度 $L$ 进行划分，得密文分组 $C = c_1c_2 \cdots c_N$；</li>
+<li>使用私钥 $d$，对密文分组进行解密运算，每个分组对应的明文为 $m_i = {c_i}^{d} \ mod \ n$，其中 $1 \le i \le N$，解密后得明文分组 $M = m_1m_2 \cdots m_N$。</li>
+</ol>
+<p>以上就是 RSA 加密算法的基本原理，涉及到的数论知识已加粗标识，基本部分没掌握好的请自行查阅资料学习。</p>
+<p>下面进入正题，借助 <strong>Python 2.7</strong> 来对 RSA 加解密过程的大整数进行运算，要用到模块 <a href="https://pypi.python.org/pypi/gmpy2" target="_blank" rel="external">gmpy2</a> 进行大整数运算，使用文档请见 <a href="http://gmpy2.readthedocs.io/en/latest/" target="_blank" rel="external">http://gmpy2.readthedocs.io/en/latest/</a>，以及模块 <a href="https://docs.python.org/2/library/binascii.html" target="_blank" rel="external">binascii</a>，将 ASCII 码十六进制字符串还原成明文。</p>
+<p><strong>注意：由于以下四题的明文量较小，均有 $m &lt; p \times q = n$，因此明密文不涉及分组过程。</strong></p>
+<h1 id="0x01-Easy-RSA"><a href="#0x01-Easy-RSA" class="headerlink" title="0x01 Easy RSA"></a>0x01 Easy RSA</h1><p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/CNSS_2017_Crypto_RSA_Combo/easy_rsa.png" alt="easy_rsa"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">p: 0xddb9fe428c938abdce551751b299feed367c97b52b17062d</div><div class="line">q: 0x265ad78c77eab2c5ab9b69fb44a11624818bed56c003d2c5e6d29f7</div><div class="line">e: 0x1fffffffffffffff</div><div class="line">d: 0x9737352a92d198aaeddb8db9cc5cb81a788aa7d0ec0ec9bac7f6ffece7ff928c8db6a47656dffb0421ef9ca595665b6b55d35f</div><div class="line">c: 0x1c0aa41505131e967d3db09227ef9572337a5e79f07484428efd6262eddee2fb67b6e6e6b5506871891ece1949eabf7a03cafdb</div></pre></td></tr></table></figure>
+<p>根据题意，已知 $p、q、e、d、c$，求 $m$。此题属于 RSA 加密算法基础题，思路也容易想到，直接求 $m = c^d \ mod \ n$ 即可得到明文，且 $n = p \times q$。下面给出 Python 解题代码，代码中的函数使用方法请自行查阅相应模块的使用手册。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> gmpy2</div><div class="line"><span class="keyword">import</span> binascii</div><div class="line"></div><div class="line">p = gmpy2.mpz(<span class="number">0xddb9fe428c938abdce551751b299feed367c97b52b17062d</span>)</div><div class="line">q = gmpy2.mpz(<span class="number">0x265ad78c77eab2c5ab9b69fb44a11624818bed56c003d2c5e6d29f7</span>)</div><div class="line">d = gmpy2.mpz(<span class="number">0x9737352a92d198aaeddb8db9cc5cb81a788aa7d0ec0ec9bac7f6ffece7ff928c8db6a47656dffb0421ef9ca595665b6b55d35f</span>)</div><div class="line">c = gmpy2.mpz(<span class="number">0x1c0aa41505131e967d3db09227ef9572337a5e79f07484428efd6262eddee2fb67b6e6e6b5506871891ece1949eabf7a03cafdb</span>)</div><div class="line"></div><div class="line">m = hex(pow(c, d, p*q))  <span class="comment"># Figure out c^d modulo n, then change to hex. Note that n = p * q.</span></div><div class="line"><span class="keyword">print</span> <span class="string">"plaintext:"</span>, m</div><div class="line"><span class="keyword">print</span> <span class="string">"flag:"</span>, binascii.a2b_hex(str(m)[<span class="number">2</span>:])</div></pre></td></tr></table></figure>
+<p>代码执行后，打印明文的十六进制数值，以及对应的 ASCII 字符串：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">plaintext: 0x636e73737b555f6d7573745f6b6e30775f41534331315f616e645f5235617d</div><div class="line">flag: cnss&#123;U_must_kn0w_ASC11_and_R5a&#125;</div></pre></td></tr></table></figure>
+<h1 id="0x02-RSA-Cool"><a href="#0x02-RSA-Cool" class="headerlink" title="0x02 RSA Cool"></a>0x02 RSA Cool</h1><p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/CNSS_2017_Crypto_RSA_Combo/rsa_cool.png" alt="easy_rsa"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">p: 0xf5621a5fd44994f720c1b971fea84f63</div><div class="line">q: 0xdfb85e3d22c0b59271884df021a57123</div><div class="line">e: 0xf36698ed9d9fedd7</div><div class="line">c: 0x448040a0a4757a630c4d8401fb3c0518ab0bce9a02085329536244c91727775c</div></pre></td></tr></table></figure>
+<p>根据所给数据，本题是已知 $p、q、e、c$，求 $m$，与第一题相比少给了私钥 $d$。此题也属于 RSA 加密算法基础题，在第一题的基础上先求出私钥 $d$，再求 $m = c^d \ mod \ n$ 即可得到明文。下面给出 Python 解题代码。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> gmpy2</div><div class="line"><span class="keyword">import</span> binascii</div><div class="line"></div><div class="line">p = gmpy2.mpz(<span class="number">0xf5621a5fd44994f720c1b971fea84f63</span>)</div><div class="line">q = gmpy2.mpz(<span class="number">0xdfb85e3d22c0b59271884df021a57123</span>)</div><div class="line">e = gmpy2.mpz(<span class="number">0xf36698ed9d9fedd7</span>)</div><div class="line">c = gmpy2.mpz(<span class="number">0x448040a0a4757a630c4d8401fb3c0518ab0bce9a02085329536244c91727775c</span>)</div><div class="line"></div><div class="line">phi_n = (p - <span class="number">1</span>) * (q - <span class="number">1</span>)</div><div class="line">d = gmpy2.invert(e, phi_n)  <span class="comment"># Figure out the multiplicative inverse of e modulo phi_n (i.e. the private key). </span></div><div class="line">m = hex(pow(c, d, p*q))  <span class="comment"># Figure out c^d modulo n, then change to hex. Note that n = p * q.</span></div><div class="line"></div><div class="line"><span class="keyword">print</span> <span class="string">"private key:"</span>, hex(d)</div><div class="line"><span class="keyword">print</span> <span class="string">"plaintext:"</span>, m</div><div class="line"><span class="keyword">print</span> <span class="string">"flag:"</span>, binascii.a2b_hex(str(m)[<span class="number">2</span>:])</div></pre></td></tr></table></figure>
+<p>代码执行后，打印私钥、明文的十六进制数值，以及对应的 ASCII 字符串：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">private key: 0x93f984ff1d6333df9c43c135c3098a83d27516f5cf32f9475171fe31da5c7edb</div><div class="line">plaintext: 0x636e73737b5269763373745f5368616d31725f34646c656d616e7d</div><div class="line">flag: cnss&#123;Riv3st_Sham1r_4dleman&#125;</div></pre></td></tr></table></figure>
+<h1 id="0x03-RSA-Cooler"><a href="#0x03-RSA-Cooler" class="headerlink" title="0x03 RSA Cooler"></a>0x03 RSA Cooler</h1><p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/CNSS_2017_Crypto_RSA_Combo/rsa_cooler.png" alt="easy_rsa"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">public key 1:</div><div class="line">n = 0x9ff2e873e1fcafbed22341b4eafdae01afec540e4e84e6041b0a0e83253f1c5da5dabc73004faa82cfaff8e83e5a99255f9790a7744dd18a694d09a89a5caf638d0cf4fe1150a9e894d47a17f386c107a083ae227efab851196de992a2441b7af3442f31a757234ef8997d8af1a3c3aecf2b6100d393a7b632913c2b1c921409</div><div class="line">e = 0xe9a44960483b5ca224cfd18818944eaae47de3a158debbc7886b74d7e11165e2e4158c86add4ccc5317256e5323596c9947513766645aefdac4f0375a0296743</div><div class="line"></div><div class="line">encrypted message 1:</div><div class="line">c = 0x636f86fb2b1991d4788092563adf87d14b975e9c7ab7279b10f4741f515788bba2e6e788d6f6c165f4daf65eabee93cebfc55a1d651b1dfb1190174ab338d959775658cf1c6d42b0fe6b7b1abaf5a9aa4ca239367bfcbe88b304c99d5e5f8aac019ec74b11662a5deba523c2f93b7c68a731c019578e3ac64db64cfd3533e91b</div><div class="line"></div><div class="line">public key 2:</div><div class="line">n = 0x9ff2e873e1fcafbed22341b4eafdae01afec540e4e84e6041b0a0e83253f1c5da5dabc73004faa82cfaff8e83e5a99255f9790a7744dd18a694d09a89a5caf638d0cf4fe1150a9e894d47a17f386c107a083ae227efab851196de992a2441b7af3442f31a757234ef8997d8af1a3c3aecf2b6100d393a7b632913c2b1c921409</div><div class="line">e = 0xd9b47cdd777deb3e94cfa3d416aa91b04f9391af0504a83de03e9e0c49faae8b79cf7c99f575af99ed2e9e5a7edb09219c4f79cf961092f9919ab33bc3c9a74f</div><div class="line"></div><div class="line">encrypted message 2:</div><div class="line">c = 0x53b601daa8f93166495a69fa747f8553bb8317cfe6dc3f7fec8c8511e209f9288038405fdee399f3ed68ab25dcd91be8bb2ef2ecac1173318b5d2bba932afdcab2d4e5b46987a0f774a29204ce481f79ea422943118f2eaf6c6820b501d9da8d3fbbcea464a2d158a39de6bae6ab845555e4646ae556d7b1e00567b00d41b06c</div></pre></td></tr></table></figure>
+<p>根据所给数据，可看出本题是已知两组 $n、e、c$，求 $m$，且两组中的模数 $n$ 相等。</p>
+<p>换言之，就是已知两个都在模 $n$ 下的公钥，记为 $e_1、e_2$，以及相应的密文 $c_1、c_2$，看你能不能恢复出明文？即使学过 RSA，如果数学基础不够扎实，也很难想出解法的。翻阅了几本密码学教材，发现这种在特定场景下的 RSA 密码攻击，大名为<strong>共模攻击</strong>。</p>
+<h2 id="共模攻击"><a href="#共模攻击" class="headerlink" title="共模攻击"></a>共模攻击</h2><p><strong>共模攻击</strong>，是指在 RSA 加密算法的实际使用中，有时为了方便起见，给每个用户设置相同的模数 $n$，仅用不同的公钥 $e$ 来区分不同用户。在这种场景下，若攻击者截获了分别用不同公钥 $e_1、e_2$ 加密相同明文 $m$ 后的密文 $c_1、c_2$，则能够在不知道用户私钥 $d_1、d_2$ 的情况下，恢复出明文 $m$。</p>
+<p>假设两个用户的公钥分别为 $e_1、e_2$，且 $e_1$ 与 $e_2$ 互素，模数为 $n$，明文为 $m$，密文分别为 $c_1 \equiv m^{e_1} \ mod \ n 、 c_2 \equiv m^{e_2} \ mod \ n$。攻击者截获 $c_1、c_2$ 后，可通过<strong>扩展欧几里得算法</strong>，求出满足等式 $xe_1 + ye_2 = 1$ 的两个整数 $x$ 和 $y$，其中 $x$ 是 $e_1$ 在模 $e_2$ 下的<strong>乘法逆元</strong>，$y$ 是 $e_2$ 在模 $e_1$ 下的<strong>乘法逆元</strong>，由此计算 ${c_1}^x{c_2}^y \equiv m^{xe_1}m^{ye_2} \equiv m^{\left(xe_1+ye_2\right)} \equiv m \ mod \ n$ 即可得到明文 $m$。下面给出 Python 解题代码。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> gmpy2</div><div class="line"><span class="keyword">import</span> binascii</div><div class="line"></div><div class="line"><span class="comment"># Extended Euclid Algorithm</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">extendedGCD</span><span class="params">(a, b)</span>:</span>  </div><div class="line">    <span class="comment"># a*xi + b*yi = ri</span></div><div class="line">    <span class="keyword">if</span> b == <span class="number">0</span>:</div><div class="line">        <span class="keyword">return</span> (<span class="number">1</span>, <span class="number">0</span>, a)</div><div class="line">    <span class="comment"># a*x1 + b*y1 = a</span></div><div class="line">    x1 = <span class="number">1</span></div><div class="line">    y1 = <span class="number">0</span></div><div class="line">    <span class="comment"># a*x2 + b*y2 = b</span></div><div class="line">    x2 = <span class="number">0</span></div><div class="line">    y2 = <span class="number">1</span></div><div class="line">    <span class="keyword">while</span> b != <span class="number">0</span>:</div><div class="line">        q = a / b</div><div class="line">        <span class="comment"># ri = r(i-2) % r(i-1)</span></div><div class="line">        r = a % b</div><div class="line">        a = b</div><div class="line">        b = r</div><div class="line">        <span class="comment"># xi = x(i-2) - q*x(i-1)</span></div><div class="line">        x = x1 - q*x2</div><div class="line">        x1 = x2</div><div class="line">        x2 = x</div><div class="line">        <span class="comment"># yi = y(i-2) - q*y(i-1)</span></div><div class="line">        y = y1 - q*y2</div><div class="line">        y1 = y2</div><div class="line">        y2 = y</div><div class="line">    <span class="keyword">return</span> (x1, y1, a)</div><div class="line"></div><div class="line">n = gmpy2.mpz(<span class="number">0x9ff2e873e1fcafbed22341b4eafdae01afec540e4e84e6041b0a0e83253f1c5da5dabc73004faa82cfaff8e83e5a99255f9790a7744dd18a694d09a89a5caf638d0cf4fe1150a9e894d47a17f386c107a083ae227efab851196de992a2441b7af3442f31a757234ef8997d8af1a3c3aecf2b6100d393a7b632913c2b1c921409</span>)</div><div class="line">e1 = gmpy2.mpz(<span class="number">0xe9a44960483b5ca224cfd18818944eaae47de3a158debbc7886b74d7e11165e2e4158c86add4ccc5317256e5323596c9947513766645aefdac4f0375a0296743</span>)</div><div class="line">e2 = gmpy2.mpz(<span class="number">0xd9b47cdd777deb3e94cfa3d416aa91b04f9391af0504a83de03e9e0c49faae8b79cf7c99f575af99ed2e9e5a7edb09219c4f79cf961092f9919ab33bc3c9a74f</span>)</div><div class="line">c1 = gmpy2.mpz(<span class="number">0x636f86fb2b1991d4788092563adf87d14b975e9c7ab7279b10f4741f515788bba2e6e788d6f6c165f4daf65eabee93cebfc55a1d651b1dfb1190174ab338d959775658cf1c6d42b0fe6b7b1abaf5a9aa4ca239367bfcbe88b304c99d5e5f8aac019ec74b11662a5deba523c2f93b7c68a731c019578e3ac64db64cfd3533e91b</span>)</div><div class="line">c2 = gmpy2.mpz(<span class="number">0x53b601daa8f93166495a69fa747f8553bb8317cfe6dc3f7fec8c8511e209f9288038405fdee399f3ed68ab25dcd91be8bb2ef2ecac1173318b5d2bba932afdcab2d4e5b46987a0f774a29204ce481f79ea422943118f2eaf6c6820b501d9da8d3fbbcea464a2d158a39de6bae6ab845555e4646ae556d7b1e00567b00d41b06c</span>)</div><div class="line"></div><div class="line">x, y, r = extendedGCD(e1, e2)</div><div class="line">m = hex(pow(c1, x, n) * pow(c2, y, n) % n)</div><div class="line"></div><div class="line"><span class="keyword">print</span> <span class="string">"plaintext:"</span>, m</div><div class="line"><span class="keyword">print</span> <span class="string">"flag:"</span>, binascii.a2b_hex(str(m)[<span class="number">2</span>:])</div></pre></td></tr></table></figure>
+<p>代码执行后，打印明文的十六进制数值，以及对应的 ASCII 字符串：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">plaintext: 0x636e73737b5253415f63306d6d4f6e5f6d6f64754975355f34746b7d</div><div class="line">flag: cnss&#123;RSA_c0mmOn_moduIu5_4tk&#125;</div></pre></td></tr></table></figure>
+<h1 id="0x04-RSA-Coolest"><a href="#0x04-RSA-Coolest" class="headerlink" title="0x04 RSA Coolest"></a>0x04 RSA Coolest</h1><p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/CNSS_2017_Crypto_RSA_Combo/rsa_coolest.png" alt="easy_rsa"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">public key 1:</div><div class="line">n = 0xba298d721fadbadb15dabd393db296c13610b33bfeb3aea844815439df3b025bcc6a7085a21eeb3b904a17071c01f05229873518828a8eb8a9129cff611f3481</div><div class="line">e = 0x3</div><div class="line"></div><div class="line">encrypted message 1:</div><div class="line">c = 0x7d4f6c0953ec517212b6c778da72245820a749254d21b62d09e36b44e073f858114f174b71cee25104b4d3b0abbf7eb31f031201bf40846290344c865c4b9cf8</div><div class="line"></div><div class="line">public key 2:</div><div class="line">n = 0xe37a3cab324cc0a5ea1030b498f3838f674e6ee9b4e441900c604e4d095b04c70cd32a7c4a5be0b463e3fd94594b3bd25ada9bc9ca17a80d72b7928e233f726d</div><div class="line">e = 0x3</div><div class="line"></div><div class="line">encrypted message 2:</div><div class="line">c = 0xc09aea0a9b6e10d7db7a5c2071b46f5801896c536152badb81db37848ef373cf6c6842737a87c12f6aba1d39bdf5d2aaf40e919628a64e4cd78a42c2cdde651a</div><div class="line"></div><div class="line">public key 3:</div><div class="line">n = 0xd8b6924687baaffe1c205ac0474fd5b5f894cb97abb3d427df0e47f30c7f035c07586430679ab65c5bbdccbc53cea9c95c466f3171d24efb85433bd05bc36c5d</div><div class="line">e = 0x3</div><div class="line"></div><div class="line">encrypted message 3:</div><div class="line">c = 0x6e3591536b9aadcdb412d6b05a755d603d0272434cc27447a8877707861363c8408b47da377474924db89a3e104717855613cbea16ad439c98b6e7bfdb7ae14f</div></pre></td></tr></table></figure>
+<p>根据所给数据，可看出本题是已知三组 $n、e、c$，求 $m$，且三组中的公钥 $e$ 都等于较小的数 $3$。</p>
+<p>换言之，就是已知在三个不同模数 $n_1、n_2、n_3$ 下的相同公钥 $e$，以及相应的密文 $c_1、c_2、c_3$，问能不能恢复出明文？刚才的密码学教材继续往下看，得知在此特定场景下的 RSA 密码攻击，名为<strong>低指数攻击</strong>，顾名思义，即要求此相同公钥 $e$ 是个较小的数。</p>
+<h2 id="低指数攻击"><a href="#低指数攻击" class="headerlink" title="低指数攻击"></a>低指数攻击</h2><p><strong>低指数攻击</strong>，是指为了增强 RSA 加密算法在实际使用中高效性，给每个用户设置相同且较小的公钥 $e$，仅用不同的模数 $n$ 来区分不同用户。在这种场景下，若攻击者截获了在不同模数 $n_1、n_2、n_3$ 下用相同公钥 $e$ 加密相同明文 $m$ 后的密文 $c_1、c_2、c_3$，则能够在不知道用户私钥 $d_1、d_2、d_3$ 的情况下，恢复出明文 $m$。</p>
+<p>假设三个用户的模数分别为 $n_1、n_2、n_3$，且不同的模数间两两互素，否则通过计算最大公约数可分解模数，公钥为 $e = 0x3$，明文为 $m$，密文分别为<br>$$<br>\begin{cases}<br>c_1 \equiv m^3 \ mod \ n_1  \\<br>c_2 \equiv m^3 \ mod \ n_2  \\<br>c_3 \equiv m^3 \ mod \ n_3<br>\end{cases}<br>$$<br>即可得<br>$$<br>\begin{cases}<br>m^3 \equiv c_1 \ mod \ n_1  \\<br>m^3 \equiv c_2 \ mod \ n_2  \\<br>m^3 \equiv c_3 \ mod \ n_3<br>\end{cases}<br>$$<br>令 $N = n_1n_2n_3$，则通过<strong>中国剩余定理</strong>可求得 $m^3 \ mod \ N$。又因为 $m^3 &lt; N$，则可直接对 $m^3$ 开立方根得到明文 $m$。至此，可知为何要求公钥 $e$ 是个较小的数，因为 $e$ 太大的话会增加开方运算的难度。下面给出 Python 解题代码。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> gmpy2</div><div class="line"><span class="keyword">import</span> binascii</div><div class="line"></div><div class="line">n1 = gmpy2.mpz(<span class="number">0xba298d721fadbadb15dabd393db296c13610b33bfeb3aea844815439df3b025bcc6a7085a21eeb3b904a17071c01f05229873518828a8eb8a9129cff611f3481</span>)</div><div class="line">n2 = gmpy2.mpz(<span class="number">0xe37a3cab324cc0a5ea1030b498f3838f674e6ee9b4e441900c604e4d095b04c70cd32a7c4a5be0b463e3fd94594b3bd25ada9bc9ca17a80d72b7928e233f726d</span>)</div><div class="line">n3 = gmpy2.mpz(<span class="number">0xd8b6924687baaffe1c205ac0474fd5b5f894cb97abb3d427df0e47f30c7f035c07586430679ab65c5bbdccbc53cea9c95c466f3171d24efb85433bd05bc36c5d</span>)</div><div class="line">e  = gmpy2.mpz(<span class="number">0x3</span>)</div><div class="line">c1 = gmpy2.mpz(<span class="number">0x7d4f6c0953ec517212b6c778da72245820a749254d21b62d09e36b44e073f858114f174b71cee25104b4d3b0abbf7eb31f031201bf40846290344c865c4b9cf8</span>)</div><div class="line">c2 = gmpy2.mpz(<span class="number">0xc09aea0a9b6e10d7db7a5c2071b46f5801896c536152badb81db37848ef373cf6c6842737a87c12f6aba1d39bdf5d2aaf40e919628a64e4cd78a42c2cdde651a</span>)</div><div class="line">c3 = gmpy2.mpz(<span class="number">0x6e3591536b9aadcdb412d6b05a755d603d0272434cc27447a8877707861363c8408b47da377474924db89a3e104717855613cbea16ad439c98b6e7bfdb7ae14f</span>)</div><div class="line"></div><div class="line"><span class="comment"># Chinese Remainder Theorem with three equations</span></div><div class="line">N  = n1 * n2 * n3</div><div class="line">N1 = N / n1</div><div class="line">N2 = N / n2</div><div class="line">N3 = N / n3</div><div class="line">b1 = gmpy2.invert(N1, n1)</div><div class="line">b2 = gmpy2.invert(N2, n2)</div><div class="line">b3 = gmpy2.invert(N3, n3)</div><div class="line">m_pow_e = (c1*b1*N1 + c2*b2*N2 + c3*b3*N3) % N</div><div class="line"></div><div class="line">m, boolean = gmpy2.iroot(m_pow_e, e)  <span class="comment"># Figure out the cubic root of m_pow_e</span></div><div class="line">m = hex(m)</div><div class="line"></div><div class="line"><span class="keyword">print</span> <span class="string">"plaintext:"</span>, m</div><div class="line"><span class="keyword">print</span> <span class="string">"flag:"</span>, binascii.a2b_hex(str(m)[<span class="number">2</span>:])</div></pre></td></tr></table></figure>
+<p>代码执行后，打印明文的十六进制数值，以及对应的 ASCII 字符串：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">plaintext: 0x636e73737b436f304f6f4f30306f4f304f6f4f6f304f306f6c6573747d</div><div class="line">flag: cnss&#123;Co0OoO00oO0OoOo0O0olest&#125;</div></pre></td></tr></table></figure>
+<hr>
+<p>以上四道关于 RSA 公钥密码体题目的 writeup 到此全部结束，作者水平和经验有限，文中若有错误或不妥之处在所难免，希望发现问题的读者可在文末留言，同时也希望本文能够对读者的密码学探索之旅给予帮助与启发，谢谢。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script type="text/javascript" src="http://jslibs.wuxubj.cn/sweetalert_mini/jquery-1.7.1.min.js"></script>
+  <script src="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.mini.css">
+  <p><span>本文标题:</span><a href="/2017/10/27/【CNSS 2017】 Crypto —— RSA Combo/">【CNSS 2017】 Crypto —— RSA Combo</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 Cipher Saw 的个人博客">Cipher Saw</a></p>
+  <p><span>发布时间:</span>2017年10月27日 - 22:10</p>
+  <p><span>最后更新:</span>2019年05月02日 - 09:05</p>
+  <p><span>原始链接:</span><a href="/2017/10/27/【CNSS 2017】 Crypto —— RSA Combo/" title="【CNSS 2017】 Crypto —— RSA Combo">https://ciphersaw.github.io/2017/10/27/【CNSS 2017】 Crypto —— RSA Combo/</a>
+    <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://ciphersaw.github.io/2017/10/27/【CNSS 2017】 Crypto —— RSA Combo/"  aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">署名-非商业性使用-禁止演绎 4.0 国际</a> </p>  
+  <p>转载请保留原文链接及作者，谢谢！</p>
+</div>
+<script> 
+    var clipboard = new Clipboard('.fa-clipboard');
+    clipboard.on('success', $(function(){
+      $(".fa-clipboard").click(function(){
+        swal({   
+          title: "",   
+          text: '复制成功',   
+          html: false,
+          timer: 500,   
+          showConfirmButton: false
+        });
+      });
+    }));  
+</script>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/CTF/" rel="tag"># CTF</a>
+          
+            <a href="/tags/Writeup/" rel="tag"># Writeup</a>
+          
+            <a href="/tags/Crypto/" rel="tag"># Crypto</a>
+          
+            <a href="/tags/RSA/" rel="tag"># RSA</a>
+          
+            <a href="/tags/CNSS/" rel="tag"># CNSS</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/09/28/【实验吧 CTF】 Web —— 忘记密码了/" rel="next" title="【实验吧 CTF】 Web —— 忘记密码了">
+                <i class="fa fa-chevron-left"></i> 【实验吧 CTF】 Web —— 忘记密码了
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/11/12/Hash Length Extension Attack（哈希长度扩展攻击）/" rel="prev" title="Hash Length Extension Attack（哈希长度扩展攻击）">
+                Hash Length Extension Attack（哈希长度扩展攻击） <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zMjUyNS85MDg2"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          
+            <img class="site-author-image" itemprop="image"
+              src="/images/avatar.jpg"
+              alt="Cipher Saw" />
+          
+            <p class="site-author-name" itemprop="name">Cipher Saw</p>
+            <p class="site-description motion-element" itemprop="description">Not to be whom you don't want to be.</p>
+        </div>
+
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">23</span>
+                <span class="site-state-item-name">posts</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">categories</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">56</span>
+                <span class="site-state-item-name">tags</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/ciphersaw" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>GitHub</a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/CipherSaw" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>Twitter</a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-block">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              Links
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://ctf-wiki.github.io/ctf-wiki/" title="CTF Wiki" target="_blank">CTF Wiki</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://www.owasp.org/index.php/Main_Page" title="OWASP" target="_blank">OWASP</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.pentest-standard.org/index.php/Main_Page" title="Pentest Standard" target="_blank">Pentest Standard</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#0x00-前言"><span class="nav-text">0x00 前言</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#RSA-密钥对的生成"><span class="nav-text">RSA 密钥对的生成</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RSA-加密算法"><span class="nav-text">RSA 加密算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RSA-解密算法"><span class="nav-text">RSA 解密算法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x01-Easy-RSA"><span class="nav-text">0x01 Easy RSA</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x02-RSA-Cool"><span class="nav-text">0x02 RSA Cool</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x03-RSA-Cooler"><span class="nav-text">0x03 RSA Cooler</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#共模攻击"><span class="nav-text">共模攻击</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x04-RSA-Coolest"><span class="nav-text">0x04 RSA Coolest</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#低指数攻击"><span class="nav-text">低指数攻击</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-space-shuttle"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Cipher Saw</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" href="https://hexo.io">Hexo</a></div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.2</div>
+
+
+        
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=63761272";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+  
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("KWe6NtO4vhgQR3IfB99JElre-gzGzoHsz", "7nrrRDyHHUMcx03upUALYKIQ");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+  <script type="text/javascript" src="https://tajs.qq.com/stats?sId=63761272" charset="UTF-8"></script>
+</body>
+</html>
