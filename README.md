@@ -39,6 +39,10 @@ The original articles in my blog  are classified by index below.
 
 - [【XCTF 攻防世界】 Reverse —— csaw2013reversing2](https://ciphersaw.github.io/2019/05/28/%E3%80%90XCTF%20%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C%E3%80%91%20Reverse%20%E2%80%94%E2%80%94%20csaw2013reversing2/)
 
+### Red-Blue
+
+- [奇安信「实战攻防三部曲」要点总结](https://ciphersaw.github.io/2019/09/22/%E5%A5%87%E5%AE%89%E4%BF%A1%E3%80%8C%E5%AE%9E%E6%88%98%E6%94%BB%E9%98%B2%E4%B8%89%E9%83%A8%E6%9B%B2%E3%80%8D%E8%A6%81%E7%82%B9%E6%80%BB%E7%BB%93/)
+
 ## Programming
 
 ### Python
