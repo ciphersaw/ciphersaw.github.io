@@ -71,20 +71,20 @@
 
 
 
-<meta name="description" content="0x00 前言在上一篇文章「Python 绝技 —— TCP 服务器与客户端」中，介绍了传输层的核心协议 TCP ，并运用 Python 脚本的 socket 模块演示了 TCP 服务器与客户端的通信过程。 本篇将按照同样的套路，先介绍传输层的另一个核心协议 UDP，再比较 TCP 与 UDP 的特点，最后借助 Python 脚本演示 UDP 服务器与客户端的通信过程。">
+<meta name="description" content="table th:nth-of-type(1) {     width: 18%; }   0x00 前言在上一篇文章「Python 绝技 —— TCP 服务器与客户端」中，介绍了传输层的核心协议 TCP ，并运用 Python 脚本的 socket 模块演示了 TCP 服务器与客户端的通信过程。 本篇将按照同样的套路，先介绍传输层的另一个核心协议 UDP，再比较 TCP 与 UDP 的特点，最">
 <meta name="keywords" content="Python,Network,UDP,Socket,Server,Client,API">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Python 绝技 —— UDP 服务器与客户端">
 <meta property="og:url" content="https://ciphersaw.github.io/2018/06/15/Python 绝技 —— UDP 服务器与客户端/index.html">
 <meta property="og:site_name" content="Secrypt Agency">
-<meta property="og:description" content="0x00 前言在上一篇文章「Python 绝技 —— TCP 服务器与客户端」中，介绍了传输层的核心协议 TCP ，并运用 Python 脚本的 socket 模块演示了 TCP 服务器与客户端的通信过程。 本篇将按照同样的套路，先介绍传输层的另一个核心协议 UDP，再比较 TCP 与 UDP 的特点，最后借助 Python 脚本演示 UDP 服务器与客户端的通信过程。">
+<meta property="og:description" content="table th:nth-of-type(1) {     width: 18%; }   0x00 前言在上一篇文章「Python 绝技 —— TCP 服务器与客户端」中，介绍了传输层的核心协议 TCP ，并运用 Python 脚本的 socket 模块演示了 TCP 服务器与客户端的通信过程。 本篇将按照同样的套路，先介绍传输层的另一个核心协议 UDP，再比较 TCP 与 UDP 的特点，最">
 <meta property="og:locale" content="en">
 <meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Python_%E7%BB%9D%E6%8A%80_UDP_%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8E%E5%AE%A2%E6%88%B7%E7%AB%AF/udp_socket_python.png">
 <meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Python_%E7%BB%9D%E6%8A%80_UDP_%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8E%E5%AE%A2%E6%88%B7%E7%AB%AF/one_server_vs_multiple_clients.png">
-<meta property="og:updated_time" content="2019-05-02T02:17:44.779Z">
+<meta property="og:updated_time" content="2019-09-23T13:52:20.714Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Python 绝技 —— UDP 服务器与客户端">
-<meta name="twitter:description" content="0x00 前言在上一篇文章「Python 绝技 —— TCP 服务器与客户端」中，介绍了传输层的核心协议 TCP ，并运用 Python 脚本的 socket 模块演示了 TCP 服务器与客户端的通信过程。 本篇将按照同样的套路，先介绍传输层的另一个核心协议 UDP，再比较 TCP 与 UDP 的特点，最后借助 Python 脚本演示 UDP 服务器与客户端的通信过程。">
+<meta name="twitter:description" content="table th:nth-of-type(1) {     width: 18%; }   0x00 前言在上一篇文章「Python 绝技 —— TCP 服务器与客户端」中，介绍了传输层的核心协议 TCP ，并运用 Python 脚本的 socket 模块演示了 TCP 服务器与客户端的通信过程。 本篇将按照同样的套路，先介绍传输层的另一个核心协议 UDP，再比较 TCP 与 UDP 的特点，最">
 <meta name="twitter:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Python_%E7%BB%9D%E6%8A%80_UDP_%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8E%E5%AE%A2%E6%88%B7%E7%AB%AF/udp_socket_python.png">
 
 
@@ -403,7 +403,13 @@
       
 
       
-        <h1 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h1><p>在上一篇文章<a href="https://ciphersaw.github.io/2018/05/23/Python%20%E7%BB%9D%E6%8A%80%20%E2%80%94%E2%80%94%20TCP%20%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8E%E5%AE%A2%E6%88%B7%E7%AB%AF/">「Python 绝技 —— TCP 服务器与客户端」</a>中，介绍了传输层的核心协议 TCP ，并运用 Python 脚本的 socket 模块演示了 TCP 服务器与客户端的通信过程。</p>
+        <style>
+table th:nth-of-type(1) {
+    width: 18%;
+}
+</style>
+
+<h1 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h1><p>在上一篇文章<a href="https://ciphersaw.github.io/2018/05/23/Python%20%E7%BB%9D%E6%8A%80%20%E2%80%94%E2%80%94%20TCP%20%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8E%E5%AE%A2%E6%88%B7%E7%AB%AF/">「Python 绝技 —— TCP 服务器与客户端」</a>中，介绍了传输层的核心协议 TCP ，并运用 Python 脚本的 socket 模块演示了 TCP 服务器与客户端的通信过程。</p>
 <p>本篇将按照同样的套路，先介绍传输层的另一个<strong>核心协议 UDP</strong>，再比较 TCP 与 UDP 的特点，最后借助 Python 脚本演示 <strong>UDP 服务器与客户端</strong>的通信过程。</p>
 <a id="more"></a>
 <h1 id="0x01-UDP-协议"><a href="#0x01-UDP-协议" class="headerlink" title="0x01 UDP 协议"></a>0x01 UDP 协议</h1><p><a href="https://en.wikipedia.org/wiki/User_Datagram_Protocol" target="_blank" rel="external">UDP（User Datagram Protocol，用户数据报协议）</a>是一种无连接、不可靠、基于数据报的传输层通信协议。</p>
@@ -589,7 +595,7 @@
   <p><span>本文标题:</span><a href="/2018/06/15/Python 绝技 —— UDP 服务器与客户端/">Python 绝技 —— UDP 服务器与客户端</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 Cipher Saw 的个人博客">Cipher Saw</a></p>
   <p><span>发布时间:</span>2018年06月15日 - 09:06</p>
-  <p><span>最后更新:</span>2019年05月02日 - 10:05</p>
+  <p><span>最后更新:</span>2019年09月23日 - 21:09</p>
   <p><span>原始链接:</span><a href="/2018/06/15/Python 绝技 —— UDP 服务器与客户端/" title="Python 绝技 —— UDP 服务器与客户端">https://ciphersaw.github.io/2018/06/15/Python 绝技 —— UDP 服务器与客户端/</a>
     <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://ciphersaw.github.io/2018/06/15/Python 绝技 —— UDP 服务器与客户端/"  aria-label="复制成功！"></i></span>
   </p>
