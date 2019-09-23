@@ -6,6 +6,12 @@ tags: [Python,Network,UDP,Socket,Server,Client,API]
 categories: [Programming,Python]
 ---
 
+<style>
+table th:nth-of-type(1) {
+	width: 18%;
+}
+</style>
+
 # 0x00 前言
 
 在上一篇文章[「Python 绝技 —— TCP 服务器与客户端」](https://ciphersaw.github.io/2018/05/23/Python%20%E7%BB%9D%E6%8A%80%20%E2%80%94%E2%80%94%20TCP%20%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8E%E5%AE%A2%E6%88%B7%E7%AB%AF/)中，介绍了传输层的核心协议 TCP ，并运用 Python 脚本的 socket 模块演示了 TCP 服务器与客户端的通信过程。
