@@ -109,7 +109,7 @@ yum -y install lrzsz
 
 ## 编写脚本
 
-Python 脚本主要是通过 [requests](https://2.python-requests.org/en/master/) 库向题目链接发送 POST 请求，模拟浏览器中的点击操作，使 WeChall 访问服务器的特定网页。
+Python 脚本主要是通过 [requests](https://requests.kennethreitz.org/en/master/) 库向题目链接发送 POST 请求，模拟浏览器中的点击操作，使 WeChall 访问服务器的特定网页。
 
 注意，由于个人 PC 与 VPS 的 IP 地址不同，因此在 PC 上登录 WeChall 用户时，切勿勾选 **Restrict Session to this IP**，否则 Cookie 与 PC 的 IP 地址绑定，导致在 VPS 上无法正常使用。
 

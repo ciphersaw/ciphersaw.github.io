@@ -240,7 +240,7 @@ SQL 语句中限制条件为 `WHERE id=1 AND 1=2# `，相当于 `WHERE 1=2# `，
 
 ![leak](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/leak.png)
 
-对的，你想的没错，管理员的 16 位密码哈希值，用 [MD5解密工具](http://www.dmd5.com/md5-decrypter.jsp) 解密后的明文结果正是 `admin888`：
+对的，你想的没错，管理员的 16 位密码哈希值，用 [MD5解密工具](http://www.dmd5.com/) 解密后的明文结果正是 `admin888`：
 
 ![password](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/password.png)
 
@@ -365,7 +365,7 @@ SQL 语句中限制条件为 `WHERE id=1 AND 1=2# `，相当于 `WHERE 1=2# `，
 
 ## Pwdump7
 
-[**Pwdump7**](http://www.tarasco.org/security/pwdump_7/index.html) 是 [Tarasco Security](http://www.tarasco.org/security/pwdump_7/index.html) 发布的一款免费软件，能够从 SAM 中快速提取用户密码哈希值，易用性与有效性极佳。
+[**Pwdump7**](http://www.tarasco.org/security/pwdump_7/index.html) 是 [Tarasco Security](http://www.tarasco.org/security/index.html) 发布的一款免费软件，能够从 SAM 中快速提取用户密码哈希值，易用性与有效性极佳。
 
 使用之前，将实验工具箱【提权工具】->【hash】->【Pwdump7】文件夹下的 **Pwdump7.exe** 与 **libeay32.dll** 两个文件通过菜刀上传至服务器 `C:\wmpub` 目录，再回到远程主机桌面点击【开始】 -> 【我的电脑】，进入上传点打开 cmd.exe，直接输入 `pwdump7` 命令即可获得所有用户的密码哈希值，其中 `62C4700EBB05958F3832C92FC614B7D1` 是 LM 哈希，`4D478675344541AACCF6CF33E1DD9D85` 是 NTLM 哈希：
 
