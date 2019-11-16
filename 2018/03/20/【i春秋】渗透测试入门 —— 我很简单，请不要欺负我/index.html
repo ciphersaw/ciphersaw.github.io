@@ -125,7 +125,7 @@
 <meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/cain_config.png">
 <meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/cain_result.png">
 <meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/objectif.png">
-<meta property="og:updated_time" content="2019-05-02T01:52:13.511Z">
+<meta property="og:updated_time" content="2019-11-16T02:31:17.565Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="【i春秋】渗透测试入门 —— 我很简单，请不要欺负我">
 <meta name="twitter:description" content="0x00 前言本实验是一次非常深入彻底的模拟渗透，虽然只针对一台服务器，但却经历了从最初的获取网站管理员账号密码，到获得网站的 webshell，最后到通过提权获得服务器系统最高权限的完整渗透过程。 从实验手册上给出的工具提示也能看出，本次渗透会用到目录扫描工具、注入工具、getshell 工具、提权工具等，可谓干货满满。若各位能亲自动手尝试所有能用到的工具，把整个渗透流程实现一遍，所有知识点都想">
@@ -569,7 +569,7 @@
 <p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/manual_result.png" alt="manual_result"></p>
 <h2 id="敏感信息泄露"><a href="#敏感信息泄露" class="headerlink" title="敏感信息泄露"></a>敏感信息泄露</h2><p>在本节末尾留个小彩蛋，细心的读者可能在上述注入点的页面底部发现了：</p>
 <p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/leak.png" alt="leak"></p>
-<p>对的，你想的没错，管理员的 16 位密码哈希值，用 <a href="http://www.dmd5.com/md5-decrypter.jsp" target="_blank" rel="external">MD5解密工具</a> 解密后的明文结果正是 <code>admin888</code>：</p>
+<p>对的，你想的没错，管理员的 16 位密码哈希值，用 <a href="http://www.dmd5.com/" target="_blank" rel="external">MD5解密工具</a> 解密后的明文结果正是 <code>admin888</code>：</p>
 <p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/password.png" alt="password"></p>
 <h1 id="0x03-获取后台登录地址"><a href="#0x03-获取后台登录地址" class="headerlink" title="0x03 获取后台登录地址"></a>0x03 获取后台登录地址</h1><p>根据实验手册的提示，在实验工具箱的【目录扫描】-&gt;【御剑后台扫描工具】文件夹下打开工具，在 <strong>域名</strong> 处填上主站 URL <code>http://www.test.ichunqiu/</code>，点击 <strong>开始扫描</strong> 即可轻松获取后台登录地址 <code>/admin/login.asp</code>：</p>
 <p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/yujian_scan.png" alt="yujian_scan"></p>
@@ -637,7 +637,7 @@
 <blockquote>
 <p>小贴士：<a href="https://en.wikipedia.org/wiki/Pwdump" target="_blank" rel="external"><strong>pwdump</strong></a> 是一类能从 Windows <a href="https://en.wikipedia.org/wiki/Security_Account_Manager" target="_blank" rel="external">SAM（Security Account Manager）</a> 中读出本地用户 <a href="https://en.wikipedia.org/wiki/LAN_Manager#LM_hash_details" target="_blank" rel="external">LM（LAN Manager）</a> 与 <a href="https://en.wikipedia.org/wiki/NT_LAN_Manager" target="_blank" rel="external">NTLM（NT LAN Manager）</a> 密码哈希值的工具（注意必须在管理员权限下），其中 LM 与 NTLM 是 Windows 系统下的安全认证协议，并且 NTLM 是 LM 的演进版本，安全性更高。</p>
 </blockquote>
-<h2 id="Pwdump7"><a href="#Pwdump7" class="headerlink" title="Pwdump7"></a>Pwdump7</h2><p><a href="http://www.tarasco.org/security/pwdump_7/index.html" target="_blank" rel="external"><strong>Pwdump7</strong></a> 是 <a href="http://www.tarasco.org/security/pwdump_7/index.html" target="_blank" rel="external">Tarasco Security</a> 发布的一款免费软件，能够从 SAM 中快速提取用户密码哈希值，易用性与有效性极佳。</p>
+<h2 id="Pwdump7"><a href="#Pwdump7" class="headerlink" title="Pwdump7"></a>Pwdump7</h2><p><a href="http://www.tarasco.org/security/pwdump_7/index.html" target="_blank" rel="external"><strong>Pwdump7</strong></a> 是 <a href="http://www.tarasco.org/security/index.html" target="_blank" rel="external">Tarasco Security</a> 发布的一款免费软件，能够从 SAM 中快速提取用户密码哈希值，易用性与有效性极佳。</p>
 <p>使用之前，将实验工具箱【提权工具】-&gt;【hash】-&gt;【Pwdump7】文件夹下的 <strong>Pwdump7.exe</strong> 与 <strong>libeay32.dll</strong> 两个文件通过菜刀上传至服务器 <code>C:\wmpub</code> 目录，再回到远程主机桌面点击【开始】 -&gt; 【我的电脑】，进入上传点打开 cmd.exe，直接输入 <code>pwdump7</code> 命令即可获得所有用户的密码哈希值，其中 <code>62C4700EBB05958F3832C92FC614B7D1</code> 是 LM 哈希，<code>4D478675344541AACCF6CF33E1DD9D85</code> 是 NTLM 哈希：</p>
 <p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8_%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95_%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/pwdump7.png" alt="pwdump7"></p>
 <h2 id="QuarksPwDump"><a href="#QuarksPwDump" class="headerlink" title="QuarksPwDump"></a>QuarksPwDump</h2><p><a href="https://blog.quarkslab.com/quarks-pwdump.html" target="_blank" rel="external"><strong>QuarksPwDump</strong></a> 是 <a href="https://quarkslab.com/" target="_blank" rel="external">Quarkslab</a> 发布的一款开源工具，能导出 Windows 下各种类型的用户凭证，它自身有专属的命令交互界面，可输入不同的命令选项获得所需数据。</p>
@@ -685,13 +685,13 @@
 <div class="my_post_copyright">
   <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
   <!-- JS库 sweetalert 可修改路径 -->
-  <script type="text/javascript" src="http://jslibs.wuxubj.cn/sweetalert_mini/jquery-1.7.1.min.js"></script>
-  <script src="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.min.js"></script>
-  <link rel="stylesheet" type="text/css" href="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.mini.css">
+  <script type="text/javascript" src="https://cdn.bootcss.com/jquery/1.7.1/jquery.min.js"></script>
+  <script src="https://cdn.bootcss.com/sweetalert/1.1.0/sweetalert.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://cdn.bootcss.com/sweetalert/1.1.0/sweetalert.min.css">
   <p><span>本文标题:</span><a href="/2018/03/20/【i春秋】渗透测试入门 —— 我很简单，请不要欺负我/">【i春秋】渗透测试入门 —— 我很简单，请不要欺负我</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 Cipher Saw 的个人博客">Cipher Saw</a></p>
   <p><span>发布时间:</span>2018年03月20日 - 21:03</p>
-  <p><span>最后更新:</span>2019年05月02日 - 09:05</p>
+  <p><span>最后更新:</span>2019年11月16日 - 10:11</p>
   <p><span>原始链接:</span><a href="/2018/03/20/【i春秋】渗透测试入门 —— 我很简单，请不要欺负我/" title="【i春秋】渗透测试入门 —— 我很简单，请不要欺负我">https://ciphersaw.github.io/2018/03/20/【i春秋】渗透测试入门 —— 我很简单，请不要欺负我/</a>
     <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://ciphersaw.github.io/2018/03/20/【i春秋】渗透测试入门 —— 我很简单，请不要欺负我/"  aria-label="复制成功！"></i></span>
   </p>

@@ -87,7 +87,7 @@
 <meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_Web_%E7%88%86%E7%A0%B4_3/burp_failure.png">
 <meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_Web_%E7%88%86%E7%A0%B4_3/burp_success.png">
 <meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_Web_%E7%88%86%E7%A0%B4_3/requests_body.png">
-<meta property="og:updated_time" content="2019-05-02T01:45:23.079Z">
+<meta property="og:updated_time" content="2019-11-16T02:00:20.950Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="【i春秋】 Web —— 爆破-3">
 <meta name="twitter:description" content="0x00 前言此题出自「百度杯」CTF 比赛 2017 二月场，是第三道 「爆破」系列的 Web 题，主要考察在理解了题目 PHP 代码的逻辑后，通过网络编程与服务器交互获取 flag 的能力，难度中低，需要的基础知识有：PHP、Python、HTTP协议。 题目链接在「i春秋」的 CTF 大本营，解题链接通过创建在线靶场后得到：  题目链接：https://www.ichunqiu.com/ba">
@@ -436,7 +436,7 @@
 <p>第二种方法：</p>
 <p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_Web_%E7%88%86%E7%A0%B4_3/method2.png" alt="method2"></p>
 <p>针对 POST 请求同样适用，请读者自行验证。</p>
-<p>将页面显示的新值传入 <code>value</code> 参数后，按上述方法手动循环 10 次，即可满足输出 flag 的条件，但只仅对于次数少的情况有效，如果循环 100 次，还想继续手动操作吗？这时，使用 Python 的<strong>第三方开源库 <a href="https://2.python-requests.org/en/master/" target="_blank" rel="external">Requests</a></strong> 编写自动化脚本，即可轻松解决问题，基本用法可参考：</p>
+<p>将页面显示的新值传入 <code>value</code> 参数后，按上述方法手动循环 10 次，即可满足输出 flag 的条件，但只仅对于次数少的情况有效，如果循环 100 次，还想继续手动操作吗？这时，使用 Python 的<strong>第三方开源库 <a href="https://requests.kennethreitz.org/en/master/" target="_blank" rel="external">Requests</a></strong> 编写自动化脚本，即可轻松解决问题，基本用法可参考：</p>
 <blockquote>
 <p><a href="https://ciphersaw.github.io/2017/12/16/%E8%AF%A6%E8%A7%A3%20CTF%20Web%20%E4%B8%AD%E7%9A%84%E5%BF%AB%E9%80%9F%E5%8F%8D%E5%BC%B9%20POST%20%E8%AF%B7%E6%B1%82/">详解 CTF Web 中的快速反弹 POST 请求</a></p>
 </blockquote>
@@ -455,7 +455,7 @@
 <p>借此机会，讲解一下如何使用 Burp Suite 抓取 Python 发送的网络请求包，相信大家看到请求包后，答案便一目了然。以下是利用代理抓取 POST 请求包的 Python 脚本：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#!/usr/bin/env python3</span></div><div class="line"><span class="comment"># -*- coding: utf-8 -*-</span></div><div class="line"><span class="keyword">import</span> requests</div><div class="line"></div><div class="line">url = <span class="string">"http://2428bbb29ccc4976b0d6d3f5630e3d0a215aedbbe5bf457e.game.ichunqiu.com/"</span></div><div class="line">s = requests.Session()</div><div class="line">whoami = <span class="string">"ea"</span></div><div class="line">payload = &#123;<span class="string">"value[]"</span>: whoami[<span class="number">0</span>], <span class="string">"value[]"</span>: whoami[<span class="number">1</span>]&#125; </div><div class="line">burp = &#123;<span class="string">"http"</span>: <span class="string">"127.0.0.1:8080"</span>&#125;</div><div class="line">response = s.post(url, data = payload, proxies = burp)</div></pre></td></tr></table></figure>
 <ul>
-<li>构造 POST 请求中 <a href="https://2.python-requests.org//en/master/user/advanced/#proxies" target="_blank" rel="external"><code>proxies</code> 代理参数</a>的 <code>dict</code> 类型变量，其中 <code>http</code> 是代理访问 URL 的协议类型，<code>127.0.0.1:8080</code> 是 Burp Suite 的本地监听地址与端口号。</li>
+<li>构造 POST 请求中 <a href="https://requests.kennethreitz.org/en/master/user/advanced/#proxies" target="_blank" rel="external"><code>proxies</code> 代理参数</a>的 <code>dict</code> 类型变量，其中 <code>http</code> 是代理访问 URL 的协议类型，<code>127.0.0.1:8080</code> 是 Burp Suite 的本地监听地址与端口号。</li>
 </ul>
 <p>将 Burp Suite 开启 Intercept 模式，运行上述脚本即可看到：</p>
 <p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_Web_%E7%88%86%E7%A0%B4_3/burp_failure.png" alt="burp_failure"></p>
@@ -483,13 +483,13 @@
 <div class="my_post_copyright">
   <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
   <!-- JS库 sweetalert 可修改路径 -->
-  <script type="text/javascript" src="http://jslibs.wuxubj.cn/sweetalert_mini/jquery-1.7.1.min.js"></script>
-  <script src="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.min.js"></script>
-  <link rel="stylesheet" type="text/css" href="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.mini.css">
+  <script type="text/javascript" src="https://cdn.bootcss.com/jquery/1.7.1/jquery.min.js"></script>
+  <script src="https://cdn.bootcss.com/sweetalert/1.1.0/sweetalert.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://cdn.bootcss.com/sweetalert/1.1.0/sweetalert.min.css">
   <p><span>本文标题:</span><a href="/2018/09/11/【i春秋】 Web —— 爆破-3/">【i春秋】 Web —— 爆破-3</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 Cipher Saw 的个人博客">Cipher Saw</a></p>
   <p><span>发布时间:</span>2018年09月11日 - 23:09</p>
-  <p><span>最后更新:</span>2019年05月02日 - 09:05</p>
+  <p><span>最后更新:</span>2019年11月16日 - 10:11</p>
   <p><span>原始链接:</span><a href="/2018/09/11/【i春秋】 Web —— 爆破-3/" title="【i春秋】 Web —— 爆破-3">https://ciphersaw.github.io/2018/09/11/【i春秋】 Web —— 爆破-3/</a>
     <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://ciphersaw.github.io/2018/09/11/【i春秋】 Web —— 爆破-3/"  aria-label="复制成功！"></i></span>
   </p>

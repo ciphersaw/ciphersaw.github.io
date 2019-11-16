@@ -92,7 +92,7 @@
 <meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/WeChall_Training_WWW_Basics/f12.png">
 <meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/WeChall_Training_WWW_Basics/payload.png">
 <meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/WeChall_Training_WWW_Basics/result.png">
-<meta property="og:updated_time" content="2019-05-02T01:53:52.130Z">
+<meta property="og:updated_time" content="2019-11-16T02:00:31.992Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="【WeChall】 Training：WWW-Basics">
 <meta name="twitter:description" content="0x00 前言本题的思路很明确：搭建一个 Web 服务后，使 WeChall 能够访问特定网页的内容。 但问题来了，WeChall 是向用户登录的 IP 地址发起访问请求。一方面，运营商分配给普通用户的 IP 地址通常是经过多层 NAT 的，所有无法在个人 PC 上搭建 Web 服务，让公网用户访问；另一方面，租借一台 VPS 虽然能拥有公网独立 IP 地址，但服务器的操作系统通常是命令行界面，难">
@@ -454,7 +454,7 @@
 <p>正常情况下，依次执行以下命令，可完成依赖工具的安装：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># Install pip</span></div><div class="line">yum -y install python-pip</div><div class="line"></div><div class="line"><span class="comment"># Upgrade pip</span></div><div class="line">pip install --upgrade pip</div><div class="line"></div><div class="line"><span class="comment"># Install requests</span></div><div class="line">pip install requests</div><div class="line"></div><div class="line"><span class="comment"># Install lrzsz</span></div><div class="line">yum -y install lrzsz</div></pre></td></tr></table></figure>
 <h1 id="0x03-人生苦短，我用-Python"><a href="#0x03-人生苦短，我用-Python" class="headerlink" title="0x03 人生苦短，我用 Python"></a>0x03 人生苦短，我用 Python</h1><p>通过 Python 脚本模拟浏览器访问 WeChall，关键点有两个：一是要<strong>携带用户身份认证信息</strong>，即我们熟知的 Cookie；二是要<strong>携带点击按钮发送的表单数据</strong>。</p>
-<h2 id="编写脚本"><a href="#编写脚本" class="headerlink" title="编写脚本"></a>编写脚本</h2><p>Python 脚本主要是通过 <a href="https://2.python-requests.org/en/master/" target="_blank" rel="external">requests</a> 库向题目链接发送 POST 请求，模拟浏览器中的点击操作，使 WeChall 访问服务器的特定网页。</p>
+<h2 id="编写脚本"><a href="#编写脚本" class="headerlink" title="编写脚本"></a>编写脚本</h2><p>Python 脚本主要是通过 <a href="https://requests.kennethreitz.org/en/master/" target="_blank" rel="external">requests</a> 库向题目链接发送 POST 请求，模拟浏览器中的点击操作，使 WeChall 访问服务器的特定网页。</p>
 <p>注意，由于个人 PC 与 VPS 的 IP 地址不同，因此在 PC 上登录 WeChall 用户时，切勿勾选 <strong>Restrict Session to this IP</strong>，否则 Cookie 与 PC 的 IP 地址绑定，导致在 VPS 上无法正常使用。</p>
 <p>登录后进入题目链接，先按下 <strong>F12</strong> 打开 Chrome 浏览器的开发者工具，再点击页面中的按钮，在 <strong>Network -&gt; Name -&gt; Headers</strong> 中可查看当前用户的 Cookie 与表单数据的内容：</p>
 <p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/WeChall_Training_WWW_Basics/f12.png" alt="f12"></p>
@@ -483,13 +483,13 @@
 <div class="my_post_copyright">
   <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
   <!-- JS库 sweetalert 可修改路径 -->
-  <script type="text/javascript" src="http://jslibs.wuxubj.cn/sweetalert_mini/jquery-1.7.1.min.js"></script>
-  <script src="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.min.js"></script>
-  <link rel="stylesheet" type="text/css" href="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.mini.css">
+  <script type="text/javascript" src="https://cdn.bootcss.com/jquery/1.7.1/jquery.min.js"></script>
+  <script src="https://cdn.bootcss.com/sweetalert/1.1.0/sweetalert.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://cdn.bootcss.com/sweetalert/1.1.0/sweetalert.min.css">
   <p><span>本文标题:</span><a href="/2019/04/30/【WeChall】 Training：WWW-Basics/">【WeChall】 Training：WWW-Basics</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 Cipher Saw 的个人博客">Cipher Saw</a></p>
   <p><span>发布时间:</span>2019年04月30日 - 14:04</p>
-  <p><span>最后更新:</span>2019年05月02日 - 09:05</p>
+  <p><span>最后更新:</span>2019年11月16日 - 10:11</p>
   <p><span>原始链接:</span><a href="/2019/04/30/【WeChall】 Training：WWW-Basics/" title="【WeChall】 Training：WWW-Basics">https://ciphersaw.github.io/2019/04/30/【WeChall】 Training：WWW-Basics/</a>
     <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://ciphersaw.github.io/2019/04/30/【WeChall】 Training：WWW-Basics/"  aria-label="复制成功！"></i></span>
   </p>
