@@ -54,6 +54,10 @@ The original articles in my blog  are classified by index below.
 
 - [玩转 PHP eval() 中的单双引号](https://ciphersaw.github.io/2017/11/16/%E7%8E%A9%E8%BD%AC%20PHP%20eval()%20%E4%B8%AD%E7%9A%84%E5%8D%95%E5%8F%8C%E5%BC%95%E5%8F%B7/)
 
+### Javascript
+
+- [Javascript 判断 IP 地址是否属于 CIDR 范围](https://ciphersaw.github.io/2020/02/16/Javascript%20%E5%88%A4%E6%96%AD%20IP%20%E5%9C%B0%E5%9D%80%E6%98%AF%E5%90%A6%E5%B1%9E%E4%BA%8E%20CIDR%20%E8%8C%83%E5%9B%B4/)
+
 ## Tips
 
 ### Microsoft Word
