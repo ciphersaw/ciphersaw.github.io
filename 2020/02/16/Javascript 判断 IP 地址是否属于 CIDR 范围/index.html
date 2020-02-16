@@ -1,0 +1,1367 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="TGrgd6itNVDcEjPh_ZJU-fc0-4WWeviPJnz7UOzkj-k" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Javascript,ECMAScript,Network,RegEx," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="0x00 前言在项目过程中，曾遇到根据 IP 地址判断 CIDR 网络区域、并且在前端展示的需求。由于 Javascript 没有原生类库能对 IP 地址进行相关操作，因此本文将采用 ES6 的新特性箭头函数，精简地实现此判断功能。">
+<meta name="keywords" content="Javascript,ECMAScript,Network,RegEx">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Javascript 判断 IP 地址是否属于 CIDR 范围">
+<meta property="og:url" content="https://ciphersaw.github.io/2020/02/16/Javascript 判断 IP 地址是否属于 CIDR 范围/index.html">
+<meta property="og:site_name" content="Secrypt Agency">
+<meta property="og:description" content="0x00 前言在项目过程中，曾遇到根据 IP 地址判断 CIDR 网络区域、并且在前端展示的需求。由于 Javascript 没有原生类库能对 IP 地址进行相关操作，因此本文将采用 ES6 的新特性箭头函数，精简地实现此判断功能。">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Javascript_%E5%88%A4%E6%96%AD_IP_%E5%9C%B0%E5%9D%80%E6%98%AF%E5%90%A6%E5%B1%9E%E4%BA%8E_CIDR_%E8%8C%83%E5%9B%B4/cidr_comparison.png">
+<meta property="og:updated_time" content="2020-02-16T13:14:11.041Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Javascript 判断 IP 地址是否属于 CIDR 范围">
+<meta name="twitter:description" content="0x00 前言在项目过程中，曾遇到根据 IP 地址判断 CIDR 网络区域、并且在前端展示的需求。由于 Javascript 没有原生类库能对 IP 地址进行相关操作，因此本文将采用 ES6 的新特性箭头函数，精简地实现此判断功能。">
+<meta name="twitter:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Javascript_%E5%88%A4%E6%96%AD_IP_%E5%9C%B0%E5%9D%80%E6%98%AF%E5%90%A6%E5%B1%9E%E4%BA%8E_CIDR_%E8%8C%83%E5%9B%B4/cidr_comparison.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.2',
+    sidebar: {"position":"right","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://ciphersaw.github.io/2020/02/16/Javascript 判断 IP 地址是否属于 CIDR 范围/"/>
+
+
+
+
+
+  <title>Javascript 判断 IP 地址是否属于 CIDR 范围 | Secrypt Agency</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Secrypt Agency</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Welcome to a platform for network security artists.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-friends">
+          <a href="/friends/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-users"></i> <br />
+            
+            Friends
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="Searching..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://ciphersaw.github.io/2020/02/16/Javascript 判断 IP 地址是否属于 CIDR 范围/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Cipher Saw">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Secrypt Agency">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Javascript 判断 IP 地址是否属于 CIDR 范围</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-02-16T21:07:52+08:00">
+                2020-02-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Programming/" itemprop="url" rel="index">
+                    <span itemprop="name">Programming</span>
+                  </a>
+                </span>
+
+                
+                
+                  , 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Programming/Javascript/" itemprop="url" rel="index">
+                    <span itemprop="name">Javascript</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2020/02/16/Javascript 判断 IP 地址是否属于 CIDR 范围/" class="leancloud_visitors" data-flag-title="Javascript 判断 IP 地址是否属于 CIDR 范围">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">Visitors&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h1><p>在项目过程中，曾遇到<strong>根据 IP 地址判断 CIDR 网络区域、并且在前端展示</strong>的需求。由于 Javascript 没有原生类库能对 IP 地址进行相关操作，因此本文将采用 ES6 的新特性<strong>箭头函数</strong>，精简地实现此判断功能。</p>
+<a id="more"></a>
+<h1 id="0x01-基础概念"><a href="#0x01-基础概念" class="headerlink" title="0x01 基础概念"></a>0x01 基础概念</h1><h2 id="什么是-CIDR？"><a href="#什么是-CIDR？" class="headerlink" title="什么是 CIDR？"></a>什么是 CIDR？</h2><p><strong><a href="https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing" target="_blank" rel="external">CIDR</a>（Classless Inter-Domain Routing，无类别域间路由）</strong>是一种 IP 地址归类方法，主要用于分配 IP 地址与有效地路由 IP 数据包等功能。</p>
+<p>CIDR 的表示方法为 <code>A.B.C.D/N</code>，其中 <code>A.B.C.D</code> 是点分十进制的 IPv4 地址，<code>N</code> 是 0 至 32 之间的整数，代表 CIDR 的前缀长度，两者用斜线 <code>/</code> 分隔。</p>
+<p>若一个 IP 地址的前 <code>N</code> 位与 一个 CIDR 范围的前缀相同，则说明此 IP 地址在此 CIDR 范围中。以 CIDR 范围 <code>10.10.1.32/27</code> 为例，可知 <code>110.10.1.44</code> 属于该 CIDR 范围，而 <code>10.10.1.90</code> 则不属于。</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Javascript_%E5%88%A4%E6%96%AD_IP_%E5%9C%B0%E5%9D%80%E6%98%AF%E5%90%A6%E5%B1%9E%E4%BA%8E_CIDR_%E8%8C%83%E5%9B%B4/cidr_comparison.png" alt="cidr_comparison"></p>
+<h2 id="什么是箭头函数？"><a href="#什么是箭头函数？" class="headerlink" title="什么是箭头函数？"></a>什么是箭头函数？</h2><p><strong><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions" target="_blank" rel="external">箭头函数</a>表达式</strong>是 ECMAScript 6 的新增语法，相比于普通函数表达式，它主要特点是具有更精简的表达语法，以及在函数体内不存在自己的 <code>this</code>、<code>arguments</code>、<code>super</code>、<code>new.target</code> 等变量。</p>
+<p>以下变量 <code>a</code> 与 <code>b</code> 均可定义了一个平方数计算函数，可见 <code>a</code> 比 <code>b</code> 的定义更精简：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> a = <span class="function"><span class="params">x</span> =&gt;</span> x * x;</div><div class="line"></div><div class="line"><span class="comment">// 等同于</span></div><div class="line"><span class="keyword">const</span> b = <span class="function"><span class="keyword">function</span>(<span class="params">x</span>) </span>&#123;</div><div class="line">    <span class="keyword">return</span> x * x;</div><div class="line">&#125;;</div><div class="line"></div><div class="line">a(<span class="number">2</span>); <span class="comment">// 4</span></div><div class="line">b(<span class="number">2</span>); <span class="comment">// 4</span></div></pre></td></tr></table></figure>
+<p>箭头函数的特点及用法，请参考 0x03 中的相关教程，此处不再详解。</p>
+<h1 id="0x02-函数实现"><a href="#0x02-函数实现" class="headerlink" title="0x02 函数实现"></a>0x02 函数实现</h1><h2 id="validateIp4"><a href="#validateIp4" class="headerlink" title="validateIp4"></a>validateIp4</h2><p><code>validateIp4</code> 用于判断 IPv4 地址的合法性。需要满足以下三个要求：</p>
+<ul>
+<li>由三个 <code>.</code> 符号分隔四部分整数</li>
+<li>每部分整数范围是 0 至 255</li>
+<li>每部分整数不能有前导 0</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> validateIp4 = <span class="function"><span class="params">ip</span> =&gt;</span></div><div class="line">	/^((\d|[<span class="number">1</span><span class="number">-9</span>]\d|<span class="number">1</span>\d\d|<span class="number">2</span>([<span class="number">0</span><span class="number">-4</span>]\d|<span class="number">5</span>[<span class="number">0</span><span class="number">-5</span>]))(\.|$))&#123;<span class="number">4</span>&#125;$/.test(ip) ? <span class="literal">true</span> : <span class="literal">false</span>;</div><div class="line"></div><div class="line">validateIp4(<span class="string">"192.168.1.1"</span>) <span class="comment">// true</span></div><div class="line">validateIp4(<span class="string">"192.168.1"</span>) <span class="comment">// false</span></div><div class="line">validateIp4(<span class="string">"192.168.1.1000"</span>) <span class="comment">// false</span></div><div class="line">validateIp4(<span class="string">"192.168.1.01"</span>) <span class="comment">// false</span></div></pre></td></tr></table></figure>
+<p>此函数通过正则表达式实现，其中：</p>
+<ul>
+<li><code>(\d|[1-9]\d|1\d\d|2([0-4]\d|5[0-5]))</code> 限定每部分整数取值只能为 0 至 9、10 至 99、100 至 255</li>
+<li><code>(\.|$)</code> 限定每部分结尾只能是 <code>.</code> 符号或行尾</li>
+</ul>
+<h2 id="validateCidr"><a href="#validateCidr" class="headerlink" title="validateCidr"></a>validateCidr</h2><p><code>validateCidr</code> 用于判断 CIDR 范围的合法性。除了 IPv4 部分需要满足上述三个要求，前缀长度还需满足：</p>
+<ul>
+<li>长度范围是 0 至 32</li>
+<li>长度不能有前导 0</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> validateCidr = <span class="function"><span class="params">cidr</span> =&gt;</span></div><div class="line">	/^((\d|[<span class="number">1</span><span class="number">-9</span>]\d|<span class="number">1</span>\d\d|<span class="number">2</span>([<span class="number">0</span><span class="number">-4</span>]\d|<span class="number">5</span>[<span class="number">0</span><span class="number">-5</span>]))\.)&#123;<span class="number">3</span>&#125;((\d|[<span class="number">1</span><span class="number">-9</span>]\d|<span class="number">1</span>\d\d|<span class="number">2</span>([<span class="number">0</span><span class="number">-4</span>]\d|<span class="number">5</span>[<span class="number">0</span><span class="number">-5</span>]))\/)&#123;<span class="number">1</span>&#125;(\d|[<span class="number">1</span><span class="number">-3</span>]\d)$/.test(cidr) ? <span class="literal">true</span> : <span class="literal">false</span>;</div><div class="line"></div><div class="line">validateCidr(<span class="string">"192.168.1.1/24"</span>) <span class="comment">// true</span></div><div class="line">validateCidr(<span class="string">"192.168.1.1"</span>) <span class="comment">// false</span></div><div class="line">validateCidr(<span class="string">"192.168.1/24"</span>) <span class="comment">// false</span></div><div class="line">validateCidr(<span class="string">"192.168.1.1/48"</span>) <span class="comment">// false</span></div><div class="line">validateCidr(<span class="string">"192.168.1/024"</span>) <span class="comment">// false</span></div></pre></td></tr></table></figure>
+<p>由于 IPv4 地址最后一部分不再匹配行尾，因此正则表达式拆分成两部分：IPv4 地址前三部分末尾匹配 <code>.</code> 符号，最后一部分末尾匹配 <code>/</code> 符号。此外，<code>(\d|[1-3]\d)</code> 限定前缀范围为 0 至 32。</p>
+<h2 id="ip4ToInt"><a href="#ip4ToInt" class="headerlink" title="ip4ToInt"></a>ip4ToInt</h2><p><code>ip4ToInt</code> 用于计算 IPv4 地址每部分整数的移位累加和。可以理解为，在去除 <code>.</code> 符号后，得到从左至右排列的 32 位二进制整数，再将其转换为十进制整数。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> ip4ToInt = <span class="function"><span class="params">ip</span> =&gt;</span></div><div class="line">	ip.split(<span class="string">'.'</span>).reduce(<span class="function">(<span class="params">sum, part</span>) =&gt;</span> (sum &lt;&lt; <span class="number">8</span>) + <span class="built_in">parseInt</span>(part, <span class="number">10</span>), <span class="number">0</span>) &gt;&gt;&gt; <span class="number">0</span>;</div><div class="line"></div><div class="line">ip4ToInt(<span class="string">"192.168.1.1"</span>) <span class="comment">// 3232235777</span></div><div class="line">ip4ToInt(<span class="string">"192.168.1"</span>) <span class="comment">// 12625921</span></div><div class="line">ip4ToInt(<span class="string">"192.168.1.1000"</span>) <span class="comment">// 3232236776</span></div><div class="line">ip4ToInt(<span class="string">"192.168.1.01"</span>) <span class="comment">// 3232235777</span></div></pre></td></tr></table></figure>
+<p>由测试结果可见，函数暂未做 IPv4 地址合法性判断，适用于任何点分数字字符串，其中：</p>
+<ul>
+<li><code>split(&#39;.&#39;)</code> 将 IPv4 地址的每部分取出，例如 <code>&quot;192.168.1.1&quot;.split(&#39;.&#39;)</code> 将得到 <code>[&quot;192&quot;, &quot;168&quot;, &quot;1&quot;, &quot;1&quot;]</code></li>
+<li><code>reduce((sum, part) =&gt; (sum &lt;&lt; 8) + parseInt(part, 10), 0)</code> 将计算每个数组元素的移位累加和，详细用法请参考：<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/Reduce" target="_blank" rel="external">Array.prototype.reduce()</a><ul>
+<li><code>sum</code> 为累加和，作为 <code>reduce</code> 函数的结果返回，初始值设置为 0</li>
+<li><code>part</code> 为每个数组元素，转换为十进制整数后，与左移 8 位后的 <code>sum</code> 相加</li>
+</ul>
+</li>
+<li><code>&gt;&gt;&gt; 0</code> 将计算结果转换为 32 位无符号整数，详细含义请参考：<a href="https://stackoverflow.com/questions/1822350/what-is-the-javascript-operator-and-how-do-you-use-it" target="_blank" rel="external">What is the JavaScript &gt;&gt;&gt; operator and how do you use it?</a></li>
+</ul>
+<h2 id="isIp4InCidr"><a href="#isIp4InCidr" class="headerlink" title="isIp4InCidr"></a>isIp4InCidr</h2><p><code>isIp4InCidr</code> 用于判断 IPv4 地址是否属于 CIDR 范围。函数中嵌套了子函数，<code>isIp4InCidr(ip)</code> 返回一个以 <code>cidr</code> 作为参数的函数，便于后续对多个 CIDR 范围进行判断。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> isIp4InCidr = <span class="function"><span class="params">ip</span> =&gt;</span> cidr =&gt; &#123;</div><div class="line">    <span class="keyword">if</span> (validateIp4(ip) &amp;&amp; validateCidr(cidr)) &#123;</div><div class="line">        <span class="keyword">const</span> [range, bits] = cidr.split(<span class="string">'/'</span>);</div><div class="line">        <span class="keyword">const</span> mask = ~(<span class="number">2</span> ** (<span class="number">32</span> - bits) - <span class="number">1</span>);</div><div class="line">        <span class="keyword">return</span> (ip4ToInt(ip) &amp; mask) === (ip4ToInt(range) &amp; mask);</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        <span class="keyword">return</span> <span class="literal">false</span></div><div class="line">    &#125;</div><div class="line">&#125;;</div><div class="line"></div><div class="line">isIp4InCidr(<span class="string">"192.168.1.1"</span>)(<span class="string">"192.168.1.1/24"</span>) <span class="comment">// true</span></div><div class="line">isIp4InCidr(<span class="string">"192.168.1.1"</span>)(<span class="string">"192.168.1.1/48"</span>) <span class="comment">// false</span></div><div class="line">isIp4InCidr(<span class="string">"192.168.1"</span>)(<span class="string">"192.168.1.1/24"</span>) <span class="comment">// false</span></div></pre></td></tr></table></figure>
+<p>若 IPv4 地址与 CIDR 范围均合法，则继续进行判断，否则返回 <code>false</code>，其中：</p>
+<ul>
+<li><code>[range, bits] = cidr.split(&#39;/&#39;)</code> 使用了 ES6 的新特性<a href="http://es6.ruanyifeng.com/#docs/destructuring" target="_blank" rel="external">解构赋值</a>，<code>range</code> 为 CIDR 范围的 IPv4 部分，<code>bits</code> 为前缀长度部分</li>
+<li><code>mask = ~(2 ** (32 - bits) - 1)</code> 根据前缀长度计算掩码，掩码的前 <code>bits</code> 位为 <code>1</code>，后 <code>32 - bits</code> 位为 <code>0</code></li>
+<li>若 <code>ip</code> 与 <code>range</code> 的前 <code>bits</code> 位相同，则返回 <code>true</code>，否则返回 <code>false</code></li>
+</ul>
+<h2 id="isIp4InCidrs"><a href="#isIp4InCidrs" class="headerlink" title="isIp4InCidrs"></a>isIp4InCidrs</h2><p><code>isIp4InCidrs</code> 用于判断 IPv4 地址是否属于 CIDR 数组内的其中一个范围。函数基于 <code>isIp4InCidr</code>  实现。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> isIp4InCidrs = <span class="function">(<span class="params">ip, cidrs</span>) =&gt;</span> cidrs.some(isIp4InCidr(ip));</div><div class="line"></div><div class="line">isIp4InCidrs(<span class="string">'192.168.10.1'</span>, [<span class="string">'10.10.0.0/16'</span>, <span class="string">'192.168.1.1/24'</span>]); <span class="comment">// false</span></div><div class="line">isIp4InCidrs(<span class="string">'192.168.10.1'</span>, [<span class="string">'10.10.0.0/16'</span>, <span class="string">'192.168.1.1/16'</span>]); <span class="comment">// true</span></div><div class="line">isIp4InCidrs(<span class="string">'10.10.10.10'</span>, [<span class="string">'10.10.0.0/48'</span>, <span class="string">'10.10.0.0/16'</span>]); <span class="comment">// true</span></div></pre></td></tr></table></figure>
+<p>若 IPv4 地址属于CIDR 数组内的其中一个范围，则返回 <code>true</code>，结束判断，否则返回 <code>false</code>，其中：</p>
+<ul>
+<li><code>some(isIp4InCidr(ip))</code> 将判断 CIDR 数组中，是否至少有一个元素满足 <code>isIp4InCidr(ip)</code> 为真，即 IPv4 地址属于某个 CIDR 范围，详细用法请参考：<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/Some" target="_blank" rel="external">Array.prototype.some()</a></li>
+</ul>
+<h1 id="0x03-小结"><a href="#0x03-小结" class="headerlink" title="0x03 小结"></a>0x03 小结</h1><p>本文主要是利用 ECMAScript 6 的新特性与 Array 对象的方法，精简地实现了 IPv4 地址是否属于某个 CIDR 范围的判断功能，文中不足或错误之处，恳请读者告知。</p>
+<p>对功能实现与箭头函数有疑惑的读者，可参考以下文章：</p>
+<p><a href="https://tech.mybuilder.com/determining-if-an-ipv4-address-is-within-a-cidr-range-in-javascript/" target="_blank" rel="external">Determining if an IPv4 address is within a CIDR range in JavaScript</a><br><a href="https://hacks.mozilla.org/2015/06/es6-in-depth-arrow-functions/" target="_blank" rel="external">ES6 In Depth: Arrow functions</a><br><a href="http://es6.ruanyifeng.com/#docs/function" target="_blank" rel="external">ECMAScript 6 入门教程——函数的扩展</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script type="text/javascript" src="https://cdn.bootcss.com/jquery/1.7.1/jquery.min.js"></script>
+  <script src="https://cdn.bootcss.com/sweetalert/1.1.0/sweetalert.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://cdn.bootcss.com/sweetalert/1.1.0/sweetalert.min.css">
+  <p><span>本文标题:</span><a href="/2020/02/16/Javascript 判断 IP 地址是否属于 CIDR 范围/">Javascript 判断 IP 地址是否属于 CIDR 范围</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 Cipher Saw 的个人博客">Cipher Saw</a></p>
+  <p><span>发布时间:</span>2020年02月16日 - 21:02</p>
+  <p><span>最后更新:</span>2020年02月16日 - 21:02</p>
+  <p><span>原始链接:</span><a href="/2020/02/16/Javascript 判断 IP 地址是否属于 CIDR 范围/" title="Javascript 判断 IP 地址是否属于 CIDR 范围">https://ciphersaw.github.io/2020/02/16/Javascript 判断 IP 地址是否属于 CIDR 范围/</a>
+    <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://ciphersaw.github.io/2020/02/16/Javascript 判断 IP 地址是否属于 CIDR 范围/"  aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">署名-非商业性使用-禁止演绎 4.0 国际</a> </p>  
+  <p>转载请保留原文链接及作者，谢谢！</p>
+</div>
+<script> 
+    var clipboard = new Clipboard('.fa-clipboard');
+    clipboard.on('success', $(function(){
+      $(".fa-clipboard").click(function(){
+        swal({   
+          title: "",   
+          text: '复制成功',   
+          html: false,
+          timer: 500,   
+          showConfirmButton: false
+        });
+      });
+    }));  
+</script>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Javascript/" rel="tag"># Javascript</a>
+          
+            <a href="/tags/ECMAScript/" rel="tag"># ECMAScript</a>
+          
+            <a href="/tags/Network/" rel="tag"># Network</a>
+          
+            <a href="/tags/RegEx/" rel="tag"># RegEx</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/09/22/奇安信「实战攻防三部曲」要点总结/" rel="next" title="奇安信「实战攻防三部曲」要点总结">
+                <i class="fa fa-chevron-left"></i> 奇安信「实战攻防三部曲」要点总结
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zMjUyNS85MDg2"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          
+            <img class="site-author-image" itemprop="image"
+              src="/images/avatar.jpg"
+              alt="Cipher Saw" />
+          
+            <p class="site-author-name" itemprop="name">Cipher Saw</p>
+            <p class="site-description motion-element" itemprop="description">Not to be whom you don't want to be.</p>
+        </div>
+
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">24</span>
+                <span class="site-state-item-name">posts</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">categories</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">58</span>
+                <span class="site-state-item-name">tags</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/ciphersaw" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>GitHub</a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/CipherSaw" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>Twitter</a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-block">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              Links
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://ctf-wiki.github.io/ctf-wiki/" title="CTF Wiki" target="_blank">CTF Wiki</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://www.owasp.org/index.php/Main_Page" title="OWASP" target="_blank">OWASP</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.pentest-standard.org/index.php/Main_Page" title="Pentest Standard" target="_blank">Pentest Standard</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#0x00-前言"><span class="nav-text">0x00 前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x01-基础概念"><span class="nav-text">0x01 基础概念</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是-CIDR？"><span class="nav-text">什么是 CIDR？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是箭头函数？"><span class="nav-text">什么是箭头函数？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x02-函数实现"><span class="nav-text">0x02 函数实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#validateIp4"><span class="nav-text">validateIp4</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#validateCidr"><span class="nav-text">validateCidr</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ip4ToInt"><span class="nav-text">ip4ToInt</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#isIp4InCidr"><span class="nav-text">isIp4InCidr</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#isIp4InCidrs"><span class="nav-text">isIp4InCidrs</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x03-小结"><span class="nav-text">0x03 小结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-space-shuttle"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Cipher Saw</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" href="https://hexo.io">Hexo</a></div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.2</div>
+
+
+        
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=63761272";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+  
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("KWe6NtO4vhgQR3IfB99JElre-gzGzoHsz", "7nrrRDyHHUMcx03upUALYKIQ");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+  <script type="text/javascript" src="https://tajs.qq.com/stats?sId=63761272" charset="UTF-8"></script>
+</body>
+</html>
