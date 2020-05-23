@@ -63,3 +63,7 @@ The original articles in my blog  are classified by index below.
 ### Microsoft Word
 
 - [Microsoft Word 2013 公式自动编号与交叉引用](https://ciphersaw.github.io/2019/01/30/Microsoft%20Word%202013%20%E5%85%AC%E5%BC%8F%E8%87%AA%E5%8A%A8%E7%BC%96%E5%8F%B7%E4%B8%8E%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8/)
+
+### Career
+
+- [萌新开发接手大佬项目初体验](https://ciphersaw.github.io/2020/05/23/%E8%90%8C%E6%96%B0%E5%BC%80%E5%8F%91%E6%8E%A5%E6%89%8B%E5%A4%A7%E4%BD%AC%E9%A1%B9%E7%9B%AE%E5%88%9D%E4%BD%93%E9%AA%8C/)
