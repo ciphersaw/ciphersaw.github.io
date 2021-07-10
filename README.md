@@ -67,3 +67,7 @@ The original articles in my blog  are classified by index below.
 ### Career
 
 - [萌新开发接手大佬项目初体验](https://ciphersaw.github.io/2020/05/23/%E8%90%8C%E6%96%B0%E5%BC%80%E5%8F%91%E6%8E%A5%E6%89%8B%E5%A4%A7%E4%BD%AC%E9%A1%B9%E7%9B%AE%E5%88%9D%E4%BD%93%E9%AA%8C/)
+
+### VMware
+
+- [VMware 导入 ovf 文件格式异常报错之探解](https://ciphersaw.github.io/2021/07/10/VMware%20%E5%AF%BC%E5%85%A5%20ovf%20%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%E5%BC%82%E5%B8%B8%E6%8A%A5%E9%94%99%E4%B9%8B%E6%8E%A2%E8%A7%A3/)

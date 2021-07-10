@@ -1,0 +1,404 @@
+---
+title: VMware 导入 ovf 文件格式异常报错之探解
+copyright: true
+date: 2021-07-10 12:25:40
+tags: [VM,VMware,Solution]
+categories: [Tips,VMware]
+---
+
+# 0x00 前言
+
+近日，从 [Vulnhub](https://www.vulnhub.com/) 下载了一个靶机镜像 [Stapler](https://www.vulnhub.com/entry/stapler-1,150/) 作为练习，以巩固攻防实战技巧。谁知，开始之初便受阻，导入镜像所遇问题颇多，特此记录其探解过程，以备待查。
+
+<!-- more -->
+
+本文操作环境为 Windows 10 操作系统与 VMware Workstation 15 Pro 虚拟机，其中 VMware OVF Tool 版本为 4.3.0。
+
+# 0x01 vmdk 导入受阻
+
+将 Stapler 靶机镜像压缩包下载至本地后，发现其 Stapler 目录下包含三个文件：`Stapler-disk1.vmdk`、`Stapler.ovf` 与 `Stapler.mf`：
+
+![stapler_zip_download](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/VMware_%E5%AF%BC%E5%85%A5_ovf_%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%E5%BC%82%E5%B8%B8%E6%8A%A5%E9%94%99%E4%B9%8B%E6%8E%A2%E8%A7%A3/stapler_zip_download.png)
+
+其压缩包的 MD5 与官网上的一致，确认文件完整性无误：
+
+![stapler_zip_file_info](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/VMware_%E5%AF%BC%E5%85%A5_ovf_%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%E5%BC%82%E5%B8%B8%E6%8A%A5%E9%94%99%E4%B9%8B%E6%8E%A2%E8%A7%A3/stapler_zip_file_info.png)
+
+上述三个文件的含义及用途如下：
+
+- `.vmdk`：[虚拟机硬盘格式（Virtual Machine Disk Format）](https://en.wikipedia.org/wiki/VMDK)，用于存储所有用户数据与虚拟服务器配置，即虚拟机磁盘镜像。
+- `.ovf`：[开放虚拟化格式（Open Virtualization Format）](https://en.wikipedia.org/wiki/Open_Virtualization_Format)，用于实现虚拟机在不同的虚拟化平台之间的转移，为业界提供了一种针对虚拟机打包和发布的开放标准，是一个包含了虚拟机元数据（虚拟机名称、硬件配置、镜像引用等）的 XML 文件。
+- `.mf`：[清单文件（Manifest File）](https://en.wikipedia.org/wiki/Manifest_file)，用于记录包内其他文件的 SHA-1 散列值，以校验其完整性。
+
+相关文件的完整释义见下图，并可参考：[Open Virtualization Format (OVF and OVA)](https://docs.citrix.com/en-us/xencenter/7-1/vms-exportimport-ovf.html)
+
+![ovf_files](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/VMware_%E5%AF%BC%E5%85%A5_ovf_%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%E5%BC%82%E5%B8%B8%E6%8A%A5%E9%94%99%E4%B9%8B%E6%8E%A2%E8%A7%A3/ovf_files.png)
+
+## 通过打开 ovf 导入 vmdk
+
+首先，采用常规方式，通过 VMware 打开 ovf 文件来导入 vmdk。依次点击 VMware 左上角的 **文件 -> 打开**，选中解压目录下的 `Stapler.ovf` 文件：
+
+![open_ovf](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/VMware_%E5%AF%BC%E5%85%A5_ovf_%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%E5%BC%82%E5%B8%B8%E6%8A%A5%E9%94%99%E4%B9%8B%E6%8E%A2%E8%A7%A3/open_ovf.png)
+
+接着点击 **打开**，发现 VMware 弹出以下报错：
+
+![open_ovf_error](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/VMware_%E5%AF%BC%E5%85%A5_ovf_%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%E5%BC%82%E5%B8%B8%E6%8A%A5%E9%94%99%E4%B9%8B%E6%8E%A2%E8%A7%A3/open_ovf_error.png)
+
+大意为不支持 `Caption` 元素、缺少 `ElementName` 子元素等。
+
+## 通过新建虚拟机导入 vmdk
+
+既然常规方法受阻，则需另辟蹊径，直接通过新建虚拟机来导入 vmdk。
+
+由于导入方法步骤繁多，此处不展开说明，具体请参考：[VMware通过vmdk文件创建虚拟机](https://jingyan.baidu.com/article/9113f81b2796852b3214c705.html)
+
+虽然 vmdk 导入成功，但虚拟机却启动失败。点击 **开启此虚拟机**，只见终端出现 ``error: failure writing sector 0xec800 to `hd0'.`` 报错：
+
+![failure_writing_sector](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/VMware_%E5%AF%BC%E5%85%A5_ovf_%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%E5%BC%82%E5%B8%B8%E6%8A%A5%E9%94%99%E4%B9%8B%E6%8E%A2%E8%A7%A3/failure_writing_sector.png)
+
+按下任意键继续执行，发现 Apache、PHP、MySQL 等模块启动失败，迟迟无法加载进入登录界面：
+
+![services_start_error](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/VMware_%E5%AF%BC%E5%85%A5_ovf_%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%E5%BC%82%E5%B8%B8%E6%8A%A5%E9%94%99%E4%B9%8B%E6%8E%A2%E8%A7%A3/services_start_error.png)
+
+# 0x02 ovf 探而复之
+
+镜像导入失败，本人略显无奈。还好，功夫不负有心人，终于找到一种解法，能够通过打开 ovf 导入 vmdk。
+
+## 探求误因
+
+经探究，在 [Converting OVF file using ovftool from VirtualBox produces error "Line 39: Unsupported element 'Caption'" and many more errors](https://communities.vmware.com/t5/Open-Virtualization-Format-Tool/Converting-OVF-file-using-ovftool-from-VirtualBox-produces-error/td-p/1179450) 帖子中遇到类似问题，其中一条评论提到，需要调整 ovf 文件中 `<Item>` 子元素的顺序：
+
+![ovf_solution_1](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/VMware_%E5%AF%BC%E5%85%A5_ovf_%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%E5%BC%82%E5%B8%B8%E6%8A%A5%E9%94%99%E4%B9%8B%E6%8E%A2%E8%A7%A3/ovf_solution_1.png)
+
+类似地，在 [Issues with OVF Template](https://communities.vmware.com/t5/Open-Virtualization-Format-Tool/Issues-with-OVF-Template/td-p/2606134) 帖子中同样有人提到，RASD 元素字段必须以字母顺序排列：
+
+![ovf-solution_2](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/VMware_%E5%AF%BC%E5%85%A5_ovf_%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%E5%BC%82%E5%B8%B8%E6%8A%A5%E9%94%99%E4%B9%8B%E6%8E%A2%E8%A7%A3/ovf-solution_2.png)
+
+根据以上线索，查找 ovf 文件格式的相关标准，终于在 [Open Virtualization Format Specification (DSP0243_2.1.0)](https://www.dmtf.org/sites/default/files/standards/documents/DSP0243_2.1.0.pdf) 文档中的第 8 章找到解释说明，图中 CIM 类的 XML 元素应该按照 Unicode 码位顺序排列：
+
+![dps0243_order_note](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/VMware_%E5%AF%BC%E5%85%A5_ovf_%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%E5%BC%82%E5%B8%B8%E6%8A%A5%E9%94%99%E4%B9%8B%E6%8E%A2%E8%A7%A3/dps0243_order_note.png)
+
+并给出了参考样例：
+
+![dps0243_order_example](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/VMware_%E5%AF%BC%E5%85%A5_ovf_%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%E5%BC%82%E5%B8%B8%E6%8A%A5%E9%94%99%E4%B9%8B%E6%8E%A2%E8%A7%A3/dps0243_order_example.png)
+
+## 修复验证
+
+查看 `Stapler.ovf` 文件，确实发现在 `<Envelope>` 元素中引入了 `CIM_ResourceAllocationSettingData` 类的命名空间，并且 `<Item>` 子元素默认为乱序排列：
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Generated by VMware ovftool 4.1.0 (build-3018522), UTC time: 2016-06-07T10:02:55.518806Z-->
+<Envelope vmw:buildId="build-3018522" xmlns="http://schemas.dmtf.org/ovf/envelope/1" xmlns:cim="http://schemas.dmtf.org/wbem/wscim/1/common" xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1" xmlns:rasd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" xmlns:vmw="http://www.vmware.com/schema/ovf" xmlns:vssd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <References>
+    <File ovf:href="Stapler-disk1.vmdk" ovf:id="file1" ovf:size="757926912"/>
+  </References>
+  <DiskSection>
+    <Info>Virtual disk information</Info>
+    <Disk ovf:capacity="20" ovf:capacityAllocationUnits="byte * 2^30" ovf:diskId="vmdisk1" ovf:fileRef="file1" ovf:format="http://www.vmware.com/interfaces/specifications/vmdk.html#streamOptimized" ovf:populatedSize="2212560896"/>
+  </DiskSection>
+  <NetworkSection>
+    <Info>The list of logical networks</Info>
+    <Network ovf:name="hostonly">
+      <Description>The hostonly network</Description>
+    </Network>
+  </NetworkSection>
+  <VirtualSystem ovf:id="vm">
+    <Info>A virtual machine</Info>
+    <Name>Stapler</Name>
+    <OperatingSystemSection ovf:id="93" vmw:osType="ubuntuGuest">
+      <Info>The kind of installed guest operating system</Info>
+    </OperatingSystemSection>
+    <VirtualHardwareSection>
+      <Info>Virtual hardware requirements</Info>
+      <System>
+        <vssd:Caption>Virtual Hardware Family</vssd:Caption>
+        <vssd:InstanceID>0</vssd:InstanceID>
+        <vssd:VirtualSystemIdentifier>Stapler</vssd:VirtualSystemIdentifier>
+        <vssd:VirtualSystemType>vmx-11</vssd:VirtualSystemType>
+      </System>
+      <Item>
+        <rasd:AllocationUnits>hertz * 10^6</rasd:AllocationUnits>
+        <rasd:Description>Number of Virtual CPUs</rasd:Description>
+        <rasd:Caption>1 virtual CPU(s)</rasd:Caption>
+        <rasd:InstanceID>1</rasd:InstanceID>
+        <rasd:ResourceType>3</rasd:ResourceType>
+        <rasd:VirtualQuantity>1</rasd:VirtualQuantity>
+      </Item>
+      <Item>
+        <rasd:AllocationUnits>byte * 2^20</rasd:AllocationUnits>
+        <rasd:Description>Memory Size</rasd:Description>
+        <rasd:Caption>1024MB of memory</rasd:Caption>
+        <rasd:InstanceID>2</rasd:InstanceID>
+        <rasd:ResourceType>4</rasd:ResourceType>
+        <rasd:VirtualQuantity>1024</rasd:VirtualQuantity>
+      </Item>
+      <Item>
+        <rasd:Address>0</rasd:Address>
+        <rasd:Description>SATA Controller</rasd:Description>
+        <rasd:Caption>sataController0</rasd:Caption>
+        <rasd:InstanceID>3</rasd:InstanceID>
+        <rasd:ResourceSubType>AHCI</rasd:ResourceSubType>
+        <rasd:ResourceType>20</rasd:ResourceType>
+      </Item>
+      <Item ovf:required="false">
+        <rasd:Address>0</rasd:Address>
+        <rasd:Description>USB Controller (EHCI)</rasd:Description>
+        <rasd:Caption>usb</rasd:Caption>
+        <rasd:InstanceID>4</rasd:InstanceID>
+        <rasd:ResourceSubType>vmware.usb.ehci</rasd:ResourceSubType>
+        <rasd:ResourceType>23</rasd:ResourceType>
+        <vmw:Config ovf:required="false" vmw:key="ehciEnabled" vmw:value="true"/>
+      </Item>
+      <Item>
+        <rasd:Address>0</rasd:Address>
+        <rasd:Description>SCSI Controller</rasd:Description>
+        <rasd:Caption>scsiController0</rasd:Caption>
+        <rasd:InstanceID>5</rasd:InstanceID>
+        <rasd:ResourceSubType>lsilogic</rasd:ResourceSubType>
+        <rasd:ResourceType>6</rasd:ResourceType>
+      </Item>
+      <Item>
+        <rasd:AddressOnParent>2</rasd:AddressOnParent>
+        <rasd:AutomaticAllocation>true</rasd:AutomaticAllocation>
+        <rasd:Connection>hostonly</rasd:Connection>
+        <rasd:Description>PCNet32 ethernet adapter on &quot;hostonly&quot;</rasd:Description>
+        <rasd:Caption>ethernet0</rasd:Caption>
+        <rasd:InstanceID>6</rasd:InstanceID>
+        <rasd:ResourceSubType>PCNet32</rasd:ResourceSubType>
+        <rasd:ResourceType>10</rasd:ResourceType>
+        <vmw:Config ovf:required="false" vmw:key="slotInfo.pciSlotNumber" vmw:value="33"/>
+        <vmw:Config ovf:required="false" vmw:key="wakeOnLanEnabled" vmw:value="false"/>
+      </Item>
+      <Item ovf:required="false">
+        <rasd:AutomaticAllocation>false</rasd:AutomaticAllocation>
+        <rasd:Caption>video</rasd:Caption>
+        <rasd:InstanceID>7</rasd:InstanceID>
+        <rasd:ResourceType>24</rasd:ResourceType>
+        <vmw:Config ovf:required="false" vmw:key="enable3DSupport" vmw:value="false"/>
+        <vmw:Config ovf:required="false" vmw:key="slotInfo.pciSlotNumber" vmw:value="33"/>
+      </Item>
+      <Item ovf:required="false">
+        <rasd:AutomaticAllocation>false</rasd:AutomaticAllocation>
+        <rasd:Caption>vmci</rasd:Caption>
+        <rasd:InstanceID>8</rasd:InstanceID>
+        <rasd:ResourceSubType>vmware.vmci</rasd:ResourceSubType>
+        <rasd:ResourceType>1</rasd:ResourceType>
+        <vmw:Config ovf:required="false" vmw:key="slotInfo.pciSlotNumber" vmw:value="33"/>
+      </Item>
+      <Item>
+        <rasd:AddressOnParent>0</rasd:AddressOnParent>
+        <rasd:Caption>disk0</rasd:Caption>
+        <rasd:HostResource>ovf:/disk/vmdisk1</rasd:HostResource>
+        <rasd:InstanceID>9</rasd:InstanceID>
+        <rasd:Parent>3</rasd:Parent>
+        <rasd:ResourceType>17</rasd:ResourceType>
+        <vmw:Config ovf:required="false" vmw:key="slotInfo.pciSlotNumber" vmw:value="33"/>
+      </Item>
+      <Item ovf:required="false">
+        <rasd:AddressOnParent>1</rasd:AddressOnParent>
+        <rasd:AutomaticAllocation>false</rasd:AutomaticAllocation>
+        <rasd:Caption>cdrom0</rasd:Caption>
+        <rasd:InstanceID>10</rasd:InstanceID>
+        <rasd:Parent>3</rasd:Parent>
+        <rasd:ResourceType>15</rasd:ResourceType>
+        <vmw:Config ovf:required="false" vmw:key="slotInfo.pciSlotNumber" vmw:value="33"/>
+      </Item>
+      <vmw:Config ovf:required="false" vmw:key="cpuHotAddEnabled" vmw:value="true"/>
+      <vmw:Config ovf:required="false" vmw:key="memoryHotAddEnabled" vmw:value="true"/>
+      <vmw:Config ovf:required="false" vmw:key="powerOpInfo.powerOffType" vmw:value="soft"/>
+      <vmw:Config ovf:required="false" vmw:key="powerOpInfo.resetType" vmw:value="soft"/>
+      <vmw:Config ovf:required="false" vmw:key="powerOpInfo.suspendType" vmw:value="soft"/>
+      <vmw:Config ovf:required="false" vmw:key="tools.afterPowerOn" vmw:value="true"/>
+      <vmw:Config ovf:required="false" vmw:key="tools.afterResume" vmw:value="true"/>
+      <vmw:Config ovf:required="false" vmw:key="tools.beforeGuestShutdown" vmw:value="true"/>
+      <vmw:Config ovf:required="false" vmw:key="tools.beforeGuestStandby" vmw:value="true"/>
+      <vmw:Config ovf:required="false" vmw:key="tools.syncTimeWithHost" vmw:value="true"/>
+      <vmw:Config ovf:required="false" vmw:key="tools.toolsUpgradePolicy" vmw:value="upgradeAtPowerCycle"/>
+    </VirtualHardwareSection>
+    <AnnotationSection ovf:required="false">
+      <Info>A human-readable annotation</Info>
+      <Annotation>--[[~~Enjoy. Have fun. Happy Hacking.~~]]--
+
++ There are multiple methods to-do this machine: At least
+-- Two (2) paths to get a limited shell
+-- At least three (3) ways to get a root access</Annotation>
+    </AnnotationSection>
+  </VirtualSystem>
+</Envelope>
+```
+
+按标准规则调整后，将 `Stapler.ovf` 文件恢复为正确格式：
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Generated by VMware ovftool 4.1.0 (build-3018522), UTC time: 2016-06-07T10:02:55.518806Z-->
+<Envelope vmw:buildId="build-3018522" xmlns="http://schemas.dmtf.org/ovf/envelope/1" xmlns:cim="http://schemas.dmtf.org/wbem/wscim/1/common" xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1" xmlns:rasd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" xmlns:vmw="http://www.vmware.com/schema/ovf" xmlns:vssd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <References>
+    <File ovf:href="Stapler-disk1.vmdk" ovf:id="file1" ovf:size="757926912"/>
+  </References>
+  <DiskSection>
+    <Info>Virtual disk information</Info>
+    <Disk ovf:capacity="20" ovf:capacityAllocationUnits="byte * 2^30" ovf:diskId="vmdisk1" ovf:fileRef="file1" ovf:format="http://www.vmware.com/interfaces/specifications/vmdk.html#streamOptimized" ovf:populatedSize="2212560896"/>
+  </DiskSection>
+  <NetworkSection>
+    <Info>The list of logical networks</Info>
+    <Network ovf:name="hostonly">
+      <Description>The hostonly network</Description>
+    </Network>
+  </NetworkSection>
+  <VirtualSystem ovf:id="vm">
+    <Info>A virtual machine</Info>
+    <Name>Stapler</Name>
+    <OperatingSystemSection ovf:id="93" vmw:osType="ubuntuGuest">
+      <Info>The kind of installed guest operating system</Info>
+    </OperatingSystemSection>
+    <VirtualHardwareSection>
+      <Info>Virtual hardware requirements</Info>
+      <System>
+        <vssd:Caption>Virtual Hardware Family</vssd:Caption>
+        <vssd:InstanceID>0</vssd:InstanceID>
+        <vssd:VirtualSystemIdentifier>Stapler</vssd:VirtualSystemIdentifier>
+        <vssd:VirtualSystemType>vmx-15</vssd:VirtualSystemType>
+      </System>
+      <Item>
+        <rasd:AllocationUnits>hertz * 10^6</rasd:AllocationUnits>
+        <rasd:Caption>1 virtual CPU(s)</rasd:Caption>
+        <rasd:Description>Number of Virtual CPUs</rasd:Description>
+        <rasd:InstanceID>1</rasd:InstanceID>
+        <rasd:ResourceType>3</rasd:ResourceType>
+        <rasd:VirtualQuantity>1</rasd:VirtualQuantity>
+      </Item>
+      <Item>
+        <rasd:AllocationUnits>byte * 2^20</rasd:AllocationUnits>
+        <rasd:Caption>1024MB of memory</rasd:Caption>
+        <rasd:Description>Memory Size</rasd:Description>
+        <rasd:InstanceID>2</rasd:InstanceID>
+        <rasd:ResourceType>4</rasd:ResourceType>
+        <rasd:VirtualQuantity>1024</rasd:VirtualQuantity>
+      </Item>
+      <Item>
+        <rasd:Address>0</rasd:Address>
+        <rasd:Caption>sataController0</rasd:Caption>
+        <rasd:Description>SATA Controller</rasd:Description>
+        <rasd:InstanceID>3</rasd:InstanceID>
+        <rasd:ResourceSubType>AHCI</rasd:ResourceSubType>
+        <rasd:ResourceType>20</rasd:ResourceType>
+      </Item>
+      <Item ovf:required="false">
+        <rasd:Address>0</rasd:Address>
+        <rasd:Caption>usb</rasd:Caption>
+        <rasd:Description>USB Controller (EHCI)</rasd:Description>
+        <rasd:InstanceID>4</rasd:InstanceID>
+        <rasd:ResourceSubType>vmware.usb.ehci</rasd:ResourceSubType>
+        <rasd:ResourceType>23</rasd:ResourceType>
+        <vmw:Config ovf:required="false" vmw:key="ehciEnabled" vmw:value="true"/>
+      </Item>
+      <Item>
+        <rasd:Address>0</rasd:Address>
+        <rasd:Caption>scsiController0</rasd:Caption>
+        <rasd:Description>SCSI Controller</rasd:Description>
+        <rasd:InstanceID>5</rasd:InstanceID>
+        <rasd:ResourceSubType>lsilogic</rasd:ResourceSubType>
+        <rasd:ResourceType>6</rasd:ResourceType>
+      </Item>
+      <Item>
+        <rasd:AddressOnParent>2</rasd:AddressOnParent>
+        <rasd:AutomaticAllocation>true</rasd:AutomaticAllocation>
+        <rasd:Caption>ethernet0</rasd:Caption>
+        <rasd:Connection>hostonly</rasd:Connection>
+        <rasd:Description>PCNet32 ethernet adapter on &quot;hostonly&quot;</rasd:Description>
+        <rasd:InstanceID>6</rasd:InstanceID>
+        <rasd:ResourceSubType>PCNet32</rasd:ResourceSubType>
+        <rasd:ResourceType>10</rasd:ResourceType>
+        <vmw:Config ovf:required="false" vmw:key="slotInfo.pciSlotNumber" vmw:value="33"/>
+        <vmw:Config ovf:required="false" vmw:key="wakeOnLanEnabled" vmw:value="false"/>
+      </Item>
+      <Item ovf:required="false">
+        <rasd:AutomaticAllocation>false</rasd:AutomaticAllocation>
+        <rasd:Caption>video</rasd:Caption>
+        <rasd:InstanceID>7</rasd:InstanceID>
+        <rasd:ResourceType>24</rasd:ResourceType>
+        <vmw:Config ovf:required="false" vmw:key="enable3DSupport" vmw:value="false"/>
+        <vmw:Config ovf:required="false" vmw:key="slotInfo.pciSlotNumber" vmw:value="33"/>
+      </Item>
+      <Item ovf:required="false">
+        <rasd:AutomaticAllocation>false</rasd:AutomaticAllocation>
+        <rasd:Caption>vmci</rasd:Caption>
+        <rasd:InstanceID>8</rasd:InstanceID>
+        <rasd:ResourceSubType>vmware.vmci</rasd:ResourceSubType>
+        <rasd:ResourceType>1</rasd:ResourceType>
+        <vmw:Config ovf:required="false" vmw:key="slotInfo.pciSlotNumber" vmw:value="33"/>
+      </Item>
+      <Item>
+        <rasd:AddressOnParent>0</rasd:AddressOnParent>
+        <rasd:Caption>disk0</rasd:Caption>
+        <rasd:HostResource>ovf:/disk/vmdisk1</rasd:HostResource>
+        <rasd:InstanceID>9</rasd:InstanceID>
+        <rasd:Parent>3</rasd:Parent>
+        <rasd:ResourceType>17</rasd:ResourceType>
+        <vmw:Config ovf:required="false" vmw:key="slotInfo.pciSlotNumber" vmw:value="33"/>
+      </Item>
+      <Item ovf:required="false">
+        <rasd:AddressOnParent>1</rasd:AddressOnParent>
+        <rasd:AutomaticAllocation>false</rasd:AutomaticAllocation>
+        <rasd:Caption>cdrom0</rasd:Caption>
+        <rasd:InstanceID>10</rasd:InstanceID>
+        <rasd:Parent>3</rasd:Parent>
+        <rasd:ResourceType>15</rasd:ResourceType>
+        <vmw:Config ovf:required="false" vmw:key="slotInfo.pciSlotNumber" vmw:value="33"/>
+      </Item>
+      <vmw:Config ovf:required="false" vmw:key="cpuHotAddEnabled" vmw:value="true"/>
+      <vmw:Config ovf:required="false" vmw:key="memoryHotAddEnabled" vmw:value="true"/>
+      <vmw:Config ovf:required="false" vmw:key="powerOpInfo.powerOffType" vmw:value="soft"/>
+      <vmw:Config ovf:required="false" vmw:key="powerOpInfo.resetType" vmw:value="soft"/>
+      <vmw:Config ovf:required="false" vmw:key="powerOpInfo.suspendType" vmw:value="soft"/>
+      <vmw:Config ovf:required="false" vmw:key="tools.afterPowerOn" vmw:value="true"/>
+      <vmw:Config ovf:required="false" vmw:key="tools.afterResume" vmw:value="true"/>
+      <vmw:Config ovf:required="false" vmw:key="tools.beforeGuestShutdown" vmw:value="true"/>
+      <vmw:Config ovf:required="false" vmw:key="tools.beforeGuestStandby" vmw:value="true"/>
+      <vmw:Config ovf:required="false" vmw:key="tools.syncTimeWithHost" vmw:value="true"/>
+      <vmw:Config ovf:required="false" vmw:key="tools.toolsUpgradePolicy" vmw:value="upgradeAtPowerCycle"/>
+    </VirtualHardwareSection>
+    <AnnotationSection ovf:required="false">
+      <Info>A human-readable annotation</Info>
+      <Annotation>--[[~~Enjoy. Have fun. Happy Hacking.~~]]--
+
++ There are multiple methods to-do this machine: At least
+-- Two (2) paths to get a limited shell
+-- At least three (3) ways to get a root access</Annotation>
+    </AnnotationSection>
+  </VirtualSystem>
+</Envelope>
+```
+
+更新 `Stapler.ovf` 文件后，需要重新计算其 SHA-1 散列值，并在 `Stapler.mf` 文件中替换：
+
+![replace_ovf_sha1](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/VMware_%E5%AF%BC%E5%85%A5_ovf_%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%E5%BC%82%E5%B8%B8%E6%8A%A5%E9%94%99%E4%B9%8B%E6%8E%A2%E8%A7%A3/replace_ovf_sha1.png)
+
+完成以上步骤后，再次打开 `Stapler.ovf` 文件，发现不再报错：
+
+![open_ovf_success](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/VMware_%E5%AF%BC%E5%85%A5_ovf_%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%E5%BC%82%E5%B8%B8%E6%8A%A5%E9%94%99%E4%B9%8B%E6%8E%A2%E8%A7%A3/open_ovf_success.png)
+
+选择虚拟机存储路径后，导入并开机，最终成功初始化，出现了 Stapler 靶机的登录界面：
+
+![stapler_login](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/VMware_%E5%AF%BC%E5%85%A5_ovf_%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%E5%BC%82%E5%B8%B8%E6%8A%A5%E9%94%99%E4%B9%8B%E6%8E%A2%E8%A7%A3/stapler_login.png)
+
+## 有待深究
+
+至此，镜像导入问题暂时得到解决，不过仍留有两处问题，有待深究：
+
+- Stapler 的镜像提供者，在用 VMware 导入镜像时，其 ovf 文件为什么不是按标准格式排序，而是乱序？
+- 为什么通过新建虚拟机导入 vmdk 会初始化失败？
+
+# 0x03 小结
+
+由于本人时间精力有限，此文旨在记录 VMware 镜像导入问题的解决过程，对部分问题未能继续深究，望谅解。文中不足之处，还请各位不吝赐教，感谢阅读！
+
+本文相关参考请见：
+
+> [VMware fix "Invalid OVF manifest entry" error](https://nolabnoparty.com/en/vmware-fix-invalid-ovf-manifest-entry-error/)
+> [Difference between OVA and OVF](https://sites.google.com/site/vblog77/notes/ovf-ova)
+> [Open Virtualization Format (OVF and OVA)](https://docs.citrix.com/en-us/xencenter/7-1/vms-exportimport-ovf.html)
+> [Open Virtualization Format Specification (DSP0243_1.1.0)](https://www.dmtf.org/sites/default/files/standards/documents/DSP0243_1.1.0.pdf)
+> [Open Virtualization Format Specification (DSP0243_2.0.0)](https://www.dmtf.org/sites/default/files/standards/documents/DSP0243_2.0.0.pdf)
