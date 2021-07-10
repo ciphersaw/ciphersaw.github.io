@@ -55,7 +55,7 @@
 <link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Bugku,CTF,Writeup,Web,HTTP,Python,实验吧,API," />
+  <meta name="keywords" content="Bugku,CTF,Writeup,Web,Python,HTTP,实验吧,API," />
 
 
 
@@ -72,7 +72,7 @@
 
 
 <meta name="description" content="0x00 前言在 CTF Web 的基础题中，经常出现一类题型：在 HTTP 响应头获取了一段有效期很短的 key 值后，需要将经过处理后的 key 值快速 POST 给服务器，若 key 值还在有效期内，则服务器返回最终的 flag，否则继续提示“请再加快速度！！！” 如果还执着于手动地获取 key 值，复制下来对其进行处理，最后用相应的工具把 key 值 POST 给服务器，那么对不起，因为">
-<meta name="keywords" content="Bugku,CTF,Writeup,Web,HTTP,Python,实验吧,API">
+<meta name="keywords" content="Bugku,CTF,Writeup,Web,Python,HTTP,实验吧,API">
 <meta property="og:type" content="article">
 <meta property="og:title" content="详解 CTF Web 中的快速反弹 POST 请求">
 <meta property="og:url" content="https://ciphersaw.github.io/2017/12/16/详解 CTF Web 中的快速反弹 POST 请求/index.html">
@@ -97,7 +97,7 @@
 <meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E8%AF%A6%E8%A7%A3_CTF_Web_%E4%B8%AD%E7%9A%84%E5%BF%AB%E9%80%9F%E5%8F%8D%E5%BC%B9_POST_%E8%AF%B7%E6%B1%82/bugku_qiuming_page_source.png">
 <meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E8%AF%A6%E8%A7%A3_CTF_Web_%E4%B8%AD%E7%9A%84%E5%BF%AB%E9%80%9F%E5%8F%8D%E5%BC%B9_POST_%E8%AF%B7%E6%B1%82/bugku_qiuming_hint.png">
 <meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E8%AF%A6%E8%A7%A3_CTF_Web_%E4%B8%AD%E7%9A%84%E5%BF%AB%E9%80%9F%E5%8F%8D%E5%BC%B9_POST_%E8%AF%B7%E6%B1%82/bugku_qiuming_flag.png">
-<meta property="og:updated_time" content="2019-11-16T02:00:32.389Z">
+<meta property="og:updated_time" content="2021-07-10T06:13:32.945Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="详解 CTF Web 中的快速反弹 POST 请求">
 <meta name="twitter:description" content="0x00 前言在 CTF Web 的基础题中，经常出现一类题型：在 HTTP 响应头获取了一段有效期很短的 key 值后，需要将经过处理后的 key 值快速 POST 给服务器，若 key 值还在有效期内，则服务器返回最终的 flag，否则继续提示“请再加快速度！！！” 如果还执着于手动地获取 key 值，复制下来对其进行处理，最后用相应的工具把 key 值 POST 给服务器，那么对不起，因为">
@@ -588,7 +588,7 @@ https://github.com/?username=ciphersaw&amp;id=1
   <p><span>本文标题:</span><a href="/2017/12/16/详解 CTF Web 中的快速反弹 POST 请求/">详解 CTF Web 中的快速反弹 POST 请求</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 Cipher Saw 的个人博客">Cipher Saw</a></p>
   <p><span>发布时间:</span>2017年12月16日 - 13:12</p>
-  <p><span>最后更新:</span>2019年11月16日 - 10:11</p>
+  <p><span>最后更新:</span>2021年07月10日 - 14:07</p>
   <p><span>原始链接:</span><a href="/2017/12/16/详解 CTF Web 中的快速反弹 POST 请求/" title="详解 CTF Web 中的快速反弹 POST 请求">https://ciphersaw.github.io/2017/12/16/详解 CTF Web 中的快速反弹 POST 请求/</a>
     <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://ciphersaw.github.io/2017/12/16/详解 CTF Web 中的快速反弹 POST 请求/"  aria-label="复制成功！"></i></span>
   </p>
@@ -627,9 +627,9 @@ https://github.com/?username=ciphersaw&amp;id=1
           
             <a href="/tags/Web/" rel="tag"># Web</a>
           
-            <a href="/tags/HTTP/" rel="tag"># HTTP</a>
-          
             <a href="/tags/Python/" rel="tag"># Python</a>
+          
+            <a href="/tags/HTTP/" rel="tag"># HTTP</a>
           
             <a href="/tags/实验吧/" rel="tag"># 实验吧</a>
           
