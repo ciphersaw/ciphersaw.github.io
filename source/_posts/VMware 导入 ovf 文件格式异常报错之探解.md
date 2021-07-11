@@ -2,13 +2,13 @@
 title: VMware 导入 ovf 文件格式异常报错之探解
 copyright: true
 date: 2021-07-10 12:25:40
-tags: [VM,VMware,Solution]
+tags: [Vulnhub,VM,VMware,Solution]
 categories: [Tips,VMware]
 ---
 
 # 0x00 前言
 
-近日，从 [Vulnhub](https://www.vulnhub.com/) 下载了一个靶机镜像 [Stapler](https://www.vulnhub.com/entry/stapler-1,150/) 作为练习，以巩固攻防实战技巧。谁知，开始之初便受阻，导入镜像所遇问题颇多，特此记录其探解过程，以备待查。
+近日，从 [Vulnhub](https://www.vulnhub.com/) 下载了一个靶机镜像 [Stapler: 1](https://www.vulnhub.com/entry/stapler-1,150/) 作为练习，以巩固攻防实战技巧。谁知，开始之初便受阻，导入镜像所遇问题颇多，特此记录其探解过程，以备待查。
 
 <!-- more -->
 
@@ -78,13 +78,11 @@ categories: [Tips,VMware]
 
 ![dps0243_order_note](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/VMware_%E5%AF%BC%E5%85%A5_ovf_%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%E5%BC%82%E5%B8%B8%E6%8A%A5%E9%94%99%E4%B9%8B%E6%8E%A2%E8%A7%A3/dps0243_order_note.png)
 
-并给出了参考样例：
+并给出了参考样例，注意到 `<Item>` 子元素确实是按字母顺序排列：
 
 ![dps0243_order_example](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/VMware_%E5%AF%BC%E5%85%A5_ovf_%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%E5%BC%82%E5%B8%B8%E6%8A%A5%E9%94%99%E4%B9%8B%E6%8E%A2%E8%A7%A3/dps0243_order_example.png)
 
-## 修复验证
-
-查看 `Stapler.ovf` 文件，确实发现在 `<Envelope>` 元素中引入了 `CIM_ResourceAllocationSettingData` 类的命名空间，并且 `<Item>` 子元素默认为乱序排列：
+回头检查压缩包中的 `Stapler.ovf` 文件，发现在 `<Envelope>` 元素中引入了 `CIM_ResourceAllocationSettingData` 类的命名空间，并且 `<Item>` 子元素默认为乱序排列，与上述两帖中遇到的问题基本吻合：
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -227,8 +225,9 @@ categories: [Tips,VMware]
   </VirtualSystem>
 </Envelope>
 ```
+## 修复验证
 
-按标准规则调整后，将 `Stapler.ovf` 文件恢复为正确格式：
+根据 DSP0243 标准文档中的规则，主要调整了 `<rasd:Caption>` 元素与 `<rasd:Description>` 元素的顺序，将 `Stapler.ovf` 文件恢复为正确排列格式：
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -372,11 +371,11 @@ categories: [Tips,VMware]
 </Envelope>
 ```
 
-更新 `Stapler.ovf` 文件后，需要重新计算其 SHA-1 散列值，并在 `Stapler.mf` 文件中替换：
+更新 `Stapler.ovf` 文件后，切记需重新计算其 SHA-1 散列值，并在 `Stapler.mf` 文件中替换，否则无法通过文件完整性校验：
 
 ![replace_ovf_sha1](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/VMware_%E5%AF%BC%E5%85%A5_ovf_%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%E5%BC%82%E5%B8%B8%E6%8A%A5%E9%94%99%E4%B9%8B%E6%8E%A2%E8%A7%A3/replace_ovf_sha1.png)
 
-完成以上步骤后，再次打开 `Stapler.ovf` 文件，发现不再报错：
+完成以上步骤后，再次打开 `Stapler.ovf` 文件，发现不再报错，并提示导入虚拟机：
 
 ![open_ovf_success](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/VMware_%E5%AF%BC%E5%85%A5_ovf_%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%E5%BC%82%E5%B8%B8%E6%8A%A5%E9%94%99%E4%B9%8B%E6%8E%A2%E8%A7%A3/open_ovf_success.png)
 
