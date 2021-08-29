@@ -19,6 +19,7 @@ The original articles in my blog  are classified by index below.
 - [【i春秋】渗透测试入门 —— 渗透测试笔记](https://ciphersaw.github.io/2018/03/14/%E3%80%90i%E6%98%A5%E7%A7%8B%E3%80%91%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8%20%E2%80%94%E2%80%94%20%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E7%AC%94%E8%AE%B0/)
 - [【i春秋】渗透测试入门 —— 我很简单，请不要欺负我](https://ciphersaw.github.io/2018/03/20/%E3%80%90i%E6%98%A5%E7%A7%8B%E3%80%91%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8%20%E2%80%94%E2%80%94%20%E6%88%91%E5%BE%88%E7%AE%80%E5%8D%95%EF%BC%8C%E8%AF%B7%E4%B8%8D%E8%A6%81%E6%AC%BA%E8%B4%9F%E6%88%91/)
 - [【i春秋】渗透测试入门 —— 网站综合渗透实验](https://ciphersaw.github.io/2018/04/15/%E3%80%90i%E6%98%A5%E7%A7%8B%E3%80%91%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%85%A5%E9%97%A8%20%E2%80%94%E2%80%94%20%E7%BD%91%E7%AB%99%E7%BB%BC%E5%90%88%E6%B8%97%E9%80%8F%E5%AE%9E%E9%AA%8C/)
+- [【Vulnhub】 Stapler：1](https://ciphersaw.github.io/2021/08/29/%E3%80%90Vulnhub%E3%80%91%20Stapler%EF%BC%9A1/)
 
 ### Web
 
