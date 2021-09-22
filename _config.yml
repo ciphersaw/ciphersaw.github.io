@@ -122,3 +122,12 @@ search:
   field: post
   format: html
   limit: 10000
+
+# LeanCloud
+leancloud_counter_security:
+ enable_sync: false
+ app_id: KWe6NtO4vhgQR3IfB99JElre-gzGzoHsz
+ app_key: 7nrrRDyHHUMcx03upUALYKIQ
+ server_url: https://leancloud.cn
+ username: admin
+ password: Lc@2021#Adm
