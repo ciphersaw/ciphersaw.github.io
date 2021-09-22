@@ -243,16 +243,16 @@ flag: cnss{RSA_c0mmOn_moduIu5_4tk}
 假设三个用户的模数分别为 $n_1、n_2、n_3$，且不同的模数间两两互素，否则通过计算最大公约数可分解模数，公钥为 $e = 0x3$，明文为 $m$，密文分别为
 $$
 \begin{cases}
-c_1 \equiv m^3 \ mod \ n_1  \\
-c_2 \equiv m^3 \ mod \ n_2  \\
+c_1 \equiv m^3 \ mod \ n_1  \\\\
+c_2 \equiv m^3 \ mod \ n_2  \\\\
 c_3 \equiv m^3 \ mod \ n_3
 \end{cases}
 $$
 即可得
 $$
 \begin{cases}
-m^3 \equiv c_1 \ mod \ n_1  \\
-m^3 \equiv c_2 \ mod \ n_2  \\
+m^3 \equiv c_1 \ mod \ n_1  \\\\
+m^3 \equiv c_2 \ mod \ n_2  \\\\
 m^3 \equiv c_3 \ mod \ n_3 
 \end{cases}
 $$

@@ -4,6 +4,7 @@ copyright: true
 date: 2018-05-23 22:33:19
 tags: [Python,Network,TCP,Socket,Server,Client,API]
 categories: [Programming,Python]
+mathjax: true
 ---
 
 # 0x00 前言
@@ -18,7 +19,7 @@ Python 作为一种解释型脚本语言，自 1991 年问世以来，其简洁�
 
 # 0x01 TCP 协议
 
-**[TCP（Transmission Control Protocol，传输控制协议）](https://en.wikipedia.org/wiki/Transmission_Control_Protocol)**是一种面向连接、可靠的、基于字节流的传输层通信协议。
+[**TCP（Transmission Control Protocol，传输控制协议）**](https://en.wikipedia.org/wiki/Transmission_Control_Protocol)是一种面向连接、可靠的、基于字节流的传输层通信协议。
 
 TCP 协议的执行过程分为**连接创建（Connection Establishment）**、**数据传送（Data Transfer）**和**连接终止（Connection Termination）**三个阶段，其中「连接创建」与「连接终止」分别是耳熟能详的 **TCP 协议三次握手（TCP Three-way Handshake）**与**四次挥手（TCP Four-way Handshake）**，也是理解本文 TCP 服务器与客户端通信过程的两个核心阶段。
 

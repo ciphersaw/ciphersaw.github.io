@@ -47,8 +47,8 @@ MD5 算法的具体流程描述如下：
 
 $$
 \begin{cases}
-L + padding\_seq + padding\_len = N \times 512  \\
-L + padding\_seq \equiv 448 \ mod \ 512  \\
+L + padding\_seq + padding\_len = N \times 512  \\\\
+L + padding\_seq \equiv 448 \ mod \ 512  \\\\
 \end{cases}
 $$
 
@@ -60,8 +60,8 @@ $$
 
 $$
 \begin{cases}
-0 \le L \lt 2^{64}  \\
-1 \le padding\_seq \le 512  \\
+0 \le L \lt 2^{64}  \\\\
+1 \le padding\_seq \le 512  \\\\
 padding\_len = 64
 \end{cases}
 $$
@@ -84,9 +84,9 @@ $$
 
 $$
 \begin{cases}
-A = 0x01234567  \\
-B = 0x89ABCDEF  \\
-C = 0xFEDCBA98  \\
+A = 0x01234567  \\\\
+B = 0x89ABCDEF  \\\\
+C = 0xFEDCBA98  \\\\
 D = 0x76543210
 \end{cases}
 $$
@@ -95,9 +95,9 @@ $$
 
 $$
 \begin{cases}
-A = 0x67452301  \\
-B = 0xEFCDAB89  \\
-C = 0x98BADCFE  \\
+A = 0x67452301  \\\\
+B = 0xEFCDAB89  \\\\
+C = 0x98BADCFE  \\\\
 D = 0x10325476
 \end{cases}
 $$
@@ -116,9 +116,9 @@ MD5 迭代压缩算法每一轮都包含 16 次的步函数运算，同一轮中
 
 $$
 \begin{cases}
-F(B,C,D) = (B \land C) \lor (\lnot B \land D)  \\
-G(B,C,D) = (B \land D) \lor (C \land \lnot D)  \\
-H(B,C,D) = B \oplus C \oplus D  \\
+F(B,C,D) = (B \land C) \lor (\lnot B \land D)  \\\\
+G(B,C,D) = (B \land D) \lor (C \land \lnot D)  \\\\
+H(B,C,D) = B \oplus C \oplus D  \\\\
 I(B,C,D) = C \oplus (B \lor \lnot D)
 \end{cases}
 $$

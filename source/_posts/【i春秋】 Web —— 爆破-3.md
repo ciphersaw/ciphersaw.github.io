@@ -58,7 +58,7 @@ show_source(__FILE__);
 - Line 3~9：开始会话，包含 flag.php 文件，为超级全局变量 [`$_SESSION`](http://php.net/manual/en/reserved.variables.session.php) 的三个参数初始化。
 - Line 11~13：若 Session 有效期超过了两分钟，则销毁当前会话。
 - Line 15~17：先通过 GET 请求或 POST 请求获取的 `value` 参数，再随机选择两个小写字母拼接成字符串。
-- Line 19~23：若 `$_SESSION['whoami']` 等于 `$value` 数组中两个元素的拼接，并且 `$value` 的 MD5 哈希值的第 5~8 位等于 0，则将 `$_SESSION['nums']` 自增，将 `$_SESSION['whoami']` 更新为随机字符串并输出。
+- Line 19~23：若 `$_SESSION['whoami']` 等于 `$value` 数组中两个元素的拼接，并且 `$value` 的 MD5 哈希值的第 5 至 8 位等于 0，则将 `$_SESSION['nums']` 自增，将 `$_SESSION['whoami']` 更新为随机字符串并输出。
 - Line 25~27：若 `$_SESSION['nums']` 大于等于 10，则输出 flag。
 
 理解了代码逻辑后，再结合提示，基本可判断此题真的需要通过网络交互，来「爆破」获取 flag。
