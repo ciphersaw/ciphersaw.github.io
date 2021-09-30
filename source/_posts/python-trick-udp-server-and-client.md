@@ -54,7 +54,7 @@ table th:nth-of-type(1) {
 
 所有支持网络通信的编程语言都各自提供了一套 socket API，下面以 Python 3 为例，讲解服务器与客户端建立 UDP 通信连接的交互过程：
 
-![udp_socket_python](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Python_%E7%BB%9D%E6%8A%80_UDP_%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8E%E5%AE%A2%E6%88%B7%E7%AB%AF/udp_socket_python.png)
+![udp-socket-python](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/python-trick-udp-server-and-client/udp-socket-python.png)
 
 可见，UDP 的通信过程比 TCP 简单许多，服务器少了监听与接受连接的过程，而客户端也少了请求连接的过程。客户端只需要知道服务器的地址，直接向其发送数据即可，而服务器也敞开大门，接收任何发往自家地址的数据。
 
@@ -133,7 +133,7 @@ s.close()
 
 ## 单服务器 VS 多客户端
 
-![one_server_vs_multiple_clients](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Python_%E7%BB%9D%E6%8A%80_UDP_%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8E%E5%AE%A2%E6%88%B7%E7%AB%AF/one_server_vs_multiple_clients.png)
+![one-server-vs-multiple-clients](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/python-trick-udp-server-and-client/one-server-vs-multiple-clients.png)
 
 1. 在其中一个 PowerShell 中运行命令 `python3 ./udp_server.py`，服务器绑定本地主机的 UDP 6000 端口，并打印信息 `UDP bound on port 6000...`，等待客户端发来数据；
 2. 在另两个 PowerShell 中分别运行命令 `python3 ./udp_client.py`，并向服务器发送字符串 `Client1`、`Client2`；

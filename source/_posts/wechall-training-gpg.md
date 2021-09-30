@@ -18,7 +18,7 @@ categories: [InfoSec,Crypto]
 
 <!-- more -->
 
-![question](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/WeChall_Training_GPG/question.png)
+![question](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/wechall-training-gpg/question.png)
 
 # 0x01 生成公私钥对
 
@@ -28,11 +28,11 @@ categories: [InfoSec,Crypto]
 
 在达到我们需求的情况下，操作越简洁越好，此处选择 `--generate-key` 参数快速生成密钥对。填入用户 ID 与邮箱后，要求在弹框内输入授权口令，以保证私钥的合法使用，最后需要敲打键盘或移动鼠标，给随机数的生成提供足够的信息熵。快速生成密钥对的过程如下：
 
-![gen](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/WeChall_Training_GPG/gen.png)
+![gen](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/wechall-training-gpg/gen.png)
 
 公私钥对生成后，通过 `--list-keys` 参数可查看公钥信息，`--list-secret-keys` 参数可查看私钥信息，`--list-signatures` 参数可查看签名信息：
 
-![list](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/WeChall_Training_GPG/list.png)
+![list](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/wechall-training-gpg/list.png)
 
 # 0x02 验证公钥有效性
 
@@ -91,11 +91,11 @@ Qhla4/6ExD9AILow1kpDcvCCHeGcPtueplwL3Q3+V9Osomsplegl7UAvlfURkyVz
 
 接下来，将上述公钥复制到 WeChall 的账户设置中，点击 **Upload Key** 上传公钥：
 
-![setup](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/WeChall_Training_GPG/setup.png)
+![setup](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/wechall-training-gpg/setup.png)
 
 WeChall 会向用户邮箱发送一封用此公钥加密后的邮件：
 
-![encrypted_auth](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/WeChall_Training_GPG/encrypted_auth.png)
+![encrypted-auth](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/wechall-training-gpg/encrypted-auth.png)
 
 注意，邮件内容不符合加密数据的存储格式，需要将其调整为标准格式：
 
@@ -135,17 +135,17 @@ gpg --output auth.html --decrypt auth
 
 解密后用浏览器打开 `auth.html`，发现明文邮件原来是一条验证链接：
 
-![auth](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/WeChall_Training_GPG/auth.png)
+![auth](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/wechall-training-gpg/auth.png)
 
 最后，点击链接跳转至 WeChall，提示公钥已成功存储，并且可以正常使用：
 
-![success](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/WeChall_Training_GPG/success.png)
+![success](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/wechall-training-gpg/success.png)
 
 # 0x03 解密获得 flag
 
 回到题目链接，点击 **Send me encrypted mail please** 后，WeChall 会将公钥加密过的 flag 发送至用户邮箱：
 
-![encrypted_flag](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/WeChall_Training_GPG/encrypted_flag.png)
+![encrypted-flag](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/wechall-training-gpg/encrypted-flag.png)
 
 同样地，将加密数据调整为标准格式：
 
@@ -180,7 +180,7 @@ gpg --output flag.html --decrypt flag
 
 解密后用浏览器打开 `flag.html`，即可获得 flag：
 
-![flag](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/WeChall_Training_GPG/flag.png)
+![flag](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/wechall-training-gpg/flag.png)
 
 # 0x04 小结
 

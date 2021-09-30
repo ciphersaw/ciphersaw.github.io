@@ -17,13 +17,13 @@ categories: [InfoSec,Web]
 
 <!-- more -->
 
-![question](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Bugku_CTF_Web_welcome_to_bugkuctf/question.png)
+![question](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/bugku-ctf-web-welcome-to-bugkuctf/question.png)
 
 # 0x01 PHP 伪协议获取源码
 
 点开链接，依然按常规套路只有一句话：**you are not the number of bugku !**，继续查看源码发现线索：
 
-![hint](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Bugku_CTF_Web_welcome_to_bugkuctf/hint.png)
+![hint](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/bugku-ctf-web-welcome-to-bugkuctf/hint.png)
 
 这里需要满足两点：
 
@@ -46,7 +46,7 @@ categories: [InfoSec,Web]
 
 根据以上两种 PHP 伪协议的分析，构造出以下 payload 即得 hint.php 源码的 Base64 编码:
 
-![get_source](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Bugku_CTF_Web_welcome_to_bugkuctf/get_source.png)
+![get-source](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/bugku-ctf-web-welcome-to-bugkuctf/get-source.png)
 
 解码后得到 hint.php 源码：
 
@@ -68,7 +68,7 @@ class Flag{//flag.php
 
 根据注释发现了藏 flag 的页面，再次照葫芦画瓢去偷看 flag.php 源码：
 
-![flag_fail](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Bugku_CTF_Web_welcome_to_bugkuctf/flag_fail.png)
+![flag-fail](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/bugku-ctf-web-welcome-to-bugkuctf/flag-fail.png)
 
 ...果然没那么简单，唔，卡住了，怎么办？
 
@@ -161,6 +161,6 @@ echo serialize($f);
 
 最后别忘了在请求主体中提交字符串 `welcome to the bugkuctf` 喔，提交后得到 flag：
 
-![flag](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Bugku_CTF_Web_welcome_to_bugkuctf/flag.png)
+![flag](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/bugku-ctf-web-welcome-to-bugkuctf/flag.png)
 
 若有不足或错误之处劳烦指出，欢迎有疑问的朋友前来留言讨论。

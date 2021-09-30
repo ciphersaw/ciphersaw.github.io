@@ -17,23 +17,23 @@ categories: [InfoSec,Web]
 
 <!-- more -->
 
-![question](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Bugku_CTF_Web_never_give_up/question.png)
+![question](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/bugku-ctf-web-never-give-up/question.png)
 
 # 0x01 拦截跳转
 
 点开解题链接，除了一句 **never never never give up !!!** 之外空空如也，直接查看源码，发现一条注释中有线索：
 
-![hello_php_source](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Bugku_CTF_Web_never_give_up/hello_php_source.png)
+![hello-php-source](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/bugku-ctf-web-never-give-up/hello-php-source.png)
 
 根据提示打开链接：[http://120.24.86.145:8006/test/1p.html](http://120.24.86.145:8006/test/1p.html)，发现跳转回 [Bugku](http://www.bugku.com/) 的主站，所以祭出 BurpSuite 进行抓包拦截。
 
 请求数据包如下：
 
-![request](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Bugku_CTF_Web_never_give_up/request.png)
+![request](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/bugku-ctf-web-never-give-up/request.png)
 
 响应数据包如下：
 
-![response](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Bugku_CTF_Web_never_give_up/response.png)
+![response](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/bugku-ctf-web-never-give-up/response.png)
 
 # 0x02 三重解码
 
@@ -107,7 +107,7 @@ else
 
 ## PHP 弱类型比较
 
-![loose_comparison](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Bugku_CTF_Web_never_give_up/loose_comparison.png)
+![loose-comparison](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/bugku-ctf-web-never-give-up/loose-comparison.png)
 
 由上图可知，变量 `$id` 若想满足非空非零且弱等于整型数 0，则 `$id` 的值只能为非空非零字符串，这里假设 `$id = "asd"`。
 
@@ -139,13 +139,12 @@ CTF 题做多了就知道 `ereg()` 函数或 `eregi()` 函数存在空字符截�
 
 在构造变量 `b` 中的空字符时，过早将空字符 `\x00` 放入，在提交请求时导致请求头截断，继而请求失败，得不到响应。
 
-![wrong_payload](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Bugku_CTF_Web_never_give_up/wrong_payload.png)
+![wrong-payload](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/bugku-ctf-web-never-give-up/wrong-payload.png)
 
 因为 `b` 是 URL 查询字符串中的变量，不应该在此放入空字符 `\x00`，而应该为空字符的 URL 编码 `%00`。注意，虽然 `b=%0012345` 实际字符串长度为 8 字节，但在后台脚本读入数据时，会将 URL 编码 `%00` 转换成 1 字节。所以说，空字符应该在后台脚本的变量中出现，而不是在 URL 查询字符串变量中出现。
 
 构造出正确的 payload 后，完成此题常规思路的做法：
 
-![flag](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Bugku_CTF_Web_never_give_up/flag.png)
+![flag](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/bugku-ctf-web-never-give-up/flag.png)
 
 若有不足或错误之处劳烦指出，欢迎有其他解法的朋友前来讨论交流。
-

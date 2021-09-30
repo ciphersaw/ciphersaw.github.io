@@ -16,7 +16,7 @@ categories: [InfoSec,Web]
 
 <!-- more -->
 
-![question](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_Web_%E7%88%86%E7%A0%B4_3/question.png)
+![question](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/ichunqiu-web-brute-force-3/question.png)
 
 # 0x01 理解 PHP 代码逻辑
 
@@ -72,11 +72,11 @@ show_source(__FILE__);
 
 使用 Firefox 浏览器，针对 GET 请求进行验证。第一种方法：
 
-![method1](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_Web_%E7%88%86%E7%A0%B4_3/method1.png)
+![method1](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/ichunqiu-web-brute-force-3/method1.png)
 
 第二种方法：
 
-![method2](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_Web_%E7%88%86%E7%A0%B4_3/method2.png)
+![method2](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/ichunqiu-web-brute-force-3/method2.png)
 
 针对 POST 请求同样适用，请读者自行验证。
 
@@ -105,7 +105,7 @@ print(response.text)
 - Line 8~12：自动循环提交 10 次 GET 请求，并输出每次循环的 `value` 参数。
 - Line 13：将最后一次响应的报文内容输出，即可看到 flag。
 
-![flag](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_Web_%E7%88%86%E7%A0%B4_3/flag.png)
+![flag](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/ichunqiu-web-brute-force-3/flag.png)
 
 将第 10 行改为 `payload = "?value[]={}&value[]={}".format(whoami[0], whoami[1])` 同样能获得 flag。
 
@@ -131,7 +131,7 @@ print(response.text)
 
 显而易见，只有第 10、11 行与 GET 请求不同，运行完上述脚本后也能获得 flag。不过，当我们依葫芦画瓢将第 10 行改为 `payload = {"value[]": whoami[0], "value[]": whoami[1]} ` 后，却发现无法获得 flag 了：
 
-![flag_failure](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_Web_%E7%88%86%E7%A0%B4_3/flag_failure.png)
+![flag-failure](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/ichunqiu-web-brute-force-3/flag-failure.png)
 
 借此机会，讲解一下如何使用 Burp Suite 抓取 Python 发送的网络请求包，相信大家看到请求包后，答案便一目了然。以下是利用代理抓取 POST 请求包的 Python 脚本：
 
@@ -152,13 +152,13 @@ response = s.post(url, data = payload, proxies = burp)
 
 将 Burp Suite 开启 Intercept 模式，运行上述脚本即可看到：
 
-![burp_failure](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_Web_%E7%88%86%E7%A0%B4_3/burp_failure.png)
+![burp-failure](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/ichunqiu-web-brute-force-3/burp-failure.png)
 
 可发现表单数据只剩 `value[]=a`，原来前面 `value[]=e` 的值已被覆盖。那么问题来了，如何构造 POST 请求中不带索引的同一数组参数的不同值呢？
 
 正确的构造方法是 `payload = {"value[]": [whoami[0], whoami[1]]} ` ，再次运行脚本，即可看到表单数据正常提交了：
 
-![burp_success](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_Web_%E7%88%86%E7%A0%B4_3/burp_success.png)
+![burp-success](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/ichunqiu-web-brute-force-3/burp-success.png)
 
 其实，使用 requests 模块自带的方法也能查看请求头与请求体，对应的 Python 脚本如下：
 
@@ -178,4 +178,4 @@ print(response.request.body)
 
 运行后即可在终端上看到请求头与请求体：
 
-![requests_body](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/i%E6%98%A5%E7%A7%8B_Web_%E7%88%86%E7%A0%B4_3/requests_body.png)
+![requests-body](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/ichunqiu-web-brute-force-3/requests-body.png)

@@ -57,7 +57,7 @@ TCP 协议的执行过程分为**连接创建（Connection Establishment）**、
 
 读者可参照以下「三次握手」的示意图进行理解：
 
-![tcp_three_way_handshake](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Python_%E7%BB%9D%E6%8A%80_TCP_%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8E%E5%AE%A2%E6%88%B7%E7%AB%AF/tcp_three_way_handshake.png)
+![tcp-three-way-handshake](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/python-trick-tcp-server-and-client/tcp-three-way-handshake.png)
 
 ## 连接终止（Connection Termination）
 
@@ -97,7 +97,7 @@ TCP 协议的执行过程分为**连接创建（Connection Establishment）**、
 
 读者可参照以下「四次挥手」的示意图进行理解：
 
-![tcp_four_way_handshake](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Python_%E7%BB%9D%E6%8A%80_TCP_%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8E%E5%AE%A2%E6%88%B7%E7%AB%AF/tcp_four_way_handshake.png)
+![tcp-four-way-handshake](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/python-trick-tcp-server-and-client/tcp-four-way-handshake.png)
 
 # 0x02 Network Socket
 
@@ -109,7 +109,7 @@ TCP 协议的执行过程分为**连接创建（Connection Establishment）**、
 
 所有支持网络通信的编程语言都各自提供了一套 socket API，下面以 Python 3 为例，讲解服务器与客户端建立 TCP 通信连接的交互过程：
 
-![tcp_socket_python](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Python_%E7%BB%9D%E6%8A%80_TCP_%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8E%E5%AE%A2%E6%88%B7%E7%AB%AF/tcp_socket_python.png)
+![tcp-socket-python](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/python-trick-tcp-server-and-client/tcp-socket-python.png)
 
 脑海中先对上述过程产生一定印象后，更易于理解下面两节 TCP 服务器与客户端的 Python 实现。
 
@@ -208,7 +208,7 @@ s.close()
 
 ## 单服务器 VS 单客户端
 
-![one_server_vs_one_client](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Python_%E7%BB%9D%E6%8A%80_TCP_%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8E%E5%AE%A2%E6%88%B7%E7%AB%AF/one_server_vs_one_client.png)
+![one-server-vs-one-client](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/python-trick-tcp-server-and-client/one-server-vs-one-client.png)
 
 1. 在其中一个 PowerShell 中运行命令 `python3 ./tcp_server.py`，服务器显示 `Waiting for connection...`，并监听本地主机的 TCP 6000 端口，进入等待连接状态；
 2. 在另一个 PowerShell 中运行命令 `python3 ./tcp_client.py`，服务器显示 `Accept new connection from 127.0.0.1:42101`，完成与本地主机的 TCP 42101 端口建立通信连接，并向客户端发送欢迎信息与询问信息，客户端接收到信息后打印输出；
@@ -219,7 +219,7 @@ s.close()
 
 ## 单服务器 VS 多客户端
 
-![one_server_vs_multiple_clients](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Python_%E7%BB%9D%E6%8A%80_TCP_%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8E%E5%AE%A2%E6%88%B7%E7%AB%AF/one_server_vs_multiple_clients.png)
+![one-server-vs-multiple-clients](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/python-trick-tcp-server-and-client/one-server-vs-multiple-clients.png)
 
 1. 在其中一个 PowerShell 中运行命令 `python3 ./tcp_server.py`，服务器显示 `Waiting for connection...`，并监听本地主机的 TCP 6000 端口，进入等待连接状态；
 2. 在另三个 PowerShell 中分别运行命令 `python3 ./tcp_client.py`，服务器同时与本地主机的 TCP 42719、42721、42722 端口建立通信连接，并分别向客户端发送欢迎信息与询问信息，客户端接收到信息后打印输出；

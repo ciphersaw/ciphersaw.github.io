@@ -18,11 +18,11 @@ categories: [Tips,VMware]
 
 将 Stapler 靶机镜像压缩包下载至本地后，发现其 Stapler 目录下包含三个文件：`Stapler-disk1.vmdk`、`Stapler.ovf` 与 `Stapler.mf`：
 
-![stapler_zip_download](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/VMware_%E5%AF%BC%E5%85%A5_ovf_%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%E5%BC%82%E5%B8%B8%E6%8A%A5%E9%94%99%E4%B9%8B%E6%8E%A2%E8%A7%A3/stapler_zip_download.png)
+![stapler-zip-download](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/exploration-of-file-format-exception-while-vmware-loads-ovf/stapler-zip-download.png)
 
 其压缩包的 MD5 与官网上的一致，确认文件完整性无误：
 
-![stapler_zip_file_info](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/VMware_%E5%AF%BC%E5%85%A5_ovf_%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%E5%BC%82%E5%B8%B8%E6%8A%A5%E9%94%99%E4%B9%8B%E6%8E%A2%E8%A7%A3/stapler_zip_file_info.png)
+![stapler-zip-file-info](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/exploration-of-file-format-exception-while-vmware-loads-ovf/stapler-zip-file-info.png)
 
 上述三个文件的含义及用途如下：
 
@@ -32,17 +32,17 @@ categories: [Tips,VMware]
 
 相关文件的完整释义见下图，并可参考：[Open Virtualization Format (OVF and OVA)](https://docs.citrix.com/en-us/xencenter/7-1/vms-exportimport-ovf.html)
 
-![ovf_files](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/VMware_%E5%AF%BC%E5%85%A5_ovf_%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%E5%BC%82%E5%B8%B8%E6%8A%A5%E9%94%99%E4%B9%8B%E6%8E%A2%E8%A7%A3/ovf_files.png)
+![ovf-files](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/exploration-of-file-format-exception-while-vmware-loads-ovf/ovf-files.png)
 
 ## 通过打开 ovf 导入 vmdk
 
 首先，采用常规方式，通过 VMware 打开 ovf 文件来导入 vmdk。依次点击 VMware 左上角的 **文件 -> 打开**，选中解压目录下的 `Stapler.ovf` 文件：
 
-![open_ovf](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/VMware_%E5%AF%BC%E5%85%A5_ovf_%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%E5%BC%82%E5%B8%B8%E6%8A%A5%E9%94%99%E4%B9%8B%E6%8E%A2%E8%A7%A3/open_ovf.png)
+![open-ovf](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/exploration-of-file-format-exception-while-vmware-loads-ovf/open-ovf.png)
 
 接着点击 **打开**，发现 VMware 弹出以下报错：
 
-![open_ovf_error](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/VMware_%E5%AF%BC%E5%85%A5_ovf_%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%E5%BC%82%E5%B8%B8%E6%8A%A5%E9%94%99%E4%B9%8B%E6%8E%A2%E8%A7%A3/open_ovf_error.png)
+![open-ovf-error](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/exploration-of-file-format-exception-while-vmware-loads-ovf/open-ovf-error.png)
 
 大意为不支持 `Caption` 元素、缺少 `ElementName` 子元素等。
 
@@ -54,11 +54,11 @@ categories: [Tips,VMware]
 
 虽然 vmdk 导入成功，但虚拟机却启动失败。点击 **开启此虚拟机**，只见终端出现 ``error: failure writing sector 0xec800 to `hd0'.`` 报错：
 
-![failure_writing_sector](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/VMware_%E5%AF%BC%E5%85%A5_ovf_%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%E5%BC%82%E5%B8%B8%E6%8A%A5%E9%94%99%E4%B9%8B%E6%8E%A2%E8%A7%A3/failure_writing_sector.png)
+![failure-writing-sector](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/exploration-of-file-format-exception-while-vmware-loads-ovf/failure-writing-sector.png)
 
 按下任意键继续执行，发现 Apache、PHP、MySQL 等模块启动失败，迟迟无法加载进入登录界面：
 
-![services_start_error](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/VMware_%E5%AF%BC%E5%85%A5_ovf_%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%E5%BC%82%E5%B8%B8%E6%8A%A5%E9%94%99%E4%B9%8B%E6%8E%A2%E8%A7%A3/services_start_error.png)
+![services-start-error](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/exploration-of-file-format-exception-while-vmware-loads-ovf/services-start-error.png)
 
 # 0x02 ovf 探而复之
 
@@ -68,19 +68,19 @@ categories: [Tips,VMware]
 
 经探究，在 [Converting OVF file using ovftool from VirtualBox produces error "Line 39: Unsupported element 'Caption'" and many more errors](https://communities.vmware.com/t5/Open-Virtualization-Format-Tool/Converting-OVF-file-using-ovftool-from-VirtualBox-produces-error/td-p/1179450) 帖子中遇到类似问题，其中一条评论提到，需要调整 ovf 文件中 `<Item>` 子元素的顺序：
 
-![ovf_solution_1](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/VMware_%E5%AF%BC%E5%85%A5_ovf_%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%E5%BC%82%E5%B8%B8%E6%8A%A5%E9%94%99%E4%B9%8B%E6%8E%A2%E8%A7%A3/ovf_solution_1.png)
+![ovf-solution-1](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/exploration-of-file-format-exception-while-vmware-loads-ovf/ovf-solution-1.png)
 
 类似地，在 [Issues with OVF Template](https://communities.vmware.com/t5/Open-Virtualization-Format-Tool/Issues-with-OVF-Template/td-p/2606134) 帖子中同样有人提到，RASD 元素字段必须以字母顺序排列：
 
-![ovf-solution_2](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/VMware_%E5%AF%BC%E5%85%A5_ovf_%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%E5%BC%82%E5%B8%B8%E6%8A%A5%E9%94%99%E4%B9%8B%E6%8E%A2%E8%A7%A3/ovf-solution_2.png)
+![ovf-solution-2](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/exploration-of-file-format-exception-while-vmware-loads-ovf/ovf-solution-2.png)
 
 根据以上线索，查找 ovf 文件格式的相关标准，终于在 [Open Virtualization Format Specification (DSP0243_2.1.0)](https://www.dmtf.org/sites/default/files/standards/documents/DSP0243_2.1.0.pdf) 文档中的第 8 章找到解释说明，图中 CIM 类的 XML 元素应该按照 Unicode 码位顺序排列：
 
-![dps0243_order_note](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/VMware_%E5%AF%BC%E5%85%A5_ovf_%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%E5%BC%82%E5%B8%B8%E6%8A%A5%E9%94%99%E4%B9%8B%E6%8E%A2%E8%A7%A3/dps0243_order_note.png)
+![dps0243-order-note](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/exploration-of-file-format-exception-while-vmware-loads-ovf/dps0243-order-note.png)
 
 并给出了参考样例，注意到 `<Item>` 子元素确实是按字母顺序排列：
 
-![dps0243_order_example](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/VMware_%E5%AF%BC%E5%85%A5_ovf_%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%E5%BC%82%E5%B8%B8%E6%8A%A5%E9%94%99%E4%B9%8B%E6%8E%A2%E8%A7%A3/dps0243_order_example.png)
+![dps0243-order-example](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/exploration-of-file-format-exception-while-vmware-loads-ovf/dps0243-order-example.png)
 
 回头检查压缩包中的 `Stapler.ovf` 文件，发现在 `<Envelope>` 元素中引入了 `CIM_ResourceAllocationSettingData` 类的命名空间，并且 `<Item>` 子元素默认为乱序排列，与上述两帖中遇到的问题基本吻合：
 
@@ -373,15 +373,15 @@ categories: [Tips,VMware]
 
 更新 `Stapler.ovf` 文件后，切记需重新计算其 SHA-1 散列值，并在 `Stapler.mf` 文件中替换，否则无法通过文件完整性校验：
 
-![replace_ovf_sha1](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/VMware_%E5%AF%BC%E5%85%A5_ovf_%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%E5%BC%82%E5%B8%B8%E6%8A%A5%E9%94%99%E4%B9%8B%E6%8E%A2%E8%A7%A3/replace_ovf_sha1.png)
+![replace-ovf-sha1](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/exploration-of-file-format-exception-while-vmware-loads-ovf/replace-ovf-sha1.png)
 
 完成以上步骤后，再次打开 `Stapler.ovf` 文件，发现不再报错，并提示导入虚拟机：
 
-![open_ovf_success](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/VMware_%E5%AF%BC%E5%85%A5_ovf_%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%E5%BC%82%E5%B8%B8%E6%8A%A5%E9%94%99%E4%B9%8B%E6%8E%A2%E8%A7%A3/open_ovf_success.png)
+![open-ovf-success](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/exploration-of-file-format-exception-while-vmware-loads-ovf/open-ovf-success.png)
 
 选择虚拟机存储路径后，导入并开机，最终成功初始化，出现了 Stapler 靶机的登录界面：
 
-![stapler_login](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/VMware_%E5%AF%BC%E5%85%A5_ovf_%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%E5%BC%82%E5%B8%B8%E6%8A%A5%E9%94%99%E4%B9%8B%E6%8E%A2%E8%A7%A3/stapler_login.png)
+![stapler-login](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/exploration-of-file-format-exception-while-vmware-loads-ovf/stapler-login.png)
 
 ## 有待深究
 

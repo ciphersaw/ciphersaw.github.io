@@ -17,15 +17,15 @@ copyright: true
 
 <!-- more -->
 
-![question](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E5%AE%9E%E9%AA%8C%E5%90%A7_CTF_Web_%E5%BF%98%E8%AE%B0%E5%AF%86%E7%A0%81%E4%BA%86/question.jpg)
+![question](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/shiyanbar-ctf-web-forgotten-password/question.jpg)
 
 # 0x01 先看看 step1.php
 
 看到一个输入框，随便填个 root@xxx.com 试试反应，结果得到一个弹框，得到第二个页面 **step2.php**。
 
-![step1](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E5%AE%9E%E9%AA%8C%E5%90%A7_CTF_Web_%E5%BF%98%E8%AE%B0%E5%AF%86%E7%A0%81%E4%BA%86/step1.jpg)
+![step1](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/shiyanbar-ctf-web-forgotten-password/step1.jpg)
 
-![alert](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E5%AE%9E%E9%AA%8C%E5%90%A7_CTF_Web_%E5%BF%98%E8%AE%B0%E5%AF%86%E7%A0%81%E4%BA%86/alert.jpg)
+![alert](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/shiyanbar-ctf-web-forgotten-password/alert.jpg)
 
 # 0x02 习惯性地翻源码
 
@@ -34,7 +34,7 @@ copyright: true
 - admin 的邮箱是 admin@simplexue.com
 - 是用编辑器 Vim 编辑的
 
-![step1_source](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E5%AE%9E%E9%AA%8C%E5%90%A7_CTF_Web_%E5%BF%98%E8%AE%B0%E5%AF%86%E7%A0%81%E4%BA%86/step1_source.jpg)
+![step1-source](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/shiyanbar-ctf-web-forgotten-password/step1-source.jpg)
 
 ## 再看看 step2.php 源码可以发现：
 
@@ -45,22 +45,22 @@ copyright: true
 - 跟 step1.php 同样存在关于 admin 和 editor 信息
 - 代码下半部分惊奇地发现一个表单，并且得到第三个页面 **submit.php**，还知道需要通过 **GET 方法**向该页面发送两个参数 **emailAddress** 和 **token**。
 
-![step2_source](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E5%AE%9E%E9%AA%8C%E5%90%A7_CTF_Web_%E5%BF%98%E8%AE%B0%E5%AF%86%E7%A0%81%E4%BA%86/step2_source.jpg)
+![step2-source](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/shiyanbar-ctf-web-forgotten-password/step2-source.jpg)
 
 从以上线索看来只有一条路可走：**找出正确的 emailAddress 和 token** 发给 submit.php。
 尝试随便发点东西给 submit.php，却得到无情的拒绝:(
 
-![refuse](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E5%AE%9E%E9%AA%8C%E5%90%A7_CTF_Web_%E5%BF%98%E8%AE%B0%E5%AF%86%E7%A0%81%E4%BA%86/refuse.jpg)
+![refuse](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/shiyanbar-ctf-web-forgotten-password/refuse.jpg)
 
 # 0x03 一般人查到这就懵逼了
 
 分析一下上述线索，只有 **Vim 编辑器** 这条线索没用到了，去查查用 Vim 时会产生什么文件吧，从[https://segmentfault.com/q/1010000002692574](https://segmentfault.com/q/1010000002692574)可以看出有以下三种文件，逐一测试终于发现本题的关键文件 `.submit.php.swp`（注意 submit 前面还有个.）
 
-![vim](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E5%AE%9E%E9%AA%8C%E5%90%A7_CTF_Web_%E5%BF%98%E8%AE%B0%E5%AF%86%E7%A0%81%E4%BA%86/vim.jpg)
+![vim](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/shiyanbar-ctf-web-forgotten-password/vim.jpg)
 
 打开 `.submit.php.swp` 文件，终于看到关键代码：
 
-![swp](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E5%AE%9E%E9%AA%8C%E5%90%A7_CTF_Web_%E5%BF%98%E8%AE%B0%E5%AF%86%E7%A0%81%E4%BA%86/swp.jpg)
+![swp](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/shiyanbar-ctf-web-forgotten-password/swp.jpg)
 
 要想输出 `$flag`，必须使三个 if 的条件成立：
 1. `$emailAddress` 和 `$token` 非空
@@ -70,4 +70,4 @@ copyright: true
 
 根据上述条件，就可构建出正确的参数值 `emailAddress=admin@simplexue.com&token=0000000000`，提交后可见 flag：
 
-![flag](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E5%AE%9E%E9%AA%8C%E5%90%A7_CTF_Web_%E5%BF%98%E8%AE%B0%E5%AF%86%E7%A0%81%E4%BA%86/flag.jpg)
+![flag](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/shiyanbar-ctf-web-forgotten-password/flag.jpg)

@@ -14,17 +14,17 @@ categories: [InfoSec,Reverse]
 
 <!-- more -->
 
-![question](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/XCTF_%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C_Reverse_csaw2013reversing2/question.png)
+![question](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/xctf-adworld-reverse-csaw2013reversing2/question.png)
 
 # 0x01 逆向分析主函数
 
 依据题目的提示，双击程序后果然发现运行结果全是乱码：
 
-![mess](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/XCTF_%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C_Reverse_csaw2013reversing2/mess.png)
+![mess](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/xctf-adworld-reverse-csaw2013reversing2/mess.png)
 
 在 Kali Linux 中用 `file` 命令查看程序，发现是 Windows 下的 32 位 PE 文件：
 
-![file](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/XCTF_%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C_Reverse_csaw2013reversing2/file.png)
+![file](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/xctf-adworld-reverse-csaw2013reversing2/file.png)
 
 接下来，使用 IDA Pro 7.0 (32 bit) 打开程序，默认进入主函数的反汇编窗口，按下 **F5** 后进行反编译，自动生成类 C 语言的伪代码：
 
@@ -34,13 +34,13 @@ categories: [InfoSec,Reverse]
 
 双击 `sub_40102A()` 查看其反编译代码，发现返回值恒为零：
 
-![sub_40102A](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/XCTF_%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C_Reverse_csaw2013reversing2/sub_40102A.png)
+![sub-40102A](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/xctf-adworld-reverse-csaw2013reversing2/sub-40102A.png)
 
 而对于库函数 [`IsDebuggerPresent()`](https://docs.microsoft.com/en-us/windows/desktop/api/debugapi/nf-debugapi-isdebuggerpresent)，若程序处于调试模式下，则返回值为非零；若未处于调试模式下，则返回值为零。显然，程序不处于调试模式下，即无法满足 `if` 语句的条件。
 
 双击 `sub_401000()` 查看其反编译代码，目测是对以上乱码数据的解密函数：
 
-![sub_401000](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/XCTF_%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C_Reverse_csaw2013reversing2/sub_401000.png)
+![sub-401000](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/xctf-adworld-reverse-csaw2013reversing2/sub-401000.png)
 
 综上，解题思路大致为：**进入 `if` 语句块，跳过调试断点，并执行解密函数，最终弹框输出 Flag。**
 
@@ -48,13 +48,13 @@ categories: [InfoSec,Reverse]
 
 在主函数的反汇编窗口中，核心的语句块如下：
 
-![core](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/XCTF_%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C_Reverse_csaw2013reversing2/core.png)
+![core](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/xctf-adworld-reverse-csaw2013reversing2/core.png)
 
 首先，`int 3` 中断即为调试断点指令，需将其改为空指令 `nop`。
 
 将光标置于中断指令所在行，依次点击 **Edit -> Patch program -> Assemble**，弹出指令修改框：
 
-![modify_int](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/XCTF_%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C_Reverse_csaw2013reversing2/modify_int.png)
+![modify-int](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/xctf-adworld-reverse-csaw2013reversing2/modify-int.png)
 
 将 `int 3` 改为 `nop` 后点击 **OK** 即可。
 
@@ -62,15 +62,15 @@ categories: [InfoSec,Reverse]
 
 根据上述操作，依次将 `jmp short loc_4010EF` 修改为 `jmp short loc_4010B9`，将 `jz short loc_4010B9` 修改为 `jmp short loc_401096`，修改完运行流程如下：
 
-![modified](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/XCTF_%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C_Reverse_csaw2013reversing2/modified.png)
+![modified](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/xctf-adworld-reverse-csaw2013reversing2/modified.png)
 
 最后，依次点击 **Edit -> Patch program -> Apply patches to input file...**，弹出设置框，选择待打补丁程序，按需选择对原程序进行备份：
 
-![apply_patches](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/XCTF_%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C_Reverse_csaw2013reversing2/apply_patches.png)
+![apply-patches](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/xctf-adworld-reverse-csaw2013reversing2/apply-patches.png)
 
 设置完毕后点击 **OK** 即可。找到修改后的程序，双击执行可获得 `flag{reversing_is_not_that_hard!}`：
 
-![flag](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/XCTF_%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C_Reverse_csaw2013reversing2/flag.png)
+![flag](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/xctf-adworld-reverse-csaw2013reversing2/flag.png)
 
 # 0x03 小结
 

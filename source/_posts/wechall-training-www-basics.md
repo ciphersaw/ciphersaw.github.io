@@ -18,7 +18,7 @@ categories: [InfoSec,Web]
 
 <!-- more -->
 
-![question](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/WeChall_Training_WWW_Basics/question.png)
+![question](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/wechall-training-www-basics/question.png)
 
 # 0x01 搭建 Web 服务
 
@@ -30,39 +30,39 @@ categories: [InfoSec,Web]
 
 在服务器部署页面中，保持默认选择的云计算实例 **Vultr Cloud Compute (VC2)** 。第一步，选择地理位置，以 **America -> New York (NJ)** 为例：
 
-![location](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/WeChall_Training_WWW_Basics/location.png)
+![location](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/wechall-training-www-basics/location.png)
 
 第二步，选择服务器类型。由于我们只需搭建 Web 服务，因此可选择一键部署应用，省去了自行部署环境的过程，以 **Application -> LEMP -> CentOS 7** 为例：
 
 > 小贴士：**[LEMP](https://lemp.io/)** 是一组用于开发部署 Web 应用的自由软件的名称首字母缩写，通常指 Linux + Nginx + MySQL + PHP，使用说明请参考 [One-Click LEMP](https://www.vultr.com/docs/one-click-lemp)。
 
-![type](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/WeChall_Training_WWW_Basics/type.png)
+![type](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/wechall-training-www-basics/type.png)
 
 第三步，选择服务器配置。由于实验所需的资源甚少，所以选择最低配置 **$5/mo**：
 
-![size](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/WeChall_Training_WWW_Basics/size.png)
+![size](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/wechall-training-www-basics/size.png)
 
 其余设置可忽略，最后点击 **Deploy Now** 部署服务器。部署完成后，在 **Servers** 页面可看到 VPS 的概览：
 
-![overview](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/WeChall_Training_WWW_Basics/overview.png)
+![overview](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/wechall-training-www-basics/overview.png)
 
 可见，VPS 的 IP 地址为 **45.63.23.131**，在浏览器若能成功访问，则说明 Web 服务环境已部署完成：
 
-![index](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/WeChall_Training_WWW_Basics/index.png)
+![index](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/wechall-training-www-basics/index.png)
 
 此外，点击 **··· -> Server Details** 可查看 VPS 的详情信息，包括系统用户名与口令，以及各种资源的使用情况：
 
-![detail](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/WeChall_Training_WWW_Basics/detail.png)
+![detail](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/wechall-training-www-basics/detail.png)
 
 ## 编写特定网页
 
 接下来，需要用终端模拟器远程控制 VPS，向特定网页写入内容。本文选用 **[Xshell](https://www.netsarang.com/en/xshell/)** 进行连接，在新建会话属性框内，在 **主机** 栏中填入 IP 地址，在 **名称** 栏中按需自定义会话名称：
 
-![create](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/WeChall_Training_WWW_Basics/create.png)
+![create](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/wechall-training-www-basics/create.png)
 
 点击确定并连接后，在 SSH 安全警告框内点击 **一次性接受**，在 SSH 用户名框内输入 **root**，在 SSH 用户身份验证框内输入 VPS 详情中的口令。成功连接后，提示符将变为 `[root@vultr ~]#`：
 
-![login](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/WeChall_Training_WWW_Basics/login.png)
+![login](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/wechall-training-www-basics/login.png)
 
 参考 One-Click LEMP 的使用说明，在 Xshell 中输入以下命令，向 `/usr/share/nginx/html/ciphersaw/ciphersaw.html` 文件内写入 `My name is ciphersaw and iChall.`：
 
@@ -81,7 +81,7 @@ echo -n "My name is ciphersaw and iChall." > ciphersaw.html
 
 执行完上述命令后，若能在浏览器内访问 **45.63.23.131/ciphersaw/ciphersaw.html**，则说明题目要求的 Web 服务已搭建完成：
 
-![ciphersaw](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/WeChall_Training_WWW_Basics/ciphersaw.png)
+![ciphersaw](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/wechall-training-www-basics/ciphersaw.png)
 
 # 0x02 安装依赖工具
 
@@ -115,7 +115,7 @@ Python 脚本主要是通过 [requests](https://requests.kennethreitz.org/en/mas
 
 登录后进入题目链接，先按下 **F12** 打开 Chrome 浏览器的开发者工具，再点击页面中的按钮，在 **Network -> Name -> Headers** 中可查看当前用户的 Cookie 与表单数据的内容：
 
-![f12](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/WeChall_Training_WWW_Basics/f12.png)
+![f12](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/wechall-training-www-basics/f12.png)
 
 最后根据 Cookie 与表单数据编写出 Python 脚本：
 
@@ -135,13 +135,13 @@ print res.text
 
 回到 Xshell，输入 `rz` 命令后，选择 Python 脚本文件（此处命名为 payload.py）上传即可：
 
-![payload](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/WeChall_Training_WWW_Basics/payload.png)
+![payload](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/wechall-training-www-basics/payload.png)
 
 ## 执行脚本
 
 继续输入 `python payload.py` 执行脚本，若执行成功，则会在返回内容中出现相关提示：
 
-![result](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/WeChall_Training_WWW_Basics/result.png)
+![result](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/wechall-training-www-basics/result.png)
 
 # 0x04 小结
 

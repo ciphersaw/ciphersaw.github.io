@@ -22,7 +22,7 @@ CIDR 的表示方法为 `A.B.C.D/N`，其中 `A.B.C.D` 是点分十进制的 IPv
 
 若一个 IP 地址的前 `N` 位与 一个 CIDR 范围的前缀相同，则说明此 IP 地址在此 CIDR 范围中。以 CIDR 范围 `10.10.1.32/27` 为例，可知 `110.10.1.44` 属于该 CIDR 范围，而 `10.10.1.90` 则不属于。
 
-![cidr_comparison](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Javascript_%E5%88%A4%E6%96%AD_IP_%E5%9C%B0%E5%9D%80%E6%98%AF%E5%90%A6%E5%B1%9E%E4%BA%8E_CIDR_%E8%8C%83%E5%9B%B4/cidr_comparison.png)
+![cidr-comparison](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/check-if-ip-belongs-to-cidr-by-javascript/cidr-comparison.png)
 
 ## 什么是箭头函数？
 

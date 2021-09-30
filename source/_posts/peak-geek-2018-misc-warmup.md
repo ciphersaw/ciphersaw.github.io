@@ -53,7 +53,7 @@ mathjax: true
 
 当我们用 Stegsolve 加载图片 warmup.bmp 后，分别在 RGB 通道最低位的位平面上方发现了异常，由此猜测可能存在隐写。
 
-![rgb_lsb](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A2_2018_Misc_warmup/rgb_lsb.png)
+![rgb-lsb](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/peak-geek-2018-misc-warmup/rgb-lsb.png)
 
 # 0x03 摘取隐写信息
 
@@ -61,11 +61,11 @@ mathjax: true
 
 点击 Stegsolve 的 **Analyse -> Data Extract**，在红色通道最低位上打勾，点击 **Preview** 后，即可在提取数据的上方发现隐写信息，最后点击 **Save Bin** 保存为二进制文件 red.bin。
 
-![red_data_extract](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A2_2018_Misc_warmup/red_data_extract.png)
+![red-data-extract](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/peak-geek-2018-misc-warmup/red-data-extract.png)
 
 接着对绿色与蓝色通道进行相同操作，分别得到二进制文件 green.bin 和 blue.bin，用文本编辑器打开后，即可摘取数据上方的隐写信息。
 
-![rgb_info](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A2_2018_Misc_warmup/rgb_info.png)
+![rgb-info](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/peak-geek-2018-misc-warmup/rgb-info.png)
 
 除了使用 Stegsolve 摘取数据外，还可以尝试另一个自动化图片隐写检测工具 zsteg。
 
@@ -120,7 +120,7 @@ $ zsteg warmup.bmp --bits 1 --channel b --lsb --order xy --limit 2048
 
 即可自动摘取出隐写在图片内的信息：
 
-![rgb_zsteg](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A2_2018_Misc_warmup/rgb_zsteg.png)
+![rgb-zsteg](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/peak-geek-2018-misc-warmup/rgb-zsteg.png)
 
 仔细的读者还会发现，有一个懒人专属的选项 `--all`，可将所有可能的摘取方法都尝试一遍：
 
@@ -130,7 +130,7 @@ $ zsteg warmup.bmp --all
 
 最终在结果中挑选出可能的隐写信息：
 
-![rgb_zsteg_all](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A2_2018_Misc_warmup/rgb_zsteg_all.png)
+![rgb-zsteg-all](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/peak-geek-2018-misc-warmup/rgb-zsteg-all.png)
 
 # 0x04 辨识特殊编码
 
@@ -161,7 +161,7 @@ $ zsteg warmup.bmp --all
 
 将上述隐写信息用工具解码后得到字符串 `flag{db640436-`：
 
-![short_ook!](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A2_2018_Misc_warmup/short_ook!.png)
+![short-ook!](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/peak-geek-2018-misc-warmup/short-ook!.png)
 
 ## Ook!
 
@@ -199,7 +199,7 @@ Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook! Ook. Ook? Ook.
 
 将上述隐写信息用工具解码后得到字符串 `7839-4050-8339`：
 
-![ook!](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A2_2018_Misc_warmup/ook!.png)
+![ook!](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/peak-geek-2018-misc-warmup/ook!.png)
 
 ## Brainfuck
 
@@ -226,7 +226,7 @@ Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook! Ook. Ook? Ook.
 
 将上述隐写信息用工具解码后得到字符串 `-75a972fc553c}`：
 
-![brainfuck](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A2_2018_Misc_warmup/brainfuck.png)
+![brainfuck](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/peak-geek-2018-misc-warmup/brainfuck.png)
 
 # 0x05 总结
 

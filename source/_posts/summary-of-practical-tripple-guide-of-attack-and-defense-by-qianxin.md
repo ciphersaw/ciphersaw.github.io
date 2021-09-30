@@ -410,7 +410,7 @@ Step 3：**提高事件处置效率效果**，应在最短时间内采取技术�
 
 ### 实战攻防演习组织要素
 
-![elements](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E5%A5%87%E5%AE%89%E4%BF%A1_%E5%AE%9E%E6%88%98%E6%94%BB%E9%98%B2%E4%B8%89%E9%83%A8%E6%9B%B2_%E8%A6%81%E7%82%B9%E6%80%BB%E7%BB%93/elements.png)
+![elements](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/summary-of-practical-tripple-guide-of-attack-and-defense-by-qianxin/elements.png)
 
 | 要素             | 职责                                                         |
 | ---------------- | ------------------------------------------------------------ |
@@ -452,7 +452,7 @@ Step 3：**提高事件处置效率效果**，应在最短时间内采取技术�
 
 Step 1：**建立演习组织**
 
-![organization](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E5%A5%87%E5%AE%89%E4%BF%A1_%E5%AE%9E%E6%88%98%E6%94%BB%E9%98%B2%E4%B8%89%E9%83%A8%E6%9B%B2_%E8%A6%81%E7%82%B9%E6%80%BB%E7%BB%93/organization.png)
+![organization](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/summary-of-practical-tripple-guide-of-attack-and-defense-by-qianxin/organization.png)
 
 | 组别           | 职责                                                         |
 | -------------- | ------------------------------------------------------------ |
@@ -476,7 +476,7 @@ Step 3：**制定演习规则**
 
 Step 4：**确定演习流程**
 
-![process](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E5%A5%87%E5%AE%89%E4%BF%A1_%E5%AE%9E%E6%88%98%E6%94%BB%E9%98%B2%E4%B8%89%E9%83%A8%E6%9B%B2_%E8%A6%81%E7%82%B9%E6%80%BB%E7%BB%93/process.png)
+![process](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/summary-of-practical-tripple-guide-of-attack-and-defense-by-qianxin/process.png)
 
 | 流程           | 内容                                                         |
 | -------------- | ------------------------------------------------------------ |

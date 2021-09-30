@@ -27,7 +27,7 @@ MD5 算法的输入为长度小于 $2^{64} \ bit$ 的消息比特串，输出为
 
 MD5 算法的流程图如下：
 
-![md5_process](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Hash_Length_Extension_Attack/md5_process.jpg)
+![md5-process](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/hash-length-extension-attack/md5-process.jpg)
 
 -  $L$ 是消息比特串的原始长度；
 
@@ -68,13 +68,13 @@ $$
 
 下面举例说明，假设要对字符串「hello world」进行附加填充：
 
-![example1](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Hash_Length_Extension_Attack/example1.jpg)
+![example1](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/hash-length-extension-attack/example1.jpg)
 
 可见消息比特串长度为 $11 \ Byte$，即 $88 \ bit$，因此在第 $89 \ bit$ 处填充「1」比特，然后填充「0」比特直至长度为 $448 \ bit$，而原始长度 $88 \ bit$ 的十六进制为 $0x58 \ bit$，根据小端原则应放在低地址 $0x00000038$ 处，而高地址全部为 $0x00$。
 
 **注意，附加填充对任何消息比特串来说都是必须的，即使消息原始长度恰为 $448 \ bit$：**
 
-![example2](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Hash_Length_Extension_Attack/example2.jpg)
+![example2](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/hash-length-extension-attack/example2.jpg)
 
 即使消息比特串长度为 $56 \ Byte$，即 $448 \ bit$，也要在第 $449 \ bit$ 处填充「1」比特，然后填充「0」比特直至下一分组单元长度为 $448 \ bit$，而原始长度 $448 \ bit$ 的十六进制为 $0x01C0 \ bit$，根据小端原则低地址 $0x00000078$ 处为 $0xC0$，$0x00000079$ 处为 $0x01$，而高地址全部为 $0x00$。
 
@@ -106,7 +106,7 @@ $$
 
 每个分组单元 $M_i$ 的迭代压缩由 4 轮组成，将 $512 \ bit$ 的分组单元均分为 16 个子分组参与每轮 16 次的步函数运算，每次步函数的输入为 4 个 $32 \ bit$ 的整型变量和 1 个 $32 \ bit$ 的子分组，输出也为 4 个 $32 \ bit$ 的整型变量，作为下一次步函数的输入。经过 4 轮共 64 次的步函数运算后，将 4 个 $32 \ bit$ 寄存器中的结果分别与相应输入链接变量在模 $2^{32}$ 下相加，即得到该分组单元的输出链接变量。若为最后一个分组，则输出为消息的散列值。
 
-![iteration](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Hash_Length_Extension_Attack/iteration.jpg)
+![iteration](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/hash-length-extension-attack/iteration.jpg)
 
 **注意，在第 1 轮开始前，要将输入链接变量 $A、B、C、D$ 的值复制到暂存变量  $AA、BB、CC、DD$ 中，便于 4 轮运算结束后与结果进行模加。**
 
@@ -125,7 +125,7 @@ $$
 
 其中 $\land、\lor、\lnot、\oplus$ 分别为与、或、非、异或逻辑运算。
 
-![step_function](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Hash_Length_Extension_Attack/step_function.jpg)
+![step-function](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/hash-length-extension-attack/step-function.jpg)
 
 - $M[j]$ 表示当前分组单元 $M$ 的第 $j$ 个 $32 \ bit$ 子分组，$0 \le j \le 15$；
 - $<<< s$ 表示循环左移 $s$ 位；
@@ -149,7 +149,7 @@ $$
 
 道哥在《白帽子讲Web安全》的 **[Understanding MD5 Length Extension Attack](http://blog.chinaunix.net/uid-27070210-id-3255947.html)** 一文中对此攻击作了详细叙述，本文就其中的 PoC 举例作出讲解。
 
-![poc](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Hash_Length_Extension_Attack/poc.jpg)
+![poc](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/hash-length-extension-attack/poc.jpg)
 
 为了方便说明，上图 PoC 中只有 $secret$，省略了 $message1$。可见，此处的 $secret$ 为随机产生的一个小数字符串，长度为 $18 \ Byte$，即 $144 \ bit$， $MD5(secret)$ 与 $padding1$ 如上图所示，任意值 $message2$ 此处取为「Welcome to Secrypt Agency!」。攻击后得到的散列值与 $MD5(secret \ || \ padding1 \ || \ message2)$ 相等，表示攻击成功。
 
@@ -307,21 +307,21 @@ HashPump [-h help] [-t test] [-s signature] [-d data] [-a additional] [-k keylen
 - 题目链接：[http://www.shiyanbar.com/ctf/1848](http://www.shiyanbar.com/ctf/1848)
 - 解题链接：[http://ctf5.shiyanbar.com/web/kzhan.php](http://ctf5.shiyanbar.com/web/kzhan.php)
 
-![lmi_question](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Hash_Length_Extension_Attack/lmi_question.jpg)
+![lmi-question](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/hash-length-extension-attack/lmi-question.jpg)
 
 进入解题链接，发现如下输入框，任意输入一些值，或尝试注入，均无报错信息，且源码也无干货。
 
-![lmi_input](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Hash_Length_Extension_Attack/lmi_input.jpg)
+![lmi-input](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/hash-length-extension-attack/lmi-input.jpg)
 
-![lmi_source1](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Hash_Length_Extension_Attack/lmi_source1.jpg)
+![lmi-source1](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/hash-length-extension-attack/lmi-source1.jpg)
 
 接下来查看它的 HTTP 请求头，发现有两个属于题目本域的异常 Cookie，分别为：`sample-hash = 571580b26c65f306376d4f64e53cb5c7` 和 `source = 0`。
 
-![lmi_cookie](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Hash_Length_Extension_Attack/lmi_cookie.jpg)
+![lmi-cookie](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/hash-length-extension-attack/lmi-cookie.jpg)
 
 尝试用 BurpSuite 把 `source` 的值改为 1，再次发出请求，果然得到了真正的源代码：
 
-![lmi_source2](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Hash_Length_Extension_Attack/lmi_source2.jpg)
+![lmi-source2](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/hash-length-extension-attack/lmi-source2.jpg)
 
 由以下语句可知 Cookie `sample-hash` 原来是 `$secret` 与「adminadmin」连接而成的字符串的 MD5 散列值，即上述的 $MD5(secret || message1)$， $secret$ 为 $15 \ Byte$ 长的字符串变量 `$secret`，$message1$ 为字符串「adminadmin」 。
 
@@ -349,7 +349,7 @@ if (!empty($_COOKIE["getmein"])) {
 ```
 首先要理清代码中的变量与 Hash Length Extension Attack 中变量的对应关系，下面用 HashPump 展示说明该漏洞的攻击过程：
 
-![lmi_hashpump](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Hash_Length_Extension_Attack/lmi_hashpump.jpg)
+![lmi-hashpump](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/hash-length-extension-attack/lmi-hashpump.jpg)
 
 - **Input Signature** 是 $MD5(secret \ || \ message1)$，此处为 `sample-hash` 的取值`571580b26c65f306376d4f64e53cb5c7`；
 
@@ -377,4 +377,4 @@ Password：%61%64%6d%69%6e%80%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00
 
 正确输入 payload 后，成功得到 flag：
 
-![lmi_flag](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/Hash_Length_Extension_Attack/lmi_flag.jpg)
+![lmi-flag](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/hash-length-extension-attack/lmi-flag.jpg)
