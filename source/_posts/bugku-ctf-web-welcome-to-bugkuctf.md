@@ -21,7 +21,7 @@ categories: [InfoSec,Web]
 
 # 0x01 PHP 伪协议获取源码
 
-点开链接，依然按常规套路只有一句话：**you are not the number of bugku !**，继续查看源码发现线索：
+点开链接，依然按常规套路只有一句话：**you are not the number of bugku !** ，继续查看源码发现线索：
 
 ![hint](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/bugku-ctf-web-welcome-to-bugkuctf/hint.png)
 

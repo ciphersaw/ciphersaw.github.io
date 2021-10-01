@@ -64,7 +64,7 @@ categories: [InfoSec,Reverse]
 
 ![modified](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/xctf-adworld-reverse-csaw2013reversing2/modified.png)
 
-最后，依次点击 **Edit -> Patch program -> Apply patches to input file...**，弹出设置框，选择待打补丁程序，按需选择对原程序进行备份：
+最后，依次点击 **Edit -> Patch program -> Apply patches to input file...** ，弹出设置框，选择待打补丁程序，按需选择对原程序进行备份：
 
 ![apply-patches](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/xctf-adworld-reverse-csaw2013reversing2/apply-patches.png)
 

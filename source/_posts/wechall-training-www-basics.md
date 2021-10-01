@@ -34,7 +34,7 @@ categories: [InfoSec,Web]
 
 第二步，选择服务器类型。由于我们只需搭建 Web 服务，因此可选择一键部署应用，省去了自行部署环境的过程，以 **Application -> LEMP -> CentOS 7** 为例：
 
-> 小贴士：**[LEMP](https://lemp.io/)** 是一组用于开发部署 Web 应用的自由软件的名称首字母缩写，通常指 Linux + Nginx + MySQL + PHP，使用说明请参考 [One-Click LEMP](https://www.vultr.com/docs/one-click-lemp)。
+> 小贴士：[LEMP](https://lemp.io/) 是一组用于开发部署 Web 应用的自由软件的名称首字母缩写，通常指 Linux + Nginx + MySQL + PHP，使用说明请参考 [One-Click LEMP](https://www.vultr.com/docs/one-click-lemp)。
 
 ![type](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/wechall-training-www-basics/type.png)
 

@@ -329,7 +329,7 @@ HashPump [-h help] [-t test] [-s signature] [-d data] [-a additional] [-k keylen
 setcookie("sample-hash", md5($secret . urldecode("admin" . "admin")), time() + (60 * 60 * 24 * 7));
 ```
 
-又由以下核心语句，得知爆 flag 的条件是设置一个新 Cookie `getmein`，它的值要与 `$secret + $username + $password` 组成的字符串的 MD5 散列值相等，但前面还有一个限制条件：**`$username` 的值要等于「admin」，且 `$password` 不能等于「admin」。**想到这里，就可知此题是要用 Hash Length Extension Attack 来伪造新的散列值绕过验证。
+又由以下核心语句，得知爆 flag 的条件是设置一个新 Cookie `getmein`，它的值要与 `$secret + $username + $password` 组成的字符串的 MD5 散列值相等，但前面还有一个限制条件：`$username` **必须等于**「admin」，且 `$password` **不能等于**「admin」。想到这里，就可知此题是要用 Hash Length Extension Attack 来伪造新的散列值绕过验证。
 
 ``` php
 if (!empty($_COOKIE["getmein"])) {

@@ -151,7 +151,7 @@ $ zsteg warmup.bmp --all
 ..!.! !!!!! !!!!! !!!!! !!!.? .
 ```
 
-以上编码方式称为 **Short Ook!**，其包含的字符集如下所示：
+以上编码方式称为 **Short Ook!** ，其包含的字符集如下所示：
 
 | 字符 | 含义 | ASCII 码   |
 | ---- | ---- | ---------- |
@@ -186,7 +186,7 @@ Ook! Ook! Ook! Ook! Ook! Ook! Ook! Ook! Ook! Ook. Ook! Ook. Ook. Ook. Ook.
 Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook! Ook. Ook? Ook.
 ```
 
-以上编码方式称为 **Ook!**，其包含的字符集如下所示：
+以上编码方式称为 **Ook!** ，其包含的字符集如下所示：
 
 | 字符 | 含义       | ASCII 码    |
 | ---- | ---------- | ----------- |
