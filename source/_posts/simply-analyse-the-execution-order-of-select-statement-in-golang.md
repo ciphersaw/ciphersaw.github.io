@@ -124,7 +124,7 @@ select {}  // block forever
 
 介绍完 select 语句的官方说明后，相信大家对它的整体执行流程有了一定理解。接下来，将用几个样例重点验证第 1、4 步流程，以助于巩固加强。
 
-## 样例一
+## 样例一：矩步方行
 
 本样例的 select 语句构造了三个函数与三个 case，通过打印日志的方法以窥探其执行顺序：
 
@@ -176,7 +176,7 @@ func getIntBufChan() chan int {
 
 多次运行后，发现只有以下两种结果，而 default case 永远不会进入。
 
-第一种结果选择 case 1，执行顺序为：`getIntChan()` -> `getIntBufChan()` -> `getInt(1)` -> `getInt(0)` -> `intArr[getInt(0)]` -> `fmt.Printf("select case 1\n")`
+第一种结果选择 case 1，执行顺序为：`getIntChan()` → `getIntBufChan()` → `getInt(1)` → `getInt(0)` → `intArr[getInt(0)]` → `fmt.Printf("select case 1\n")`
 
 ```go
 get int chan
@@ -186,7 +186,7 @@ get int 0
 select case 1
 ```
 
-第二种结果选择 case 2，执行顺序为：`getIntChan()` -> `getIntBufChan()` -> `getInt(1)` -> `fmt.Printf("select case 2\n")`
+第二种结果选择 case 2，执行顺序为：`getIntChan()` → `getIntBufChan()` → `getInt(1)` → `fmt.Printf("select case 2\n")`
 
 ```go
 get int chan
@@ -197,7 +197,7 @@ select case 2
 
 综上结果，与官方说明一致：执行流程第 1 步，先按代码编写顺序，分别对 `getIntChan()`、`getIntBufChan()`、`getInt(1)` 进行求值；执行流程第 4 步，若选择 case 1 的接收操作，则会对 `getInt(0)` 求值后进行赋值，否则 `getInt(0)` 不会执行。
 
-## 样例二
+## 样例二：大同小异
 
 本样例介绍一个在发送操作与接收操作中常见的理解误区，同样有三个函数与三个 case：
 
@@ -242,7 +242,7 @@ func getIntBufChan() chan int {
 }
 ```
 
-样例运行后，大家通常可能会认为 select 语句会选择 case 2，其实不然，在按顺序执行了 `getIntBufChan()`、`getIntChan()` 后，直接就报死锁错误了。
+样例运行后，大家通常可能会认为 select 语句会选择 case 2，其实不然，在按顺序执行了 `getIntBufChan()`、`getIntChan()` 后，直接就报死锁错误了：
 
 ```go
 get int buf chan
@@ -254,7 +254,7 @@ main.main()
 	C:/Go/src/select-test/main.go:17 +0x9d
 ```
 
-以上结果的原因，在于对发送操作的右值表达式求值运算理解不到位：**select 语句需要获取 `<-getIntChan()` 表达式的求值结果，而不仅仅是 `getIntChan()` 的**。因此，在没有任何 goroutine 往 `intChan` 通道发送数据的情况下，想要从中接收数据必定是阻塞的，继而引发程序死锁。
+以上结果的原因，在于对发送操作的右值表达式求值运算理解不到位：**select 语句需要获取 `<-getIntChan()` 表达式的求值结果，而不仅仅是 `getIntChan()` 的。**因此，在没有任何 goroutine 往 `intChan` 通道发送数据的情况下，想要从中接收数据必定是阻塞的，继而引发程序死锁。
 
 在样例二的基础上，添加一个 goroutine 往 `intChan` 通道发送数据，即可解决问题：
 
@@ -300,7 +300,7 @@ func getIntBufChan() chan int {
 
 多次运行后，同样发现只有以下两种结果，并且 default case 永远不会进入。
 
-第一种结果选择 case 1，执行顺序为：`getIntBufChan()` -> `getIntChan()` -> `getIntBufChan()` -> `fmt.Printf("select case 1\n")`
+第一种结果选择 case 1，执行顺序为：`getIntBufChan()` → `getIntChan()` → `getIntBufChan()` → `fmt.Printf("select case 1\n")`
 
 ```go
 get int buf chan
@@ -309,7 +309,7 @@ get int buf chan
 select case 1
 ```
 
-第二种结果选择 case 2，执行顺序为：`getIntBufChan()` -> `getIntChan()` -> `getIntBufChan()` -> `intArr[1]`-> `fmt.Printf("select case 2\n")`
+第二种结果选择 case 2，执行顺序为：`getIntBufChan()` → `getIntChan()` → `getIntBufChan()` → `intArr[1]` → `fmt.Printf("select case 2\n")`
 
 ```go
 get int buf chan
@@ -322,6 +322,112 @@ select case 2
 
 - 接收操作：只需对 `getIntChan()` 求值，只要其返回结果是接收通道即可。
 - 发送操作：需要对 `<-getIntChan()` 整体求值，其返回结果必须是发送通道相应的数据类型。
+
+## 样例三：时空交错
+
+接下来，再讨论一个与时间相关的执行顺序问题，以下样例只含有两个函数与两个 case：
+
+- case 1：发送操作，将 `getInt(2)` 的求值结果，发送至 `getIntBufChan()` 返回的有缓冲通道中，注意此处 `getInt(2)` 需等待两秒后再返回。
+- case 2：接收操作，从 `time.After(time.Second)` 返回的无缓冲通道中，等到一秒后，接收 time.Time 类型的数据，但不进行赋值。
+
+```go
+package main
+
+import (
+	"log"
+	"time"
+)
+
+var intBufChan = make(chan int, 2)
+
+func main() {
+	select {
+	case getIntBufChan() <- getInt(2):
+		log.Printf("select case 1\n")
+	case <-time.After(time.Second):
+		log.Printf("select case 2\n")
+	}
+}
+
+func getInt(i int) int {
+	log.Printf("get int sleep 2s...\n")
+	time.Sleep(2 * time.Second)
+	log.Printf("get int %d\n", i)
+	return i
+}
+
+func getIntBufChan() chan int {
+	log.Printf("get int buf chan\n")
+	return intBufChan
+}
+```
+
+样例运行后，可能直观地会认为选择 case 2，因为 case 2 只需等待一秒，而 case 1 需要等待两秒。但事实却恰恰相反，样例中的 select 语句只会选择 case 1：
+
+```go
+2022/11/12 11:22:04 get int buf chan
+2022/11/12 11:22:04 get int sleep 2s...
+2022/11/12 11:22:06 get int 2
+2022/11/12 11:22:06 select case 1
+```
+
+对于以上与直觉相悖的结果，仍然在于对表达式求值运算的理解有偏差：**select 语句必须按顺序依次完成表达式的求值运算，若某个表达式未完成，则会一直阻塞在执行流程的第 1 步，导致后续的通信操作无法进行。**因此，即使 case 2 等待时间比 case 1 短，但也需等 case 1 等待两秒并执行完毕后，才能开始一秒的倒计时，此时显然只能选择 case 1 的发送操作了。
+
+在样例三的基础上，调换两个 case 中的表达式再运行，会发现两个 case 均有被选择的可能：
+
+```go
+package main
+
+import (
+	"log"
+	"time"
+)
+
+var intBufChan = make(chan int, 2)
+
+func main() {
+	select {
+	case <-time.After(time.Second):
+		log.Printf("select case 1\n")
+	case getIntBufChan() <- getInt(2):
+		log.Printf("select case 2\n")
+	}
+}
+
+func getInt(i int) int {
+	log.Printf("get int sleep 2s...\n")
+	time.Sleep(2 * time.Second)
+	log.Printf("get int %d\n", i)
+	return i
+}
+
+func getIntBufChan() chan int {
+	log.Printf("get int buf chan\n")
+	return intBufChan
+}
+```
+
+第一种结果选择 case 1，执行顺序为：`time.After(time.Second)` → `getIntBufChan()` → `getInt(2)` → `time.Sleep(2 * time.Second)` → `fmt.Printf("select case 1\n")`
+
+```go
+2022/11/12 11:53:29 get int buf chan
+2022/11/12 11:53:29 get int sleep 2s...
+2022/11/12 11:53:31 get int 2
+2022/11/12 11:53:31 select case 1
+```
+
+第二种结果选择 case 2，执行顺序为：`time.After(time.Second)` → `getIntBufChan()` → `getInt(2)` → `time.Sleep(2 * time.Second)` → `fmt.Printf("select case 2\n")`
+
+```go
+2022/11/12 11:54:15 get int buf chan
+2022/11/12 11:54:15 get int sleep 2s...
+2022/11/12 11:54:17 get int 2
+2022/11/12 11:54:17 select case 2
+```
+
+即便如此，应该能意识到，样例三中 `<-time.After(time.Second)` 表达式的用法是毫无意义的：要么被 `getInt(2)` 阻塞后才开始倒计时，要么倒计时结束后与 `getIntBufChan() <- getInt(2)`  一起被随机选择，无法起到超时控制的作用。
+
+综上结果，需注意 case 中与时间相关的表达式求值运算，表达式中的时间等待，会阻塞 select 语句的整体执行流程。尤其是在使用 `time.After(d Duration)` 等超时控制函数时，应当留意其他 case 中的函数是否存在时间等待逻辑，避免事与愿违。
 
 # 0x03 总结
 
