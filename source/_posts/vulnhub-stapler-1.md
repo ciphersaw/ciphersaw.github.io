@@ -253,10 +253,10 @@ cli_options:
 
 ![wpscan-scan-yml](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/vulnhub-stapler-1/wpscan-scan-yml.png)
 
-首先探测网站的有效用户名，添加 `--enumerate u1-100` 参数指定前 100 个用户名（实际上没这么多），并添加 `--disable-tls-check` 参数忽略 TLS 检查。结果显示，共有 17 个用户名，大部分与之前收集的相同：
+首先探测网站的有效用户名，添加 `--enumerate u1-100` 参数指定前 100 个用户名（实际上没这么多），并添加 `--disable-tls-checks` 参数忽略 TLS 检查。结果显示，共有 17 个用户名，大部分与之前收集的相同：
 
 ```bash
-wpscan --url https://192.168.153.147:12380/blogblog/ --enumerate u1-100 --disable-tls-check
+wpscan --url https://192.168.153.147:12380/blogblog/ --enumerate u1-100 --disable-tls-checks
 ```
 
 ![wpscan-enumerate-u](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/vulnhub-stapler-1/wpscan-enumerate-u.png)
