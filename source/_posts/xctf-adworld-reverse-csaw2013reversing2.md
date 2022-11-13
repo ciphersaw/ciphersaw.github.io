@@ -10,7 +10,7 @@ categories: [InfoSec,Reverse]
 
 此题出自 CSAW CTF 2014，是分值为 200 的 Reverse 题，重点是使用 IDA **对关键函数的逆向分析，并修改程序的运行流程**后，得到正确结果。
 
-题目链接：[https://adworld.xctf.org.cn/task/answer?type=reverse&number=4&grade=0&id=5081](https://adworld.xctf.org.cn/task/answer?type=reverse&number=4&grade=0&id=5081)
+题目链接：[https://adworld.xctf.org.cn/challenges/details?hash=18180a7a-c677-44bd-92fc-84a382d318ae_2](https://adworld.xctf.org.cn/challenges/details?hash=18180a7a-c677-44bd-92fc-84a382d318ae_2)
 
 <!-- more -->
 
@@ -28,7 +28,7 @@ categories: [InfoSec,Reverse]
 
 接下来，使用 IDA Pro 7.0 (32 bit) 打开程序，默认进入主函数的反汇编窗口，按下 **F5** 后进行反编译，自动生成类 C 语言的伪代码：
 
-![main](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/XCTF_%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C_Reverse_csaw2013reversing2/main.png) 
+![main](https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/xctf-adworld-reverse-csaw2013reversing2/main.png)
 
 可见，若 `sub_40102A()` 或 `IsDebuggerPresent()` 的返回值为真，则执行调试断点指令 `__debugbreak()`、子函数 `sub_401000(v3 + 4, lpMem)`、结果进程函数 `ExitProcess(0xFFFFFFFF)`，否则直接执行 `MessageBoxA(0, lpMem + 1, "Flag", 2u)`，弹出全是乱码的 Flag 提示框。
 
