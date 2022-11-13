@@ -59,6 +59,10 @@ The original articles in my blog  are classified by index below.
 
 - [Javascript 判断 IP 地址是否属于 CIDR 范围](https://ciphersaw.github.io/2020/02/16/check-if-ip-belongs-to-cidr-by-javascript/)
 
+### Go
+
+- [浅析 Go select 语句的执行顺序问题](https://ciphersaw.github.io/2022/11/09/simply-analyse-the-execution-order-of-select-statement-in-golang/)
+
 ## Tips
 
 ### Microsoft Word
