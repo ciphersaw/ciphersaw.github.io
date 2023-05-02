@@ -44,6 +44,10 @@ The original articles in my blog  are classified by index below.
 
 - [奇安信「实战攻防三部曲」要点总结](https://ciphersaw.github.io/2019/09/22/summary-of-practical-tripple-guide-of-attack-and-defense-by-qianxin/)
 
+### HIDS
+
+- [Elkeid Driver 性能测试操作指引](https://ciphersaw.github.io/2023/05/02/operational-guide-of-elkeid-driver-performance-test/)
+
 ## Programming
 
 ### Python
