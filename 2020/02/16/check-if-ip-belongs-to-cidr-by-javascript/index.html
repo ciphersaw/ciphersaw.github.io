@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ciphersaw.me","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.13.2","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="0x00 前言在项目过程中，曾遇到根据 IP 地址判断 CIDR 网络区域、并且在前端展示的需求。由于 Javascript 没有原生类库能对 IP 地址进行相关操作，因此本文将采用 ES6 的新特性箭头函数，精简地实现此判断功能。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Javascript 判断 IP 地址是否属于 CIDR 范围">
+<meta property="og:url" content="https://ciphersaw.me/2020/02/16/check-if-ip-belongs-to-cidr-by-javascript/index.html">
+<meta property="og:site_name" content="Secrypt Agency">
+<meta property="og:description" content="0x00 前言在项目过程中，曾遇到根据 IP 地址判断 CIDR 网络区域、并且在前端展示的需求。由于 Javascript 没有原生类库能对 IP 地址进行相关操作，因此本文将采用 ES6 的新特性箭头函数，精简地实现此判断功能。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/check-if-ip-belongs-to-cidr-by-javascript/cidr-comparison.png">
+<meta property="article:published_time" content="2020-02-16T13:07:52.000Z">
+<meta property="article:modified_time" content="2021-09-30T15:20:03.505Z">
+<meta property="article:author" content="Cipher Saw">
+<meta property="article:tag" content="Javascript">
+<meta property="article:tag" content="ECMAScript">
+<meta property="article:tag" content="Network">
+<meta property="article:tag" content="RegEx">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/check-if-ip-belongs-to-cidr-by-javascript/cidr-comparison.png">
+
+
+<link rel="canonical" href="https://ciphersaw.me/2020/02/16/check-if-ip-belongs-to-cidr-by-javascript/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://ciphersaw.me/2020/02/16/check-if-ip-belongs-to-cidr-by-javascript/","path":"2020/02/16/check-if-ip-belongs-to-cidr-by-javascript/","title":"Javascript 判断 IP 地址是否属于 CIDR 范围"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Javascript 判断 IP 地址是否属于 CIDR 范围 | Secrypt Agency</title>
+  
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Secrypt Agency</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Welcome to a platform for network security artists.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li><li class="menu-item menu-item-friends"><a href="/friends/" rel="section"><i class="fa fa-users fa-fw"></i>Friends</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#0x00-%E5%89%8D%E8%A8%80"><span class="nav-text">0x00 前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x01-%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5"><span class="nav-text">0x01 基础概念</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-CIDR%EF%BC%9F"><span class="nav-text">什么是 CIDR？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E7%AE%AD%E5%A4%B4%E5%87%BD%E6%95%B0%EF%BC%9F"><span class="nav-text">什么是箭头函数？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x02-%E5%87%BD%E6%95%B0%E5%AE%9E%E7%8E%B0"><span class="nav-text">0x02 函数实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#validateIp4"><span class="nav-text">validateIp4</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#validateCidr"><span class="nav-text">validateCidr</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ip4ToInt"><span class="nav-text">ip4ToInt</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#isIp4InCidr"><span class="nav-text">isIp4InCidr</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#isIp4InCidrs"><span class="nav-text">isIp4InCidrs</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x03-%E5%B0%8F%E7%BB%93"><span class="nav-text">0x03 小结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Cipher Saw"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Cipher Saw</p>
+  <div class="site-description" itemprop="description">Not to be whom you don't want to be.</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">74</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ciphersaw" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ciphersaw" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/CipherSaw" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;CipherSaw" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe-asia fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://ctf-wiki.github.io/ctf-wiki/" title="https:&#x2F;&#x2F;ctf-wiki.github.io&#x2F;ctf-wiki&#x2F;" rel="noopener" target="_blank">CTF Wiki</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://www.owasp.org/index.php/Main_Page" title="https:&#x2F;&#x2F;www.owasp.org&#x2F;index.php&#x2F;Main_Page" rel="noopener" target="_blank">OWASP</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.pentest-standard.org/index.php/Main_Page" title="http:&#x2F;&#x2F;www.pentest-standard.org&#x2F;index.php&#x2F;Main_Page" rel="noopener" target="_blank">Pentest Standard</a>
+        </li>
+    </ul>
+  </div>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/ciphersaw" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ciphersaw.me/2020/02/16/check-if-ip-belongs-to-cidr-by-javascript/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Cipher Saw">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Secrypt Agency">
+      <meta itemprop="description" content="Not to be whom you don't want to be.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Javascript 判断 IP 地址是否属于 CIDR 范围 | Secrypt Agency">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Javascript 判断 IP 地址是否属于 CIDR 范围
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2020-02-16 21:07:52" itemprop="dateCreated datePublished" datetime="2020-02-16T21:07:52+08:00">2020-02-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2021-09-30 23:20:03" itemprop="dateModified" datetime="2021-09-30T23:20:03+08:00">2021-09-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Programming/" itemprop="url" rel="index"><span itemprop="name">Programming</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Programming/Javascript/" itemprop="url" rel="index"><span itemprop="name">Javascript</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/2020/02/16/check-if-ip-belongs-to-cidr-by-javascript/" class="post-meta-item leancloud_visitors" data-flag-title="Javascript 判断 IP 地址是否属于 CIDR 范围" title="Views">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h1><p>在项目过程中，曾遇到<strong>根据 IP 地址判断 CIDR 网络区域、并且在前端展示</strong>的需求。由于 Javascript 没有原生类库能对 IP 地址进行相关操作，因此本文将采用 ES6 的新特性<strong>箭头函数</strong>，精简地实现此判断功能。</p>
+<span id="more"></span>
+
+<h1 id="0x01-基础概念"><a href="#0x01-基础概念" class="headerlink" title="0x01 基础概念"></a>0x01 基础概念</h1><h2 id="什么是-CIDR？"><a href="#什么是-CIDR？" class="headerlink" title="什么是 CIDR？"></a>什么是 CIDR？</h2><p><strong><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing">CIDR</a>（Classless Inter-Domain Routing，无类别域间路由）</strong>是一种 IP 地址归类方法，主要用于分配 IP 地址与有效地路由 IP 数据包等功能。</p>
+<p>CIDR 的表示方法为 <code>A.B.C.D/N</code>，其中 <code>A.B.C.D</code> 是点分十进制的 IPv4 地址，<code>N</code> 是 0 至 32 之间的整数，代表 CIDR 的前缀长度，两者用斜线 <code>/</code> 分隔。</p>
+<p>若一个 IP 地址的前 <code>N</code> 位与 一个 CIDR 范围的前缀相同，则说明此 IP 地址在此 CIDR 范围中。以 CIDR 范围 <code>10.10.1.32/27</code> 为例，可知 <code>110.10.1.44</code> 属于该 CIDR 范围，而 <code>10.10.1.90</code> 则不属于。</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/check-if-ip-belongs-to-cidr-by-javascript/cidr-comparison.png" alt="cidr-comparison"></p>
+<h2 id="什么是箭头函数？"><a href="#什么是箭头函数？" class="headerlink" title="什么是箭头函数？"></a>什么是箭头函数？</h2><p><strong><a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions">箭头函数</a>表达式</strong>是 ECMAScript 6 的新增语法，相比于普通函数表达式，它主要特点是具有更精简的表达语法，以及在函数体内不存在自己的 <code>this</code>、<code>arguments</code>、<code>super</code>、<code>new.target</code> 等变量。</p>
+<p>以下变量 <code>a</code> 与 <code>b</code> 均可定义了一个平方数计算函数，可见 <code>a</code> 比 <code>b</code> 的定义更精简：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title function_">a</span> = x =&gt; x * x;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 等同于</span></span><br><span class="line"><span class="keyword">const</span> b = <span class="keyword">function</span>(<span class="params">x</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> x * x;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="title function_">a</span>(<span class="number">2</span>); <span class="comment">// 4</span></span><br><span class="line"><span class="title function_">b</span>(<span class="number">2</span>); <span class="comment">// 4</span></span><br></pre></td></tr></table></figure>
+
+<p>箭头函数的特点及用法，请参考 0x03 中的相关教程，此处不再详解。</p>
+<h1 id="0x02-函数实现"><a href="#0x02-函数实现" class="headerlink" title="0x02 函数实现"></a>0x02 函数实现</h1><h2 id="validateIp4"><a href="#validateIp4" class="headerlink" title="validateIp4"></a>validateIp4</h2><p><code>validateIp4</code> 用于判断 IPv4 地址的合法性。需要满足以下三个要求：</p>
+<ul>
+<li>由三个 <code>.</code> 符号分隔四部分整数</li>
+<li>每部分整数范围是 0 至 255</li>
+<li>每部分整数不能有前导 0</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title function_">validateIp4</span> = ip =&gt;</span><br><span class="line">	<span class="regexp">/^((\d|[1-9]\d|1\d\d|2([0-4]\d|5[0-5]))(\.|$))&#123;4&#125;$/</span>.<span class="title function_">test</span>(ip) ? <span class="literal">true</span> : <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line"><span class="title function_">validateIp4</span>(<span class="string">&quot;192.168.1.1&quot;</span>) <span class="comment">// true</span></span><br><span class="line"><span class="title function_">validateIp4</span>(<span class="string">&quot;192.168.1&quot;</span>) <span class="comment">// false</span></span><br><span class="line"><span class="title function_">validateIp4</span>(<span class="string">&quot;192.168.1.1000&quot;</span>) <span class="comment">// false</span></span><br><span class="line"><span class="title function_">validateIp4</span>(<span class="string">&quot;192.168.1.01&quot;</span>) <span class="comment">// false</span></span><br></pre></td></tr></table></figure>
+
+<p>此函数通过正则表达式实现，其中：</p>
+<ul>
+<li><code>(\d|[1-9]\d|1\d\d|2([0-4]\d|5[0-5]))</code> 限定每部分整数取值只能为 0 至 9、10 至 99、100 至 255</li>
+<li><code>(\.|$)</code> 限定每部分结尾只能是 <code>.</code> 符号或行尾</li>
+</ul>
+<h2 id="validateCidr"><a href="#validateCidr" class="headerlink" title="validateCidr"></a>validateCidr</h2><p><code>validateCidr</code> 用于判断 CIDR 范围的合法性。除了 IPv4 部分需要满足上述三个要求，前缀长度还需满足：</p>
+<ul>
+<li>长度范围是 0 至 32</li>
+<li>长度不能有前导 0</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title function_">validateCidr</span> = cidr =&gt;</span><br><span class="line">	<span class="regexp">/^((\d|[1-9]\d|1\d\d|2([0-4]\d|5[0-5]))\.)&#123;3&#125;((\d|[1-9]\d|1\d\d|2([0-4]\d|5[0-5]))\/)&#123;1&#125;(\d|[1-3]\d)$/</span>.<span class="title function_">test</span>(cidr) ? <span class="literal">true</span> : <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line"><span class="title function_">validateCidr</span>(<span class="string">&quot;192.168.1.1/24&quot;</span>) <span class="comment">// true</span></span><br><span class="line"><span class="title function_">validateCidr</span>(<span class="string">&quot;192.168.1.1&quot;</span>) <span class="comment">// false</span></span><br><span class="line"><span class="title function_">validateCidr</span>(<span class="string">&quot;192.168.1/24&quot;</span>) <span class="comment">// false</span></span><br><span class="line"><span class="title function_">validateCidr</span>(<span class="string">&quot;192.168.1.1/48&quot;</span>) <span class="comment">// false</span></span><br><span class="line"><span class="title function_">validateCidr</span>(<span class="string">&quot;192.168.1/024&quot;</span>) <span class="comment">// false</span></span><br></pre></td></tr></table></figure>
+
+<p>由于 IPv4 地址最后一部分不再匹配行尾，因此正则表达式拆分成两部分：IPv4 地址前三部分末尾匹配 <code>.</code> 符号，最后一部分末尾匹配 <code>/</code> 符号。此外，<code>(\d|[1-3]\d)</code> 限定前缀范围为 0 至 32。</p>
+<h2 id="ip4ToInt"><a href="#ip4ToInt" class="headerlink" title="ip4ToInt"></a>ip4ToInt</h2><p><code>ip4ToInt</code> 用于计算 IPv4 地址每部分整数的移位累加和。可以理解为，在去除 <code>.</code> 符号后，得到从左至右排列的 32 位二进制整数，再将其转换为十进制整数。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title function_">ip4ToInt</span> = ip =&gt;</span><br><span class="line">	ip.<span class="title function_">split</span>(<span class="string">&#x27;.&#x27;</span>).<span class="title function_">reduce</span>(<span class="function">(<span class="params">sum, part</span>) =&gt;</span> (sum &lt;&lt; <span class="number">8</span>) + <span class="built_in">parseInt</span>(part, <span class="number">10</span>), <span class="number">0</span>) &gt;&gt;&gt; <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="title function_">ip4ToInt</span>(<span class="string">&quot;192.168.1.1&quot;</span>) <span class="comment">// 3232235777</span></span><br><span class="line"><span class="title function_">ip4ToInt</span>(<span class="string">&quot;192.168.1&quot;</span>) <span class="comment">// 12625921</span></span><br><span class="line"><span class="title function_">ip4ToInt</span>(<span class="string">&quot;192.168.1.1000&quot;</span>) <span class="comment">// 3232236776</span></span><br><span class="line"><span class="title function_">ip4ToInt</span>(<span class="string">&quot;192.168.1.01&quot;</span>) <span class="comment">// 3232235777</span></span><br></pre></td></tr></table></figure>
+
+<p>由测试结果可见，函数暂未做 IPv4 地址合法性判断，适用于任何点分数字字符串，其中：</p>
+<ul>
+<li><code>split(&#39;.&#39;)</code> 将 IPv4 地址的每部分取出，例如 <code>&quot;192.168.1.1&quot;.split(&#39;.&#39;)</code> 将得到 <code>[&quot;192&quot;, &quot;168&quot;, &quot;1&quot;, &quot;1&quot;]</code></li>
+<li><code>reduce((sum, part) =&gt; (sum &lt;&lt; 8) + parseInt(part, 10), 0)</code> 将计算每个数组元素的移位累加和，详细用法请参考：<a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/Reduce">Array.prototype.reduce()</a><ul>
+<li><code>sum</code> 为累加和，作为 <code>reduce</code> 函数的结果返回，初始值设置为 0</li>
+<li><code>part</code> 为每个数组元素，转换为十进制整数后，与左移 8 位后的 <code>sum</code> 相加</li>
+</ul>
+</li>
+<li><code>&gt;&gt;&gt; 0 </code> 将计算结果转换为 32 位无符号整数，详细含义请参考：<a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/1822350/what-is-the-javascript-operator-and-how-do-you-use-it">What is the JavaScript &gt;&gt;&gt; operator and how do you use it?</a></li>
+</ul>
+<h2 id="isIp4InCidr"><a href="#isIp4InCidr" class="headerlink" title="isIp4InCidr"></a>isIp4InCidr</h2><p><code>isIp4InCidr</code> 用于判断 IPv4 地址是否属于 CIDR 范围。函数中嵌套了子函数，<code>isIp4InCidr(ip)</code> 返回一个以 <code>cidr</code> 作为参数的函数，便于后续对多个 CIDR 范围进行判断。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title function_">isIp4InCidr</span> = ip =&gt; <span class="function"><span class="params">cidr</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="title function_">validateIp4</span>(ip) &amp;&amp; <span class="title function_">validateCidr</span>(cidr)) &#123;</span><br><span class="line">        <span class="keyword">const</span> [range, bits] = cidr.<span class="title function_">split</span>(<span class="string">&#x27;/&#x27;</span>);</span><br><span class="line">        <span class="keyword">const</span> mask = ~(<span class="number">2</span> ** (<span class="number">32</span> - bits) - <span class="number">1</span>);</span><br><span class="line">        <span class="keyword">return</span> (<span class="title function_">ip4ToInt</span>(ip) &amp; mask) === (<span class="title function_">ip4ToInt</span>(range) &amp; mask);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="title function_">isIp4InCidr</span>(<span class="string">&quot;192.168.1.1&quot;</span>)(<span class="string">&quot;192.168.1.1/24&quot;</span>) <span class="comment">// true</span></span><br><span class="line"><span class="title function_">isIp4InCidr</span>(<span class="string">&quot;192.168.1.1&quot;</span>)(<span class="string">&quot;192.168.1.1/48&quot;</span>) <span class="comment">// false</span></span><br><span class="line"><span class="title function_">isIp4InCidr</span>(<span class="string">&quot;192.168.1&quot;</span>)(<span class="string">&quot;192.168.1.1/24&quot;</span>) <span class="comment">// false</span></span><br></pre></td></tr></table></figure>
+
+<p>若 IPv4 地址与 CIDR 范围均合法，则继续进行判断，否则返回 <code>false</code>，其中：</p>
+<ul>
+<li><code>[range, bits] = cidr.split(&#39;/&#39;)</code> 使用了 ES6 的新特性<a target="_blank" rel="noopener" href="http://es6.ruanyifeng.com/#docs/destructuring">解构赋值</a>，<code>range</code> 为 CIDR 范围的 IPv4 部分，<code>bits</code> 为前缀长度部分</li>
+<li><code>mask = ~(2 ** (32 - bits) - 1)</code> 根据前缀长度计算掩码，掩码的前 <code>bits</code> 位为 <code>1</code>，后 <code>32 - bits</code> 位为 <code>0</code></li>
+<li>若 <code>ip</code> 与 <code>range</code> 的前 <code>bits</code> 位相同，则返回 <code>true</code>，否则返回 <code>false</code></li>
+</ul>
+<h2 id="isIp4InCidrs"><a href="#isIp4InCidrs" class="headerlink" title="isIp4InCidrs"></a>isIp4InCidrs</h2><p><code>isIp4InCidrs</code> 用于判断 IPv4 地址是否属于 CIDR 数组内的其中一个范围。函数基于 <code>isIp4InCidr</code>  实现。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title function_">isIp4InCidrs</span> = (<span class="params">ip, cidrs</span>) =&gt; cidrs.<span class="title function_">some</span>(<span class="title function_">isIp4InCidr</span>(ip));</span><br><span class="line"></span><br><span class="line"><span class="title function_">isIp4InCidrs</span>(<span class="string">&#x27;192.168.10.1&#x27;</span>, [<span class="string">&#x27;10.10.0.0/16&#x27;</span>, <span class="string">&#x27;192.168.1.1/24&#x27;</span>]); <span class="comment">// false</span></span><br><span class="line"><span class="title function_">isIp4InCidrs</span>(<span class="string">&#x27;192.168.10.1&#x27;</span>, [<span class="string">&#x27;10.10.0.0/16&#x27;</span>, <span class="string">&#x27;192.168.1.1/16&#x27;</span>]); <span class="comment">// true</span></span><br><span class="line"><span class="title function_">isIp4InCidrs</span>(<span class="string">&#x27;10.10.10.10&#x27;</span>, [<span class="string">&#x27;10.10.0.0/48&#x27;</span>, <span class="string">&#x27;10.10.0.0/16&#x27;</span>]); <span class="comment">// true</span></span><br></pre></td></tr></table></figure>
+
+<p>若 IPv4 地址属于CIDR 数组内的其中一个范围，则返回 <code>true</code>，结束判断，否则返回 <code>false</code>，其中：</p>
+<ul>
+<li><code>some(isIp4InCidr(ip))</code> 将判断 CIDR 数组中，是否至少有一个元素满足 <code>isIp4InCidr(ip)</code> 为真，即 IPv4 地址属于某个 CIDR 范围，详细用法请参考：<a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/Some">Array.prototype.some()</a></li>
+</ul>
+<h1 id="0x03-小结"><a href="#0x03-小结" class="headerlink" title="0x03 小结"></a>0x03 小结</h1><p>本文主要是利用 ECMAScript 6 的新特性与 Array 对象的方法，精简地实现了 IPv4 地址是否属于某个 CIDR 范围的判断功能，文中不足或错误之处，恳请读者告知。</p>
+<p>对功能实现与箭头函数有疑惑的读者，可参考以下文章：</p>
+<p><a target="_blank" rel="noopener" href="https://tech.mybuilder.com/determining-if-an-ipv4-address-is-within-a-cidr-range-in-javascript/">Determining if an IPv4 address is within a CIDR range in JavaScript</a><br><a target="_blank" rel="noopener" href="https://hacks.mozilla.org/2015/06/es6-in-depth-arrow-functions/">ES6 In Depth: Arrow functions</a><br><a target="_blank" rel="noopener" href="http://es6.ruanyifeng.com/#docs/function">ECMAScript 6 入门教程——函数的扩展</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>Post author:  </strong>Cipher Saw
+  </li>
+  <li class="post-copyright-link">
+      <strong>Post link: </strong>
+      <a href="https://ciphersaw.me/2020/02/16/check-if-ip-belongs-to-cidr-by-javascript/" title="Javascript 判断 IP 地址是否属于 CIDR 范围">https://ciphersaw.me/2020/02/16/check-if-ip-belongs-to-cidr-by-javascript/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> unless stating additionally.
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Javascript/" rel="tag"># Javascript</a>
+              <a href="/tags/ECMAScript/" rel="tag"># ECMAScript</a>
+              <a href="/tags/Network/" rel="tag"># Network</a>
+              <a href="/tags/RegEx/" rel="tag"># RegEx</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2019/09/22/summary-of-practical-tripple-guide-of-attack-and-defense-by-qianxin/" rel="prev" title="奇安信「实战攻防三部曲」要点总结">
+                  <i class="fa fa-chevron-left"></i> 奇安信「实战攻防三部曲」要点总结
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/05/23/record-of-newbie-developer-taking-over-project-for-colleague-quitting/" rel="next" title="萌新开发接手大佬项目初体验">
+                  萌新开发接手大佬项目初体验 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-space-shuttle"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Cipher Saw</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+  
+
+
+  <script class="next-config" data-name="leancloud_visitors" type="application/json">{"enable":true,"app_id":"KWe6NtO4vhgQR3IfB99JElre-gzGzoHsz","app_key":"7nrrRDyHHUMcx03upUALYKIQ","server_url":null,"security":false}</script>
+  <script src="/js/third-party/statistics/lean-analytics.js"></script>
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"ciphersaw","count":false,"i18n":{"disqus":"disqus"}}</script>
+<script src="/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

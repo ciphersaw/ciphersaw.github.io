@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ciphersaw.me","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.13.2","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="table th:nth-of-type(1) {     width: 18%; }   0x00 前言在上一篇文章「Python 绝技 —— TCP 服务器与客户端」中，介绍了传输层的核心协议 TCP ，并运用 Python 脚本的 socket 模块演示了 TCP 服务器与客户端的通信过程。 本篇将按照同样的套路，先介绍传输层的另一个核心协议 UDP，再比较 TCP 与 UDP 的特点，最">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python 绝技 —— UDP 服务器与客户端">
+<meta property="og:url" content="https://ciphersaw.me/2018/06/15/python-trick-udp-server-and-client/index.html">
+<meta property="og:site_name" content="Secrypt Agency">
+<meta property="og:description" content="table th:nth-of-type(1) {     width: 18%; }   0x00 前言在上一篇文章「Python 绝技 —— TCP 服务器与客户端」中，介绍了传输层的核心协议 TCP ，并运用 Python 脚本的 socket 模块演示了 TCP 服务器与客户端的通信过程。 本篇将按照同样的套路，先介绍传输层的另一个核心协议 UDP，再比较 TCP 与 UDP 的特点，最">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/python-trick-udp-server-and-client/udp-socket-python.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/python-trick-udp-server-and-client/one-server-vs-multiple-clients.png">
+<meta property="article:published_time" content="2018-06-15T01:38:58.000Z">
+<meta property="article:modified_time" content="2021-09-30T15:27:10.420Z">
+<meta property="article:author" content="Cipher Saw">
+<meta property="article:tag" content="Network">
+<meta property="article:tag" content="Python">
+<meta property="article:tag" content="API">
+<meta property="article:tag" content="Socket">
+<meta property="article:tag" content="Server">
+<meta property="article:tag" content="Client">
+<meta property="article:tag" content="UDP">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/python-trick-udp-server-and-client/udp-socket-python.png">
+
+
+<link rel="canonical" href="https://ciphersaw.me/2018/06/15/python-trick-udp-server-and-client/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://ciphersaw.me/2018/06/15/python-trick-udp-server-and-client/","path":"2018/06/15/python-trick-udp-server-and-client/","title":"Python 绝技 —— UDP 服务器与客户端"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Python 绝技 —— UDP 服务器与客户端 | Secrypt Agency</title>
+  
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Secrypt Agency</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Welcome to a platform for network security artists.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li><li class="menu-item menu-item-friends"><a href="/friends/" rel="section"><i class="fa fa-users fa-fw"></i>Friends</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#0x00-%E5%89%8D%E8%A8%80"><span class="nav-text">0x00 前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x01-UDP-%E5%8D%8F%E8%AE%AE"><span class="nav-text">0x01 UDP 协议</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x02-Network-Socket"><span class="nav-text">0x02 Network Socket</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x03-UDP-%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="nav-text">0x03 UDP 服务器</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x04-UDP-%E5%AE%A2%E6%88%B7%E7%AB%AF"><span class="nav-text">0x04 UDP 客户端</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x05-UDP-%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1"><span class="nav-text">0x05 UDP 进程间通信</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%95%E6%9C%8D%E5%8A%A1%E5%99%A8-VS-%E5%A4%9A%E5%AE%A2%E6%88%B7%E7%AB%AF"><span class="nav-text">单服务器 VS 多客户端</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x06-Python-API-Reference"><span class="nav-text">0x06 Python API Reference</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#socket-%E6%A8%A1%E5%9D%97"><span class="nav-text">socket 模块</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#socket-%E5%87%BD%E6%95%B0"><span class="nav-text">socket() 函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#bind-%E5%87%BD%E6%95%B0"><span class="nav-text">bind() 函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sendto-%E5%87%BD%E6%95%B0"><span class="nav-text">sendto() 函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#recvfrom-%E5%87%BD%E6%95%B0"><span class="nav-text">recvfrom() 函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#close-%E5%87%BD%E6%95%B0"><span class="nav-text">close() 函数</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x07-%E6%80%BB%E7%BB%93"><span class="nav-text">0x07 总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Cipher Saw"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Cipher Saw</p>
+  <div class="site-description" itemprop="description">Not to be whom you don't want to be.</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">74</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ciphersaw" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ciphersaw" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/CipherSaw" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;CipherSaw" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe-asia fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://ctf-wiki.github.io/ctf-wiki/" title="https:&#x2F;&#x2F;ctf-wiki.github.io&#x2F;ctf-wiki&#x2F;" rel="noopener" target="_blank">CTF Wiki</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://www.owasp.org/index.php/Main_Page" title="https:&#x2F;&#x2F;www.owasp.org&#x2F;index.php&#x2F;Main_Page" rel="noopener" target="_blank">OWASP</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.pentest-standard.org/index.php/Main_Page" title="http:&#x2F;&#x2F;www.pentest-standard.org&#x2F;index.php&#x2F;Main_Page" rel="noopener" target="_blank">Pentest Standard</a>
+        </li>
+    </ul>
+  </div>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/ciphersaw" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ciphersaw.me/2018/06/15/python-trick-udp-server-and-client/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Cipher Saw">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Secrypt Agency">
+      <meta itemprop="description" content="Not to be whom you don't want to be.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Python 绝技 —— UDP 服务器与客户端 | Secrypt Agency">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Python 绝技 —— UDP 服务器与客户端
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2018-06-15 09:38:58" itemprop="dateCreated datePublished" datetime="2018-06-15T09:38:58+08:00">2018-06-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2021-09-30 23:27:10" itemprop="dateModified" datetime="2021-09-30T23:27:10+08:00">2021-09-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Programming/" itemprop="url" rel="index"><span itemprop="name">Programming</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Programming/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/2018/06/15/python-trick-udp-server-and-client/" class="post-meta-item leancloud_visitors" data-flag-title="Python 绝技 —— UDP 服务器与客户端" title="Views">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <style>
+table th:nth-of-type(1) {
+    width: 18%;
+}
+</style>
+
+<h1 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h1><p>在上一篇文章<a target="_blank" rel="noopener" href="https://ciphersaw.github.io/2018/05/23/Python%20%E7%BB%9D%E6%8A%80%20%E2%80%94%E2%80%94%20TCP%20%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8E%E5%AE%A2%E6%88%B7%E7%AB%AF/">「Python 绝技 —— TCP 服务器与客户端」</a>中，介绍了传输层的核心协议 TCP ，并运用 Python 脚本的 socket 模块演示了 TCP 服务器与客户端的通信过程。</p>
+<p>本篇将按照同样的套路，先介绍传输层的另一个<strong>核心协议 UDP</strong>，再比较 TCP 与 UDP 的特点，最后借助 Python 脚本演示 <strong>UDP 服务器与客户端</strong>的通信过程。</p>
+<span id="more"></span>
+
+<h1 id="0x01-UDP-协议"><a href="#0x01-UDP-协议" class="headerlink" title="0x01 UDP 协议"></a>0x01 UDP 协议</h1><p><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/User_Datagram_Protocol">UDP（User Datagram Protocol，用户数据报协议）</a>是一种无连接、不可靠、基于数据报的传输层通信协议。</p>
+<ul>
+<li>UDP 的通信过程与 TCP 相比较为简单，不需要复杂的三次握手与四次挥手，体现了<strong>无连接</strong>；</li>
+<li>UDP 传输速度比 TCP 快，但容易丢包、数据到达顺序无保证、缺乏拥塞控制、秉承尽最大努力交付的原则，体现了<strong>不可靠</strong>；</li>
+<li>UDP 的无连接与不可靠特性注定无法采用字节流的通信模式，由协议名中的「Datagram」与 socket 类型中的「SOCK_DGRAM」即可体现它<strong>基于数据报</strong>的通信模式。</li>
+</ul>
+<p>为了更直观地比较 TCP 与 UDP 的异同，笔者将其整理成以下表格：</p>
+<table>
+<thead>
+<tr>
+<th align="center"></th>
+<th align="center">TCP</th>
+<th align="center">UDP</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">连接模式</td>
+<td align="center">面向连接（单点通信）</td>
+<td align="center">无连接（多点通信）</td>
+</tr>
+<tr>
+<td align="center">传输可靠性</td>
+<td align="center">可靠</td>
+<td align="center">不可靠</td>
+</tr>
+<tr>
+<td align="center">通信模式</td>
+<td align="center">基于字节流</td>
+<td align="center">基于数据报</td>
+</tr>
+<tr>
+<td align="center">报头结构</td>
+<td align="center">复杂（至少20字节）</td>
+<td align="center">简单（8字节）</td>
+</tr>
+<tr>
+<td align="center">传输速度</td>
+<td align="center">慢</td>
+<td align="center">快</td>
+</tr>
+<tr>
+<td align="center">资源需求</td>
+<td align="center">多</td>
+<td align="center">少</td>
+</tr>
+<tr>
+<td align="center">到达顺序</td>
+<td align="center">保证</td>
+<td align="center">不保证</td>
+</tr>
+<tr>
+<td align="center">流量控制</td>
+<td align="center">有</td>
+<td align="center">无</td>
+</tr>
+<tr>
+<td align="center">拥塞控制</td>
+<td align="center">有</td>
+<td align="center">无</td>
+</tr>
+<tr>
+<td align="center">应用场合</td>
+<td align="center">大量数据传输</td>
+<td align="center">少量数据传输</td>
+</tr>
+<tr>
+<td align="center">支持的应用层协议</td>
+<td align="center">Telnet、FTP、SMTP、HTTP</td>
+<td align="center">DNS、DHCP、TFTP、SNMP</td>
+</tr>
+</tbody></table>
+<h1 id="0x02-Network-Socket"><a href="#0x02-Network-Socket" class="headerlink" title="0x02 Network Socket"></a>0x02 Network Socket</h1><p><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Network_socket"><strong>Network Socket（网络套接字）</strong></a>是计算机网络中进程间通信的数据流端点，广义上也代表操作系统提供的一种进程间通信机制。</p>
+<p><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Inter-process_communication"><strong>进程间通信（Inter-Process Communication，IPC）</strong></a>的根本前提是<strong>能够唯一标示每个进程</strong>。在本地主机的进程间通信中，可以用 <strong><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Process_identifier">PID（进程 ID）</a><strong>唯一标示每个进程，但 PID 只在本地唯一，在网络中不同主机的 PID 则可能发生冲突，因此采用</strong>「IP 地址 + 传输层协议 + 端口号」</strong>的方式唯一标示网络中的一个进程。</p>
+<blockquote>
+<p>小贴士：网络层的 IP 地址可以唯一标示主机，传输层的 TCP&#x2F;UDP 协议和端口号可以唯一标示该主机的一个进程。注意，同一主机中 TCP 协议与 UDP 协议的可以使用相同的端口号。</p>
+</blockquote>
+<p>所有支持网络通信的编程语言都各自提供了一套 socket API，下面以 Python 3 为例，讲解服务器与客户端建立 UDP 通信连接的交互过程：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/python-trick-udp-server-and-client/udp-socket-python.png" alt="udp-socket-python"></p>
+<p>可见，UDP 的通信过程比 TCP 简单许多，服务器少了监听与接受连接的过程，而客户端也少了请求连接的过程。客户端只需要知道服务器的地址，直接向其发送数据即可，而服务器也敞开大门，接收任何发往自家地址的数据。</p>
+<blockquote>
+<p>小贴士：由于 UDP 采用无连接模式，可知 UDP 服务器在接收到客户端发来的数据之前，是不知道客户端的地址的，因此<strong>必须是客户端先发送数据，服务器后响应数据</strong>。而 TCP 则不同，TCP 服务器接受了客户端的连接后，既可以先向客户端发送数据，也可以等待客户端发送数据后再响应。</p>
+</blockquote>
+<h1 id="0x03-UDP-服务器"><a href="#0x03-UDP-服务器" class="headerlink" title="0x03 UDP 服务器"></a>0x03 UDP 服务器</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python3</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="keyword">import</span> socket</span><br><span class="line"></span><br><span class="line">s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)</span><br><span class="line">s.bind((<span class="string">&quot;127.0.0.1&quot;</span>, <span class="number">6000</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;UDP bound on port 6000...&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">	data, addr = s.recvfrom(<span class="number">1024</span>)</span><br><span class="line">	<span class="built_in">print</span>(<span class="string">&quot;Receive from %s:%s&quot;</span> % addr)</span><br><span class="line">	<span class="keyword">if</span> data == <span class="string">b&quot;exit&quot;</span>:</span><br><span class="line">		s.sendto(<span class="string">b&quot;Good bye!\n&quot;</span>, addr)</span><br><span class="line">		<span class="keyword">continue</span></span><br><span class="line">	s.sendto(<span class="string">b&quot;Hello %s!\n&quot;</span> % data, addr)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Line 5：创建 socket 对象，第一个参数为 <em>socket.AF_INET</em>，代表采用 IPv4 协议用于网络通信，第二个参数为 <em>socket.SOCK_DGRAM</em>，代表采用 UDP 协议用于无连接的网络通信。</li>
+<li>Line 6：向 socket 对象绑定服务器主机地址 (“127.0.0.1”, 6000)，即本地主机的 UDP 6000 端口。</li>
+<li>Line 9：进入与客户端交互数据的循环阶段。</li>
+<li>Line 10：接收客户端发来的数据，包括 bytes 对象 data，以及客户端的 IP 地址和端口号 addr，其中 addr 为二元组 (host, port)。</li>
+<li>Line 11：打印接收信息，表示从地址为 addr 的客户端接收到数据。</li>
+<li>Line 12：若 bytes 对象为 <code>b&quot;exit&quot;</code>，则向地址为 addr 的客户端发送结束响应信息 <code>b&quot;Good bye!\n&quot;</code>。发送完毕后，继续等待其他 UDP 客户端发来数据。</li>
+<li>Line 15：若 bytes 对象不为 <code>b&quot;exit&quot;</code>，则向地址为 addr 的客户端发送问候响应信息 <code>b&quot;Hello %s!\n&quot;</code>，其中 <code>%s</code> 是客户端发来的 bytes 对象。发送完毕后，继续等待任意 UDP 客户端发来数据。</li>
+</ul>
+<p>与 TCP 服务器相比，UDP 服务器不必使用多线程，因为它<strong>无需为每个通信过程创建独立连接，而是采用「即收即发」的模式</strong>，又一次体现了 UDP 的无连接特性。</p>
+<h1 id="0x04-UDP-客户端"><a href="#0x04-UDP-客户端" class="headerlink" title="0x04 UDP 客户端"></a>0x04 UDP 客户端</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python3</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="keyword">import</span> socket</span><br><span class="line"></span><br><span class="line">s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)</span><br><span class="line">addr = (<span class="string">&quot;127.0.0.1&quot;</span>, <span class="number">6000</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">	data = <span class="built_in">input</span>(<span class="string">&quot;Please input your name: &quot;</span>)</span><br><span class="line">	<span class="keyword">if</span> <span class="keyword">not</span> data:</span><br><span class="line">		<span class="keyword">continue</span></span><br><span class="line">	s.sendto(data.encode(), addr)</span><br><span class="line">	response, addr = s.recvfrom(<span class="number">1024</span>)</span><br><span class="line">	<span class="built_in">print</span>(response.decode())</span><br><span class="line">	<span class="keyword">if</span> data == <span class="string">&quot;exit&quot;</span>:</span><br><span class="line">		<span class="built_in">print</span>(<span class="string">&quot;Session is over from the server %s:%s\n&quot;</span> % addr)</span><br><span class="line">		<span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">s.close()</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Line 5：创建 socket 对象，第一个参数为 <em>socket.AF_INET</em>，代表采用 IPv4 协议用于网络通信，第二个参数为 <em>socket.SOCK_DGRAM</em>，代表采用 UDP 协议用于无连接的网络通信。</li>
+<li>Line 6：初始化 UDP 服务器的地址 (“127.0.0.1”, 6000)，即本地主机的 UDP 6000 端口。</li>
+<li>Line 8：进入与服务器交互数据的循环阶段。</li>
+<li>Line 9：要求用户输入名字。</li>
+<li>Line 10：当用户的输入为空时，则重新开始循环，要求用户重新输入。</li>
+<li>Line 12：当用户的输入非空时，则将字符串转换为 bytes 对象后，发送至地址为 (“127.0.0.1”, 6000) 的 UDP 服务器。</li>
+<li>Line 13：接收服务器的响应数据，包括 bytes 对象 response，以及服务器的 IP 地址和端口号 addr，其中 addr 为二元组 (host, port)。</li>
+<li>Line 14：将响应的 bytes 对象 response 转换为字符串后打印输出。</li>
+<li>Line 15：当用户的输入为 <code>&quot;exit&quot;</code> 时，则打印会话结束信息，终止与服务器交互数据的循环阶段，即将关闭套接字。</li>
+<li>Line 19：关闭套接字，不再向服务器发送数据。</li>
+</ul>
+<h1 id="0x05-UDP-进程间通信"><a href="#0x05-UDP-进程间通信" class="headerlink" title="0x05 UDP 进程间通信"></a>0x05 UDP 进程间通信</h1><p>将 UDP 服务器与客户端的脚本分别命名为 <code>udp_server.py</code> 与 <code>udp_client.py</code>，然后存至桌面，笔者将在 Windows 10 系统下用 PowerShell 进行演示。</p>
+<blockquote>
+<p>小贴士：读者进行复现时，要确保本机已安装 Python 3，注意笔者已将默认的启动路径名 <code>python</code> 改为了 <code>python3</code>。</p>
+</blockquote>
+<h2 id="单服务器-VS-多客户端"><a href="#单服务器-VS-多客户端" class="headerlink" title="单服务器 VS 多客户端"></a>单服务器 VS 多客户端</h2><p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/python-trick-udp-server-and-client/one-server-vs-multiple-clients.png" alt="one-server-vs-multiple-clients"></p>
+<ol>
+<li>在其中一个 PowerShell 中运行命令 <code>python3 ./udp_server.py</code>，服务器绑定本地主机的 UDP 6000 端口，并打印信息 <code>UDP bound on port 6000...</code>，等待客户端发来数据；</li>
+<li>在另两个 PowerShell 中分别运行命令 <code>python3 ./udp_client.py</code>，并向服务器发送字符串 <code>Client1</code>、<code>Client2</code>；</li>
+<li>服务器打印接收信息，表示分别从 UDP 63643、63644端口接收到数据，并分别向客户端发送问候响应信息；</li>
+<li>客户端 <code>Client1</code> 发送空字符串，则被要求重新输入；</li>
+<li>客户端 <code>Client2</code> 先发送字符串 <code>Alice</code>，得到服务器的问候响应信息，再发送字符串 <code>exit</code>，得到服务器的结束响应信息，最后打印会话结束信息，终止与服务器的数据交互；</li>
+<li>客户端 <code>Client1</code> 发送字符串 <code>exit</code>，得到服务器的结束响应信息，并打印会话结束信息，终止与服务器的数据交互；</li>
+<li>服务器按照以上客户端的数据发送顺序打印接收信息，并继续等待任意 UDP 客户端发来数据。</li>
+</ol>
+<h1 id="0x06-Python-API-Reference"><a href="#0x06-Python-API-Reference" class="headerlink" title="0x06 Python API Reference"></a>0x06 Python API Reference</h1><h2 id="socket-模块"><a href="#socket-模块" class="headerlink" title="socket 模块"></a>socket 模块</h2><p>本节介绍上述代码中用到的<a target="_blank" rel="noopener" href="https://docs.python.org/3/library/socket.html">内建模块 socket</a>，是 Python 网络编程的核心模块。</p>
+<h3 id="socket-函数"><a href="#socket-函数" class="headerlink" title="socket() 函数"></a>socket() 函数</h3><p><a target="_blank" rel="noopener" href="https://docs.python.org/3/library/socket.html#socket.socket">socket() 函数</a>用于创建网络通信中的套接字对象。函数原型如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">socket.socket(family=AF_INET, <span class="built_in">type</span>=SOCK_STREAM, proto=<span class="number">0</span>, fileno=<span class="literal">None</span>)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><em>family</em> 参数代表<a target="_blank" rel="noopener" href="https://docs.python.org/3/library/socket.html#socket-families">地址族（Address Family）</a>，默认值为 <em>AF_INET</em>，用于 IPv4 网络通信，常用的还有 <em>AF_INET6</em>，用于 IPv6 网络通信。<em>family</em> 参数的可选值取决于本机操作系统。</li>
+<li><em>type</em> 参数代表套接字的类型，默认值为 <em>SOCK_STREAM</em>，用于 TCP 协议（面向连接）的网络通信，常用的还有 <em>SOCK_DGRAM</em>，用于 UDP 协议（无连接）的网络通信。</li>
+<li><em>proto</em> 参数代表套接字的协议，默认值为 <em>0</em>，一般忽略该参数，除非 <em>family</em> 参数为 <em>AF_CAN</em>，则 <em>proto</em> 参数需设置为 <em>CAN_RAW</em> 或 <em>CAN_BCM</em>。</li>
+<li><em>fileno</em> 参数代表套接字的文件描述符，默认值为 <em>None</em>，若设置了该参数，则其他三个参数将会被忽略。</li>
+</ul>
+<p>创建完套接字对象后，需使用对象的内置函数完成网络通信过程。<strong>注意，以下函数原型中的「socket」是指 socket 对象，而不是上述的 socket 模块。</strong></p>
+<h3 id="bind-函数"><a href="#bind-函数" class="headerlink" title="bind() 函数"></a>bind() 函数</h3><p><a target="_blank" rel="noopener" href="https://docs.python.org/3/library/socket.html#socket.socket.bind">bind() 函数</a>用于向套接字对象绑定 IP 地址与端口号。注意，套接字对象必须未被绑定，并且端口号未被占用，否则会报错。函数原型如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">socket.bind(address)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><em>address</em> 参数代表套接字要绑定的地址，其格式取决于套接字的 <em>family</em> 参数。若 <em>family</em> 参数为 <em>AF_INET</em>，则 <em>address</em> 参数表示为二元组 (host, port)，其中 host 是用字符串表示的主机地址，port 是用整型表示的端口号。</li>
+</ul>
+<h3 id="sendto-函数"><a href="#sendto-函数" class="headerlink" title="sendto() 函数"></a>sendto() 函数</h3><p><a target="_blank" rel="noopener" href="https://docs.python.org/3/library/socket.html#socket.socket.sendto">sendto() 函数</a>用于向远程套接字对象发送数据。注意，该函数用于 UDP 进程间的无连接通信，远程套接字的地址在参数中指定，因此使用前不需要先与远程套接字连接。相对地，TCP 进程间面向连接的通信过程需要用 send() 函数。函数原型如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">socket.sendto(<span class="built_in">bytes</span>[, flags], address)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><em>bytes</em> 参数代表即将发送的 <a target="_blank" rel="noopener" href="https://docs.python.org/3/library/stdtypes.html#bytes-objects">bytes 对象</a>数据。例如，对于字符串 <code>&quot;hello world!&quot;</code> 而言，需要用 encode() 函数转换为 bytes 对象 <code>b&quot;hello world!&quot;</code> 才能进行网络传输。</li>
+<li><em>flags</em> 可选参数用于设置 sendto() 函数的特殊功能，默认值为 <em>0</em>，也可由一个或多个预定义值组成，用位或操作符 <code>|</code> 隔开。详情可参考 Unix 函数手册中的 <a target="_blank" rel="noopener" href="https://linux.die.net/man/2/sendto">sendto(2)</a>，<em>flags</em> 参数的常见取值有 MSG_OOB、MSG_EOR、MSG_DONTROUTE 等。</li>
+<li><em>address</em> 参数代表远程套接字的地址，其格式取决于套接字的 <em>family</em> 参数。若 <em>family</em> 参数为 <em>AF_INET</em>，则 <em>address</em> 参数表示为二元组 (host, port)，其中 host 是用字符串表示的主机地址，port 是用整型表示的端口号。</li>
+</ul>
+<p>sendto() 函数的返回值是发送数据的字节数。</p>
+<h3 id="recvfrom-函数"><a href="#recvfrom-函数" class="headerlink" title="recvfrom() 函数"></a>recvfrom() 函数</h3><p><a target="_blank" rel="noopener" href="https://docs.python.org/3/library/socket.html#socket.socket.recvfrom">recvfrom() 函数</a>用于从远程套接字对象接收数据。注意，与 sendto() 函数不同，recvfrom() 函数既可用于 UDP 进程间通信，也能用于 TCP 进程间通信。函数原型如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">socket.recvfrom(bufsize[, flags])</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><em>bufsize</em> 参数代表套接字可接收数据的最大字节数。注意，为了使硬件设备与网络传输更好地匹配，<em>bufsize</em> 参数的值最好设置为 2 的幂次方，例如 <em>4096</em>。</li>
+<li><em>flags</em> 可选参数用于设置 recv() 函数的特殊功能，默认值为 <em>0</em>，也可由一个或多个预定义值组成，用位或操作符 <code>|</code> 隔开。详情可参考 Unix 函数手册中的 <a target="_blank" rel="noopener" href="https://linux.die.net/man/2/recvfrom">recvfrom(2)</a>，<em>flags</em> 参数的常见取值有 MSG_OOB、MSG_PEEK、MSG_WAITALL 等。</li>
+</ul>
+<p>recvfrom() 函数的返回值是二元组 (bytes, address)，其中 bytes 是接收到的 bytes 对象数据，address 是发送方的 IP 地址与端口号，用二元组 (host, port) 表示。注意，recv() 函数的返回值只有 bytes 对象数据。</p>
+<h3 id="close-函数"><a href="#close-函数" class="headerlink" title="close() 函数"></a>close() 函数</h3><p><a target="_blank" rel="noopener" href="https://docs.python.org/3/library/socket.html#socket.socket.close">close() 函数</a>用于关闭本地套接字对象，释放与该套接字连接的所有资源。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">socket.close()</span><br></pre></td></tr></table></figure>
+
+<h1 id="0x07-总结"><a href="#0x07-总结" class="headerlink" title="0x07 总结"></a>0x07 总结</h1><p>本文介绍了 UDP 协议的基础知识，并与 TCP 协议进行对比，再用 Python 3 实现并演示了 UDP 服务器与客户端的通信过程，最后将脚本中涉及到的 Python API 做成了的参考索引，有助于读者理解实现过程。</p>
+<p>感谢各位的阅读，笔者水平有限，若有不足或错误之处请谅解并告知，希望自己对 TCP 和 UDP 的浅薄理解，能帮助读者更好地理解传输层协议。</p>
+<p>本文的相关参考请移步至：</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/Li_Ning_/article/details/52117463">TCP和UDP的最完整的区别</a><br><a target="_blank" rel="noopener" href="http://blog.51cto.com/feinibuke/340272">TCP和UDP之间的区别</a><br><a target="_blank" rel="noopener" href="https://www.liaoxuefeng.com/wiki/0014316089557264a6b348958f449949df42a6d3a2e542c000/001432004977916a212e2168e21449981ad65cd16e71201000">UDP编程 - 廖雪峰的官方网站</a></p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>Post author:  </strong>Cipher Saw
+  </li>
+  <li class="post-copyright-link">
+      <strong>Post link: </strong>
+      <a href="https://ciphersaw.me/2018/06/15/python-trick-udp-server-and-client/" title="Python 绝技 —— UDP 服务器与客户端">https://ciphersaw.me/2018/06/15/python-trick-udp-server-and-client/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> unless stating additionally.
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Network/" rel="tag"># Network</a>
+              <a href="/tags/Python/" rel="tag"># Python</a>
+              <a href="/tags/API/" rel="tag"># API</a>
+              <a href="/tags/Socket/" rel="tag"># Socket</a>
+              <a href="/tags/Server/" rel="tag"># Server</a>
+              <a href="/tags/Client/" rel="tag"># Client</a>
+              <a href="/tags/UDP/" rel="tag"># UDP</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2018/05/23/python-trick-tcp-server-and-client/" rel="prev" title="Python 绝技 —— TCP 服务器与客户端">
+                  <i class="fa fa-chevron-left"></i> Python 绝技 —— TCP 服务器与客户端
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2018/07/29/peak-geek-2018-misc-warmup/" rel="next" title="【巅峰极客 2018】 Misc —— warmup">
+                  【巅峰极客 2018】 Misc —— warmup <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-space-shuttle"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Cipher Saw</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+  
+
+
+  <script class="next-config" data-name="leancloud_visitors" type="application/json">{"enable":true,"app_id":"KWe6NtO4vhgQR3IfB99JElre-gzGzoHsz","app_key":"7nrrRDyHHUMcx03upUALYKIQ","server_url":null,"security":false}</script>
+  <script src="/js/third-party/statistics/lean-analytics.js"></script>
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"ciphersaw","count":false,"i18n":{"disqus":"disqus"}}</script>
+<script src="/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

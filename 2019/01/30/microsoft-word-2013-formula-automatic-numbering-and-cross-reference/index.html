@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ciphersaw.me","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.13.2","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="0x00 前言在科技论文写作中，必不可少要使用到数学公式，虽然编辑公式简单，但要将一系列公式自动编号，并且在文中交叉引用，成为了科研工作者亟需解决的我问题。本文将采用 Microsoft Word 2013 + MathType，向大家介绍一种一劳永逸的解决方案，在其他版本的 Microsoft Word 中也基本适用。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Microsoft Word 2013 公式自动编号与交叉引用">
+<meta property="og:url" content="https://ciphersaw.me/2019/01/30/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/index.html">
+<meta property="og:site_name" content="Secrypt Agency">
+<meta property="og:description" content="0x00 前言在科技论文写作中，必不可少要使用到数学公式，虽然编辑公式简单，但要将一系列公式自动编号，并且在文中交叉引用，成为了科研工作者亟需解决的我问题。本文将采用 Microsoft Word 2013 + MathType，向大家介绍一种一劳永逸的解决方案，在其他版本的 Microsoft Word 中也基本适用。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/mathtype-installation.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/formula-edit.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/show-mark.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/new-mark-normal.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/display-mark-normal.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/modify-mark-normal.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/new-mark-chapter.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/display-mark-chapter.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/modify-mark-chapter.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/initiate-pattern.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/tab-middle.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/tab-right.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/complete-pattern.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/format-with-pattern.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/initiate-style-separator.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/insert-style-separator.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/add-quick-access.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/save-normal-pattern.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/name-normal-pattern.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/save-chapter-pattern.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/name-chapter-pattern.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/inserting-cross-reference.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/select-reference.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/inserted-cross-reference.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/insert-new-formula.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/update-cross-reference.png">
+<meta property="article:published_time" content="2019-01-30T11:00:53.000Z">
+<meta property="article:modified_time" content="2021-09-30T15:25:53.588Z">
+<meta property="article:author" content="Cipher Saw">
+<meta property="article:tag" content="Microsoft">
+<meta property="article:tag" content="Word">
+<meta property="article:tag" content="MathType">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/mathtype-installation.png">
+
+
+<link rel="canonical" href="https://ciphersaw.me/2019/01/30/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://ciphersaw.me/2019/01/30/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/","path":"2019/01/30/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/","title":"Microsoft Word 2013 公式自动编号与交叉引用"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Microsoft Word 2013 公式自动编号与交叉引用 | Secrypt Agency</title>
+  
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Secrypt Agency</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Welcome to a platform for network security artists.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li><li class="menu-item menu-item-friends"><a href="/friends/" rel="section"><i class="fa fa-users fa-fw"></i>Friends</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#0x00-%E5%89%8D%E8%A8%80"><span class="nav-text">0x00 前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x01-%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="nav-text">0x01 准备工作</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85-MathType"><span class="nav-text">安装 MathType</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8F%92%E5%85%A5%E5%85%AC%E5%BC%8F"><span class="nav-text">插入公式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%98%BE%E7%A4%BA%E7%BC%96%E8%BE%91%E6%A0%87%E8%AE%B0"><span class="nav-text">显示编辑标记</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x02-%E6%8F%92%E5%85%A5%E9%A2%98%E6%B3%A8"><span class="nav-text">0x02 插入题注</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%97%A0%E7%AB%A0%E8%8A%82%E5%BA%8F%E5%8F%B7"><span class="nav-text">无章节序号</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%89%E7%AB%A0%E8%8A%82%E5%BA%8F%E5%8F%B7"><span class="nav-text">有章节序号</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x03-%E5%88%9B%E5%BB%BA%E6%AE%B5%E8%90%BD%E6%A0%B7%E5%BC%8F"><span class="nav-text">0x03 创建段落样式</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B0%E5%BB%BA%E6%A0%B7%E5%BC%8F"><span class="nav-text">新建样式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E6%A0%B7%E5%BC%8F"><span class="nav-text">使用样式</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x04-%E4%BF%9D%E5%AD%98%E8%87%B3%E8%87%AA%E5%8A%A8%E5%9B%BE%E6%96%87%E9%9B%86"><span class="nav-text">0x04 保存至自动图文集</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x05-%E4%BA%A4%E5%8F%89%E5%BC%95%E7%94%A8"><span class="nav-text">0x05 交叉引用</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x06-%E5%B0%8F%E7%BB%93"><span class="nav-text">0x06 小结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Cipher Saw"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Cipher Saw</p>
+  <div class="site-description" itemprop="description">Not to be whom you don't want to be.</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">74</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ciphersaw" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ciphersaw" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/CipherSaw" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;CipherSaw" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe-asia fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://ctf-wiki.github.io/ctf-wiki/" title="https:&#x2F;&#x2F;ctf-wiki.github.io&#x2F;ctf-wiki&#x2F;" rel="noopener" target="_blank">CTF Wiki</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://www.owasp.org/index.php/Main_Page" title="https:&#x2F;&#x2F;www.owasp.org&#x2F;index.php&#x2F;Main_Page" rel="noopener" target="_blank">OWASP</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.pentest-standard.org/index.php/Main_Page" title="http:&#x2F;&#x2F;www.pentest-standard.org&#x2F;index.php&#x2F;Main_Page" rel="noopener" target="_blank">Pentest Standard</a>
+        </li>
+    </ul>
+  </div>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/ciphersaw" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ciphersaw.me/2019/01/30/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Cipher Saw">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Secrypt Agency">
+      <meta itemprop="description" content="Not to be whom you don't want to be.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Microsoft Word 2013 公式自动编号与交叉引用 | Secrypt Agency">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Microsoft Word 2013 公式自动编号与交叉引用
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2019-01-30 19:00:53" itemprop="dateCreated datePublished" datetime="2019-01-30T19:00:53+08:00">2019-01-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2021-09-30 23:25:53" itemprop="dateModified" datetime="2021-09-30T23:25:53+08:00">2021-09-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Tips/" itemprop="url" rel="index"><span itemprop="name">Tips</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Tips/Microsoft-Word/" itemprop="url" rel="index"><span itemprop="name">Microsoft Word</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/2019/01/30/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/" class="post-meta-item leancloud_visitors" data-flag-title="Microsoft Word 2013 公式自动编号与交叉引用" title="Views">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h1><p>在科技论文写作中，必不可少要使用到数学公式，虽然编辑公式简单，但要<strong>将一系列公式自动编号，并且在文中交叉引用</strong>，成为了科研工作者亟需解决的我问题。本文将采用 <strong>Microsoft Word 2013 + MathType</strong>，向大家介绍一种一劳永逸的解决方案，在其他版本的 Microsoft Word 中也基本适用。</p>
+<span id="more"></span>
+
+<h1 id="0x01-准备工作"><a href="#0x01-准备工作" class="headerlink" title="0x01 准备工作"></a>0x01 准备工作</h1><h2 id="安装-MathType"><a href="#安装-MathType" class="headerlink" title="安装 MathType"></a>安装 MathType</h2><p><a target="_blank" rel="noopener" href="http://www.mathtype.cn/">MathType</a> 是一款专业的数学公式编辑工具，能与 Microsoft Word 完美结合，加上显示效果不俗，因此成为了广大理科男在 Word 上编辑公式的首选。此外，MathType 是共享软件，有 30 天的试用期，有需要的用户可以购买完整版，不过基本版的功能已满足大部分用户的需求了。</p>
+<p>安装完成后，新建并打开一个 Word 文档 <code>新建 Microsoft Word 文档.docx</code>，正常情况下顶部菜单栏会增加一个 <strong>MathType</strong> 选项，说明已安装成功。</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/mathtype-installation.png" alt="mathtype-installation"></p>
+<h2 id="插入公式"><a href="#插入公式" class="headerlink" title="插入公式"></a>插入公式</h2><p>点击 <strong>MathType -&gt; 内联</strong>，在公式编辑框内输入一个勾股定理表达式 $a^2 + b^2 &#x3D; c^2$，按下 <strong>Ctrl + S</strong> 保存后关闭编辑框，表达式已在文档中显示。</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/formula-edit.png" alt="formula-edit"></p>
+<h2 id="显示编辑标记"><a href="#显示编辑标记" class="headerlink" title="显示编辑标记"></a>显示编辑标记</h2><p>点击 <strong>开始 -&gt; 显示&#x2F;隐藏编辑标记</strong>，可显示制表符、分页符、空格等标记，有助于对后续操作的直观理解。</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/show-mark.png" alt="show-mark"></p>
+<h1 id="0x02-插入题注"><a href="#0x02-插入题注" class="headerlink" title="0x02 插入题注"></a>0x02 插入题注</h1><h2 id="无章节序号"><a href="#无章节序号" class="headerlink" title="无章节序号"></a>无章节序号</h2><p>点击 <strong>引用 -&gt; 插入题注 -&gt; 新建标签</strong>，在框内输入左小括号 <code>（</code>：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/new-mark-normal.png" alt="new-mark-normal"></p>
+<p>点击确定后，在 <strong>题注</strong> 内显示 <code>（ 1</code>，在 <strong>标签</strong> 内显示 <code>（</code>：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/display-mark-normal.png" alt="display-mark-normal"></p>
+<p>点击确定后，发现 <code>（</code> 与 <code>1</code> 之间有个小点，此为空格标记（该空格默认自带，无法再编辑题注中删除）。将此空格删除后，并在末尾补充上右小括号 <code>）</code>：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/modify-mark-normal.png" alt="modify-mark-normal"></p>
+<h2 id="有章节序号"><a href="#有章节序号" class="headerlink" title="有章节序号"></a>有章节序号</h2><p>点击 <strong>引用 -&gt; 插入题注 -&gt; 新建标签</strong>，若想在第一章插入题注，则在框内输入左小括号 <code>（1-</code>：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/new-mark-chapter.png" alt="new-mark-chapter"></p>
+<p>点击确定后，在 <strong>题注</strong> 内显示 <code>（1- 1</code>，在 <strong>标签</strong> 内显示 <code>（1-</code>：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/display-mark-chapter.png" alt="display-mark-chapter"></p>
+<p>同样地，点击确定后，将 <code>（1-</code> 与 <code>1</code> 之间的空格删除，并在末尾补充上右小括号 <code>）</code>：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/modify-mark-chapter.png" alt="modify-mark-chapter"></p>
+<p>以上根据有无章节序号，介绍了两种插入题注的风格，读者可按需选用。</p>
+<h1 id="0x03-创建段落样式"><a href="#0x03-创建段落样式" class="headerlink" title="0x03 创建段落样式"></a>0x03 创建段落样式</h1><h2 id="新建样式"><a href="#新建样式" class="headerlink" title="新建样式"></a>新建样式</h2><p>点击 <strong>开始 -&gt; 样式</strong> 中右下角的小箭头，在弹出框的左下角点击 <strong>新建样式</strong>，将新样式编辑框中的 <strong>属性 -&gt; 名称</strong> 改为 <code>公式</code>，并点击左下角的 <strong>格式 -&gt; 制表位</strong>：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/initiate-pattern.png" alt="initiate-pattern"></p>
+<p>在 <strong>制表位位置</strong> 输入 <code>20 字符</code>，将 <strong>对齐方式</strong> 选为 <code>居中</code> 后点击确定：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/tab-middle.png" alt="tab-middle"></p>
+<p>再次点击左下角的 <strong>格式 -&gt; 制表位</strong>，在 <strong>制表位位置</strong> 输入 <code>40 字符</code>，将 <strong>对齐方式</strong> 选为 <code>右对齐</code> 后点击确定：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/tab-right.png" alt="tab-right"></p>
+<p>建议将样式编辑框中的 <strong>格式 -&gt; 中文</strong> 设置为 <code>宋体</code>，将 <strong>格式 -&gt; 西文</strong> 设置为 <code>Times New Roman</code>，最后点击确定，在 <strong>开始 -&gt; 样式</strong> 中出现了刚添加的样式：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/complete-pattern.png" alt="complete-pattern"></p>
+<h2 id="使用样式"><a href="#使用样式" class="headerlink" title="使用样式"></a>使用样式</h2><p>以无章节序号的公式编号为例，将光标放至公式所在行的任意位置，点击 <strong>开始 -&gt; 样式</strong> 中的 <code>公式</code> 后，分别在公式前面、公式与编号之间按下 <strong>Tab</strong> 键（向右的小箭头即为 Tab 标记），出现了公式居中、编号右对齐的效果：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/format-with-pattern.png" alt="format-with-pattern"></p>
+<p>此外，为了在交叉引用时，只引用编号而不引用公式，需要在公式与编号之间添加一个<a target="_blank" rel="noopener" href="https://answers.microsoft.com/en-us/office/forum/office_2010-word/ctrlaltenter-function-in-word-2010/3d3f2583-f56a-4aaf-8e38-267c5723eedc">样式分隔符</a>。在公式下方另起一空行，按下 <strong>Ctrl + Alt + Enter</strong>，发现在原来的 Enter 标记前，多了一个被虚线框起的 Enter 标记：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/initiate-style-separator.png" alt="initiate-style-separator"></p>
+<p>被虚线框起的 Enter 标记即为样式分隔符，将其复制到公式与编号之间，最终效果如下：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/insert-style-separator.png" alt="insert-style-separator"></p>
+<h1 id="0x04-保存至自动图文集"><a href="#0x04-保存至自动图文集" class="headerlink" title="0x04 保存至自动图文集"></a>0x04 保存至自动图文集</h1><p>完成上述步骤后，已达到基本使用要求，但为了后续的方便使用，最好将公式编号的模板保存至自动图文集中。</p>
+<p>点击 <strong>文件 -&gt; 选项 -&gt; 快速访问工具栏</strong>，在 <strong>选择命令</strong> 下拉框内选择 <code>所有命令</code>，将 <code>自动图文集</code> 添加至快速访问工具栏：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/add-quick-access.png" alt="add-quick-access"></p>
+<p>添加完成后点击确定，在顶部工具栏出现了自动图文集的图标。接着全选公式所在行，再点击 <strong>自动图文集 -&gt; 将所选内容保存到自动图文集库</strong>：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/save-normal-pattern.png" alt="save-normal-pattern"></p>
+<p>此处将<strong>新建构建基块</strong>的名称设置为 <code>公式编号_交叉引用_普通版</code>，点击确定后即可完成：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/name-normal-pattern.png" alt="name-normal-pattern"></p>
+<p>将公式编号由无章节序号更改为有章节序号后，同样全选公式所在行，再点击 <strong>自动图文集 -&gt; 将所选内容保存到自动图文集库</strong>：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/save-chapter-pattern.png" alt="save-chapter-pattern"></p>
+<p>处将<strong>新建构建基块</strong>的名称设置为 <code>公式编号_交叉引用_章节版</code>，点击确定后即可完成：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/name-chapter-pattern.png" alt="name-chapter-pattern"></p>
+<p>将以上两种公式编号的模板保存至自动图文集后，即可在 <strong>自动图文集</strong> 中选择所需模板，最后记得要替换模板内的默认公式。</p>
+<h1 id="0x05-交叉引用"><a href="#0x05-交叉引用" class="headerlink" title="0x05 交叉引用"></a>0x05 交叉引用</h1><blockquote>
+<p> 小贴士：<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Cross-reference">交叉引用</a>是指在 Microsoft Word 文档中引用其他位置的内容，例如编号项、标题、脚注、尾注、题注、书签、表格、公式等，引用的内容可随着被引用主体的改变而改变。</p>
+</blockquote>
+<p>继续以无章节序号的公式编号为例，演示如何在文中交叉引用公式编号：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/inserting-cross-reference.png" alt="inserting-cross-reference"></p>
+<p>若想在光标出插入公式（1）的引用，需要点击 <strong>插入 -&gt; 交叉引用</strong>，在 <strong>引用类型</strong> 下拉框内选择 <code>（</code>，在 <strong>引用内容</strong> 下拉框内选择 <code>整项题注</code>，在 <strong>引用哪一个题注</strong> 中选择 <code>（1）</code>：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/select-reference.png" alt="select-reference"></p>
+<p>点击确定后，发现文中确实多了对公式（1）的引用：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/inserted-cross-reference.png" alt="inserted-cross-reference"></p>
+<p>接下来讨论一种常见情况，假设在公式（1）前面新插入一个圆面积计算公式 $S  &#x3D; π r^2$，这时会出现两个公式（1）：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/insert-new-formula.png" alt="insert-new-formula"></p>
+<p>此时只需要按下 <strong>Ctrl + A</strong> 选择全文，再按下 <strong>F9</strong> <a target="_blank" rel="noopener" href="https://support.office.com/en-us/article/update-fields-7339a049-cb0d-4d5a-8679-97c20c643d4e">更新域</a>，原来的公式（1）则变为公式（2），完美诠释了「引用的内容可随着被引用主体的改变而改变」这一大优势：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/update-cross-reference.png" alt="update-cross-reference"></p>
+<h1 id="0x06-小结"><a href="#0x06-小结" class="headerlink" title="0x06 小结"></a>0x06 小结</h1><p>在 Microsoft Word 2013 下对公式进行自动编号与交叉引用的方法较多，本文根据笔者自身需求总结而成，以备日后写作之需，若有理解上或操作上的疑惑还请读者不吝告知，谢谢。</p>
+<p>相关参考文章如下：</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://jingyan.baidu.com/article/4dc408486da1e1c8d946f133.html">WORD中公式的自动编号和交叉引用方法</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/wihiw/article/details/64443494">在 Word 2013 中编写公式并标号</a><br><a target="_blank" rel="noopener" href="https://jingyan.baidu.com/article/948f592421b812d80ef5f971.html">Word论文写作如何实现公式居中、编号右对齐</a></p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>Post author:  </strong>Cipher Saw
+  </li>
+  <li class="post-copyright-link">
+      <strong>Post link: </strong>
+      <a href="https://ciphersaw.me/2019/01/30/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/" title="Microsoft Word 2013 公式自动编号与交叉引用">https://ciphersaw.me/2019/01/30/microsoft-word-2013-formula-automatic-numbering-and-cross-reference/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> unless stating additionally.
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Microsoft/" rel="tag"># Microsoft</a>
+              <a href="/tags/Word/" rel="tag"># Word</a>
+              <a href="/tags/MathType/" rel="tag"># MathType</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2018/09/11/ichunqiu-web-brute-force-3/" rel="prev" title="【i春秋】 Web —— 爆破-3">
+                  <i class="fa fa-chevron-left"></i> 【i春秋】 Web —— 爆破-3
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2019/04/30/wechall-training-www-basics/" rel="next" title="【WeChall】 Training：WWW-Basics">
+                  【WeChall】 Training：WWW-Basics <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-space-shuttle"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Cipher Saw</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+  
+
+
+  <script class="next-config" data-name="leancloud_visitors" type="application/json">{"enable":true,"app_id":"KWe6NtO4vhgQR3IfB99JElre-gzGzoHsz","app_key":"7nrrRDyHHUMcx03upUALYKIQ","server_url":null,"security":false}</script>
+  <script src="/js/third-party/statistics/lean-analytics.js"></script>
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"ciphersaw","count":false,"i18n":{"disqus":"disqus"}}</script>
+<script src="/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

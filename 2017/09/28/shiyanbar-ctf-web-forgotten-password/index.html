@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ciphersaw.me","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.13.2","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="0x00 前言此题是 Web 基础题，难度中低，需要的基础知识有：HTML、PHP、SQL、Linux、HTTP 协议。 共涉及三个页面，需要用到浏览器调试技巧和搜索技巧，还要有关键点发现意识，先附上链接。  题目链接：http:&#x2F;&#x2F;www.shiyanbar.com&#x2F;ctf&#x2F;1808 解题链接：http:&#x2F;&#x2F;ctf5.shiyanbar.com&#x2F;10&#x2F;upload&#x2F;step1.php">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【实验吧 CTF】 Web —— 忘记密码了">
+<meta property="og:url" content="https://ciphersaw.me/2017/09/28/shiyanbar-ctf-web-forgotten-password/index.html">
+<meta property="og:site_name" content="Secrypt Agency">
+<meta property="og:description" content="0x00 前言此题是 Web 基础题，难度中低，需要的基础知识有：HTML、PHP、SQL、Linux、HTTP 协议。 共涉及三个页面，需要用到浏览器调试技巧和搜索技巧，还要有关键点发现意识，先附上链接。  题目链接：http:&#x2F;&#x2F;www.shiyanbar.com&#x2F;ctf&#x2F;1808 解题链接：http:&#x2F;&#x2F;ctf5.shiyanbar.com&#x2F;10&#x2F;upload&#x2F;step1.php">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/shiyanbar-ctf-web-forgotten-password/question.jpg">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/shiyanbar-ctf-web-forgotten-password/step1.jpg">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/shiyanbar-ctf-web-forgotten-password/alert.jpg">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/shiyanbar-ctf-web-forgotten-password/step1-source.jpg">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/shiyanbar-ctf-web-forgotten-password/step2-source.jpg">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/shiyanbar-ctf-web-forgotten-password/refuse.jpg">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/shiyanbar-ctf-web-forgotten-password/vim.jpg">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/shiyanbar-ctf-web-forgotten-password/swp.jpg">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/shiyanbar-ctf-web-forgotten-password/flag.jpg">
+<meta property="article:published_time" content="2017-09-28T08:13:00.000Z">
+<meta property="article:modified_time" content="2021-09-30T15:27:33.536Z">
+<meta property="article:author" content="Cipher Saw">
+<meta property="article:tag" content="CTF">
+<meta property="article:tag" content="Writeup">
+<meta property="article:tag" content="Audit">
+<meta property="article:tag" content="PHP">
+<meta property="article:tag" content="实验吧">
+<meta property="article:tag" content="Vim">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/shiyanbar-ctf-web-forgotten-password/question.jpg">
+
+
+<link rel="canonical" href="https://ciphersaw.me/2017/09/28/shiyanbar-ctf-web-forgotten-password/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://ciphersaw.me/2017/09/28/shiyanbar-ctf-web-forgotten-password/","path":"2017/09/28/shiyanbar-ctf-web-forgotten-password/","title":"【实验吧 CTF】 Web —— 忘记密码了"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>【实验吧 CTF】 Web —— 忘记密码了 | Secrypt Agency</title>
+  
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Secrypt Agency</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Welcome to a platform for network security artists.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li><li class="menu-item menu-item-friends"><a href="/friends/" rel="section"><i class="fa fa-users fa-fw"></i>Friends</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#0x00-%E5%89%8D%E8%A8%80"><span class="nav-text">0x00 前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x01-%E5%85%88%E7%9C%8B%E7%9C%8B-step1-php"><span class="nav-text">0x01 先看看 step1.php</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x02-%E4%B9%A0%E6%83%AF%E6%80%A7%E5%9C%B0%E7%BF%BB%E6%BA%90%E7%A0%81"><span class="nav-text">0x02 习惯性地翻源码</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8E-step1-php-%E6%BA%90%E7%A0%81%E5%8F%AF%E4%BB%A5%E5%BE%97%E5%88%B0%E4%BB%A5%E4%B8%8B%E7%BA%BF%E7%B4%A2%EF%BC%9A"><span class="nav-text">从 step1.php 源码可以得到以下线索：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%8D%E7%9C%8B%E7%9C%8B-step2-php-%E6%BA%90%E7%A0%81%E5%8F%AF%E4%BB%A5%E5%8F%91%E7%8E%B0%EF%BC%9A"><span class="nav-text">再看看 step2.php 源码可以发现：</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x03-%E4%B8%80%E8%88%AC%E4%BA%BA%E6%9F%A5%E5%88%B0%E8%BF%99%E5%B0%B1%E6%87%B5%E9%80%BC%E4%BA%86"><span class="nav-text">0x03 一般人查到这就懵逼了</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Cipher Saw"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Cipher Saw</p>
+  <div class="site-description" itemprop="description">Not to be whom you don't want to be.</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">74</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ciphersaw" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ciphersaw" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/CipherSaw" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;CipherSaw" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe-asia fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://ctf-wiki.github.io/ctf-wiki/" title="https:&#x2F;&#x2F;ctf-wiki.github.io&#x2F;ctf-wiki&#x2F;" rel="noopener" target="_blank">CTF Wiki</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://www.owasp.org/index.php/Main_Page" title="https:&#x2F;&#x2F;www.owasp.org&#x2F;index.php&#x2F;Main_Page" rel="noopener" target="_blank">OWASP</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.pentest-standard.org/index.php/Main_Page" title="http:&#x2F;&#x2F;www.pentest-standard.org&#x2F;index.php&#x2F;Main_Page" rel="noopener" target="_blank">Pentest Standard</a>
+        </li>
+    </ul>
+  </div>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/ciphersaw" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ciphersaw.me/2017/09/28/shiyanbar-ctf-web-forgotten-password/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Cipher Saw">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Secrypt Agency">
+      <meta itemprop="description" content="Not to be whom you don't want to be.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="【实验吧 CTF】 Web —— 忘记密码了 | Secrypt Agency">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          【实验吧 CTF】 Web —— 忘记密码了
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2017-09-28 16:13:00" itemprop="dateCreated datePublished" datetime="2017-09-28T16:13:00+08:00">2017-09-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2021-09-30 23:27:33" itemprop="dateModified" datetime="2021-09-30T23:27:33+08:00">2021-09-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/InfoSec/" itemprop="url" rel="index"><span itemprop="name">InfoSec</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/InfoSec/Web/" itemprop="url" rel="index"><span itemprop="name">Web</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/2017/09/28/shiyanbar-ctf-web-forgotten-password/" class="post-meta-item leancloud_visitors" data-flag-title="【实验吧 CTF】 Web —— 忘记密码了" title="Views">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h1><p>此题是 Web 基础题，难度中低，需要的基础知识有：<strong>HTML、PHP、SQL、Linux、HTTP 协议</strong>。</p>
+<p>共涉及三个页面，需要用到<strong>浏览器调试技巧和搜索技巧</strong>，还要有<strong>关键点发现意识</strong>，先附上链接。</p>
+<ul>
+<li>题目链接：<a target="_blank" rel="noopener" href="http://www.shiyanbar.com/ctf/1808">http://www.shiyanbar.com/ctf/1808</a></li>
+<li>解题链接：<a target="_blank" rel="noopener" href="http://ctf5.shiyanbar.com/10/upload/step1.php">http://ctf5.shiyanbar.com/10/upload/step1.php</a></li>
+</ul>
+<span id="more"></span>
+
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/shiyanbar-ctf-web-forgotten-password/question.jpg" alt="question"></p>
+<h1 id="0x01-先看看-step1-php"><a href="#0x01-先看看-step1-php" class="headerlink" title="0x01 先看看 step1.php"></a>0x01 先看看 step1.php</h1><p>看到一个输入框，随便填个 <a href="mailto:&#x72;&#x6f;&#111;&#x74;&#x40;&#x78;&#120;&#120;&#x2e;&#99;&#x6f;&#x6d;">&#x72;&#x6f;&#111;&#x74;&#x40;&#x78;&#120;&#120;&#x2e;&#99;&#x6f;&#x6d;</a> 试试反应，结果得到一个弹框，得到第二个页面 <strong>step2.php</strong>。</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/shiyanbar-ctf-web-forgotten-password/step1.jpg" alt="step1"></p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/shiyanbar-ctf-web-forgotten-password/alert.jpg" alt="alert"></p>
+<h1 id="0x02-习惯性地翻源码"><a href="#0x02-习惯性地翻源码" class="headerlink" title="0x02 习惯性地翻源码"></a>0x02 习惯性地翻源码</h1><h2 id="从-step1-php-源码可以得到以下线索："><a href="#从-step1-php-源码可以得到以下线索：" class="headerlink" title="从 step1.php 源码可以得到以下线索："></a>从 step1.php 源码可以得到以下线索：</h2><ul>
+<li>admin 的邮箱是 <a href="mailto:&#x61;&#100;&#109;&#x69;&#x6e;&#64;&#x73;&#x69;&#x6d;&#112;&#108;&#101;&#x78;&#117;&#101;&#46;&#99;&#x6f;&#109;">&#x61;&#100;&#109;&#x69;&#x6e;&#64;&#x73;&#x69;&#x6d;&#112;&#108;&#101;&#x78;&#117;&#101;&#46;&#99;&#x6f;&#109;</a></li>
+<li>是用编辑器 Vim 编辑的</li>
+</ul>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/shiyanbar-ctf-web-forgotten-password/step1-source.jpg" alt="step1-source"></p>
+<h2 id="再看看-step2-php-源码可以发现："><a href="#再看看-step2-php-源码可以发现：" class="headerlink" title="再看看 step2.php 源码可以发现："></a>再看看 step2.php 源码可以发现：</h2><ul>
+<li>怪不得马上跳转回 step1.php，原来有一句：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;meta http-equiv=refresh content=0.5;URL=&quot;./step1.php&quot;&gt;check error!</span><br></pre></td></tr></table></figure></li>
+<li>跟 step1.php 同样存在关于 admin 和 editor 信息</li>
+<li>代码下半部分惊奇地发现一个表单，并且得到第三个页面 <strong>submit.php</strong>，还知道需要通过 <strong>GET 方法</strong>向该页面发送两个参数 <strong>emailAddress</strong> 和 <strong>token</strong>。</li>
+</ul>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/shiyanbar-ctf-web-forgotten-password/step2-source.jpg" alt="step2-source"></p>
+<p>从以上线索看来只有一条路可走：<strong>找出正确的 emailAddress 和 token</strong> 发给 submit.php。<br>尝试随便发点东西给 submit.php，却得到无情的拒绝:(</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/shiyanbar-ctf-web-forgotten-password/refuse.jpg" alt="refuse"></p>
+<h1 id="0x03-一般人查到这就懵逼了"><a href="#0x03-一般人查到这就懵逼了" class="headerlink" title="0x03 一般人查到这就懵逼了"></a>0x03 一般人查到这就懵逼了</h1><p>分析一下上述线索，只有 <strong>Vim 编辑器</strong> 这条线索没用到了，去查查用 Vim 时会产生什么文件吧，从<a target="_blank" rel="noopener" href="https://segmentfault.com/q/1010000002692574">https://segmentfault.com/q/1010000002692574</a>可以看出有以下三种文件，逐一测试终于发现本题的关键文件 <code>.submit.php.swp</code>（注意 submit 前面还有个.）</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/shiyanbar-ctf-web-forgotten-password/vim.jpg" alt="vim"></p>
+<p>打开 <code>.submit.php.swp</code> 文件，终于看到关键代码：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/shiyanbar-ctf-web-forgotten-password/swp.jpg" alt="swp"></p>
+<p>要想输出 <code>$flag</code>，必须使三个 if 的条件成立：</p>
+<ol>
+<li><code>$emailAddress</code> 和 <code>$token</code> 非空</li>
+<li><code>$token</code> 的长度为 10</li>
+<li><code>$token</code> 的值为 0</li>
+<li>最后注意 admin 的邮箱地址要填正确，否则 37 行 <code>$r[&#39;num&#39;]</code> 的查询返回结果为 0</li>
+</ol>
+<p>根据上述条件，就可构建出正确的参数值 <code>emailAddress=admin@simplexue.com&amp;token=0000000000</code>，提交后可见 flag：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/shiyanbar-ctf-web-forgotten-password/flag.jpg" alt="flag"></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>Post author:  </strong>Cipher Saw
+  </li>
+  <li class="post-copyright-link">
+      <strong>Post link: </strong>
+      <a href="https://ciphersaw.me/2017/09/28/shiyanbar-ctf-web-forgotten-password/" title="【实验吧 CTF】 Web —— 忘记密码了">https://ciphersaw.me/2017/09/28/shiyanbar-ctf-web-forgotten-password/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> unless stating additionally.
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/CTF/" rel="tag"># CTF</a>
+              <a href="/tags/Writeup/" rel="tag"># Writeup</a>
+              <a href="/tags/Audit/" rel="tag"># Audit</a>
+              <a href="/tags/PHP/" rel="tag"># PHP</a>
+              <a href="/tags/%E5%AE%9E%E9%AA%8C%E5%90%A7/" rel="tag"># 实验吧</a>
+              <a href="/tags/Vim/" rel="tag"># Vim</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+            </div>
+            <div class="post-nav-item">
+                <a href="/2017/10/27/cnss-2017-crypto-rsa-combo/" rel="next" title="【CNSS 2017】 Crypto —— RSA Combo">
+                  【CNSS 2017】 Crypto —— RSA Combo <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-space-shuttle"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Cipher Saw</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+  
+
+
+  <script class="next-config" data-name="leancloud_visitors" type="application/json">{"enable":true,"app_id":"KWe6NtO4vhgQR3IfB99JElre-gzGzoHsz","app_key":"7nrrRDyHHUMcx03upUALYKIQ","server_url":null,"security":false}</script>
+  <script src="/js/third-party/statistics/lean-analytics.js"></script>
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"ciphersaw","count":false,"i18n":{"disqus":"disqus"}}</script>
+<script src="/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

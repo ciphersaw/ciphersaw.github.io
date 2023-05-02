@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ciphersaw.me","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.13.2","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="0x00 前言本人某司安全开发萌新一枚，入职以来主要负责自研 IDS（Intrusion Detection System，入侵检测系统）的管理台开发。在全栈开发老司机波老师的指导下，顺利完成了数据读写效率优化、数据可视化展示、安全运营能力提升等开发需求，对 Web 应用的整体架构有了更深理解。 不久前，突然接到项目交接任务，与领导与波老师开完项目交接会后，虽然没明说，但下意识能感觉到，波老师即将">
+<meta property="og:type" content="article">
+<meta property="og:title" content="萌新开发接手大佬项目初体验">
+<meta property="og:url" content="https://ciphersaw.me/2020/05/23/record-of-newbie-developer-taking-over-project-for-colleague-quitting/index.html">
+<meta property="og:site_name" content="Secrypt Agency">
+<meta property="og:description" content="0x00 前言本人某司安全开发萌新一枚，入职以来主要负责自研 IDS（Intrusion Detection System，入侵检测系统）的管理台开发。在全栈开发老司机波老师的指导下，顺利完成了数据读写效率优化、数据可视化展示、安全运营能力提升等开发需求，对 Web 应用的整体架构有了更深理解。 不久前，突然接到项目交接任务，与领导与波老师开完项目交接会后，虽然没明说，但下意识能感觉到，波老师即将">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-05-23T05:28:49.000Z">
+<meta property="article:modified_time" content="2021-09-30T15:16:43.895Z">
+<meta property="article:author" content="Cipher Saw">
+<meta property="article:tag" content="Career">
+<meta property="article:tag" content="Guideline">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://ciphersaw.me/2020/05/23/record-of-newbie-developer-taking-over-project-for-colleague-quitting/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://ciphersaw.me/2020/05/23/record-of-newbie-developer-taking-over-project-for-colleague-quitting/","path":"2020/05/23/record-of-newbie-developer-taking-over-project-for-colleague-quitting/","title":"萌新开发接手大佬项目初体验"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>萌新开发接手大佬项目初体验 | Secrypt Agency</title>
+  
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Secrypt Agency</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Welcome to a platform for network security artists.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li><li class="menu-item menu-item-friends"><a href="/friends/" rel="section"><i class="fa fa-users fa-fw"></i>Friends</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#0x00-%E5%89%8D%E8%A8%80"><span class="nav-text">0x00 前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x01-%E4%BA%A4%E6%8E%A5%E8%A6%81%E7%82%B9"><span class="nav-text">0x01 交接要点</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%96%E7%BB%99%E6%88%91%E7%9A%84"><span class="nav-text">他给我的</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A1%B9%E7%9B%AE%E4%BB%A3%E7%A0%81"><span class="nav-text">项目代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A1%B9%E7%9B%AE%E6%96%87%E6%A1%A3"><span class="nav-text">项目文档</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84"><span class="nav-text">系统架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E9%85%8D%E7%BD%AE%E4%BF%A1%E6%81%AF"><span class="nav-text">系统配置信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%AA%E5%AE%8C%E6%88%90%E5%B7%A5%E5%8D%95"><span class="nav-text">未完成工单</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%88%91%E9%97%AE%E4%BB%96%E7%9A%84"><span class="nav-text">我问他的</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B5%84%E4%BA%A7%E6%B8%85%E5%8D%95"><span class="nav-text">资产清单</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%B9%E6%8E%A5%E5%85%B3%E7%B3%BB"><span class="nav-text">对接关系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%89%B4%E6%9D%83%E4%B8%BB%E4%BD%93%E5%8F%98%E6%9B%B4"><span class="nav-text">鉴权主体变更</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%B6%E4%BF%A1%E4%B8%BB%E4%BD%93%E5%8F%98%E6%9B%B4"><span class="nav-text">收信主体变更</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9C%80%E6%B1%82%E5%BC%80%E5%8F%91%E6%8C%87%E7%82%B9"><span class="nav-text">需求开发指点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95"><span class="nav-text">问题解决方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%86%E6%9E%9D%E6%9C%AB%E8%8A%82"><span class="nav-text">细枝末节</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x02-%E5%86%99%E5%9C%A8%E6%9C%80%E5%90%8E"><span class="nav-text">0x02 写在最后</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Cipher Saw"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Cipher Saw</p>
+  <div class="site-description" itemprop="description">Not to be whom you don't want to be.</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">74</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ciphersaw" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ciphersaw" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/CipherSaw" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;CipherSaw" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe-asia fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://ctf-wiki.github.io/ctf-wiki/" title="https:&#x2F;&#x2F;ctf-wiki.github.io&#x2F;ctf-wiki&#x2F;" rel="noopener" target="_blank">CTF Wiki</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://www.owasp.org/index.php/Main_Page" title="https:&#x2F;&#x2F;www.owasp.org&#x2F;index.php&#x2F;Main_Page" rel="noopener" target="_blank">OWASP</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.pentest-standard.org/index.php/Main_Page" title="http:&#x2F;&#x2F;www.pentest-standard.org&#x2F;index.php&#x2F;Main_Page" rel="noopener" target="_blank">Pentest Standard</a>
+        </li>
+    </ul>
+  </div>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/ciphersaw" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ciphersaw.me/2020/05/23/record-of-newbie-developer-taking-over-project-for-colleague-quitting/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Cipher Saw">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Secrypt Agency">
+      <meta itemprop="description" content="Not to be whom you don't want to be.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="萌新开发接手大佬项目初体验 | Secrypt Agency">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          萌新开发接手大佬项目初体验
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2020-05-23 13:28:49" itemprop="dateCreated datePublished" datetime="2020-05-23T13:28:49+08:00">2020-05-23</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2021-09-30 23:16:43" itemprop="dateModified" datetime="2021-09-30T23:16:43+08:00">2021-09-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Tips/" itemprop="url" rel="index"><span itemprop="name">Tips</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Tips/Career/" itemprop="url" rel="index"><span itemprop="name">Career</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/2020/05/23/record-of-newbie-developer-taking-over-project-for-colleague-quitting/" class="post-meta-item leancloud_visitors" data-flag-title="萌新开发接手大佬项目初体验" title="Views">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h1><p>本人某司安全开发萌新一枚，入职以来主要负责自研 IDS（Intrusion Detection System，入侵检测系统）的管理台开发。在全栈开发老司机波老师的指导下，顺利完成了数据读写效率优化、数据可视化展示、安全运营能力提升等开发需求，对 Web 应用的整体架构有了更深理解。</p>
+<p>不久前，突然接到项目交接任务，与领导与波老师开完项目交接会后，虽然没明说，但下意识能感觉到，波老师即将离开。接下的一周内，波老师要将几年来的开发成果塞进我的脑袋，最后总算是顺利完成交接。整个过程下来，感觉大脑许久未在紧迫高压的状态下，涌入如此大量的信息。</p>
+<p>客观而言，接手他人工作虽然开头难，但能若成功接下来，则会让萌新以最快的速度成长。本文将以开发人员的视角，对<strong>接手项目过程中的要点</strong>进行总结，便于日后再出现工作交接时查漏补缺，同时也为尚未接手过工作的职场技术新人提供参考。</p>
+<span id="more"></span>
+
+<h1 id="0x01-交接要点"><a href="#0x01-交接要点" class="headerlink" title="0x01 交接要点"></a>0x01 交接要点</h1><p>工作交接最重要的原则，是<strong>双方高效的互动交流</strong>。不仅对技术开发者而言，对所有岗位都具有普适性，只靠单方促成的工作交接，可想而知会有多少缺漏。</p>
+<p>下面我将作为接替者，从<strong>「他给我的」</strong>与<strong>「我问他的」</strong>两个互动过程进行展开，指出每个过程中需要注意的交接要点。在此之前，先列出一些工作交接过程中的基本原则：</p>
+<ul>
+<li>永远不要问对方离职原因（个人隐私）。</li>
+<li>若离职者不主动说，在其离职前不要问跳槽去向。</li>
+<li>可以询问离职时间，有助于工作交接的进度把控。</li>
+<li>重点是<strong>收集离职者手上所有的公司资产信息</strong>，其次是<strong>掌握已上线项目的部署架构、具体功能、运营情况</strong>等，最后是<strong>了解项目实现的核心代码逻辑</strong>。</li>
+</ul>
+<h2 id="他给我的"><a href="#他给我的" class="headerlink" title="他给我的"></a>他给我的</h2><p>工作交接刚开始，波老师先将能想到的项目资产移交给我，让我对他几年来的工作有个宏观认识。接下来，将对这些项目资产进行归类，并分析交接要点。</p>
+<h3 id="项目代码"><a href="#项目代码" class="headerlink" title="项目代码"></a>项目代码</h3><p>公司内部代码通常使用 GitLab 管理，我需要核对波老师移交项目的<strong>数目是否正确</strong>，确认项目代码的<strong>时效性与完整性</strong>，自身是否拥有项目的<strong>开发或管理权限</strong>等。</p>
+<h3 id="项目文档"><a href="#项目文档" class="headerlink" title="项目文档"></a>项目文档</h3><p>项目文档可分为两类：一是项目开发过程中所用技术的<strong>外部文档</strong>，二是项目本身的<strong>内部文档</strong>。</p>
+<p>第一类，主要是<strong>开发语言、开发框架、外部系统调用接口等文档</strong>，由其他相应开发者编写，适用范围相对广泛成熟，对代码层面上的细节与 FAQ 有详细记载，并能够定时更新。</p>
+<p>第二类，主要是<strong>所接项目本身的说明文档</strong>，由项目开发者波老师编写，只对重点项目的部署架构进行说明，包括但不限于各模块的具体功能与部署机器 IP 列表，而对代码实现的描述较为欠缺。其中缘由，一是因为负责此项目的开发者人数有限，难以兼顾日益变化的代码与其说明文档；二是公司也没硬性要求对每个项目必须附属说明文档。</p>
+<p>此处应注意，<strong>切勿过分依赖于项目文档，而忽视沟通交流在工作交接过程中的重要性</strong>。细想一下，开发者需要花大量时间攥写文档，接替者也要花大量时间去阅读理解，并且要求细节覆盖要到位，在工作交接时间紧迫的情况下是不切实际的。话又说回来，倘若平时严格执行开发规范，说明文档能够及时更新，每个项目至少有两位熟悉的开发者，那在交接过程中会大大降低工作量。</p>
+<h3 id="系统架构"><a href="#系统架构" class="headerlink" title="系统架构"></a>系统架构</h3><p>首先，要熟悉公司内部所有 IDC 机房的部署情况与逻辑区域的划分规则，以及跨 IDC 机房或跨逻辑区域通信时的<strong>网络防火墙策略</strong>。接着，重点关注<strong>大型应用、分布式应用、数据库集群、网络负载均衡</strong>等系统部署架构，厘清各模块的具体功能与相互关系。</p>
+<p>波老师通过在生产环境实地讲解，并手绘架构图，不仅能使我很快掌握项目部署架构，而且对公司内部的网络架构也有了更全面的理解。</p>
+<h3 id="系统配置信息"><a href="#系统配置信息" class="headerlink" title="系统配置信息"></a>系统配置信息</h3><p>掌握了系统架构后，波老师将相关项目的系统配置信息列表给了我，其中包括：相关应用系统的<strong>部署地址、登录地址、登录方式、管理员账户密码、配置文件关键项、定时任务设定、启停脚本路径</strong>等，相关数据库集群的<strong>部署地址、连接方式、普通角色与管理员角色的账户密码</strong>等。</p>
+<p>此外，波老师还传授了如何在生产环境找到特定信息的技巧，例如：</p>
+<ul>
+<li>通过 <code>crontab -l</code> 查看定时任务，可获取相关功能模块的绝对路径。</li>
+<li>生产环境通常有保存 IP 列表的文件或查询 IP 列表的工具，可获取相关系统的部署地址。</li>
+<li>查看应用系统配置文件，可获取其他对接应用系统的 API 地址、数据库连接地址、鉴权信息等。</li>
+<li>查看 Nginx 配置文件，可了解相关应用系统的反向代理网络拓扑结构。</li>
+</ul>
+<h3 id="未完成工单"><a href="#未完成工单" class="headerlink" title="未完成工单"></a>未完成工单</h3><p>除了项目资产外，波老师还会把未能及时完成的工单转交给我，包括但不限于<strong>事件工单、安全工单、服务工单</strong>等。</p>
+<p>首先，应厘清各个工单的详细内容及处理方法；其次，应尽快完成当前能够处理的工单；最后，应了解剩余工单暂时无法完成的原因，与相关同事保持沟通，必要时申请工单延期。</p>
+<h2 id="我问他的"><a href="#我问他的" class="headerlink" title="我问他的"></a>我问他的</h2><p>工作交接进度过半，对波老师移交给我的项目资产有了大致认识。接下来，需要记录理解过程中的存疑，每天再约定好一个时段集中答疑，清空了存疑列表后，再记录新的问题，周而复始，不断完善自身对项目理解的逻辑链。最后要求达到的状态，是其他人对交接项目提出的问题，自己能够立刻解答。</p>
+<h3 id="资产清单"><a href="#资产清单" class="headerlink" title="资产清单"></a>资产清单</h3><p>波老师移交的资产清单并非完整有序，因此我需要按照不同优先级重新整理资产清单，对尚不明确的地方做好标记，既能快速检验自己对所有资产的掌握情况，还能保证资产交接没有缺漏。</p>
+<p>一级目录，根据<strong>相同功能模块的大类粗略区分</strong>，如入侵检测系统、漏洞扫描系统、Web 应用防火墙等。</p>
+<p>二级目录，根据<strong>相同功能模块下的子类精细区分</strong>，如入侵检测系统的数据采集器、规则引擎、管理台等。</p>
+<p>内容方面，简要概括每个<strong>子模块的功能</strong>，再分别记录生产环境与测试环境的<strong>部署地址</strong>。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">##### （1）入侵检测系统 #####</span><br><span class="line"></span><br><span class="line">1.1）采集器</span><br><span class="line">功能：系统进程、日志、网络流量采集？（有疑问，需确认）</span><br><span class="line">测试环境：各个服务器上</span><br><span class="line">生产环境：各个服务器上</span><br><span class="line"></span><br><span class="line">1.2）规则引擎</span><br><span class="line">功能：告警规则过滤、数据处理入库</span><br><span class="line">测试环境：a.a.a.a</span><br><span class="line">生产环境：？（有缺漏，需补齐）</span><br><span class="line"></span><br><span class="line">1.3）管理台</span><br><span class="line">功能：数据统计、可视化展示、漏洞运营</span><br><span class="line">测试环境：x.x.x.x</span><br><span class="line">生产环境：y.y.y.y</span><br><span class="line"></span><br><span class="line">1.4）...</span><br></pre></td></tr></table></figure>
+
+<p>此外，还要留意<strong>日报邮件</strong>与<strong>告警邮件</strong>等特殊资产，其归类方法同上，只需对内容稍作修改：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">##### （2）安全日报邮件 #####</span><br><span class="line"></span><br><span class="line">2.1）新增漏洞日报</span><br><span class="line">功能：统计前一天新增的弱口令、风险组件、敏感信息泄露等漏洞</span><br><span class="line">上报方式：通过 xx.sh 脚本上报</span><br><span class="line">脚本路径：/data/script/path/xx.sh</span><br><span class="line">数据表名：new_vuls_report</span><br><span class="line"></span><br><span class="line">2.2）...</span><br><span class="line"></span><br><span class="line">##### （3）安全告警邮件 #####</span><br><span class="line"></span><br><span class="line">3.1）恶意文件告警</span><br><span class="line">功能：检测服务器上是否存在恶意文件</span><br><span class="line">检测方式：通过入侵检测系统的规则引擎</span><br><span class="line"></span><br><span class="line">3.2）...</span><br></pre></td></tr></table></figure>
+
+<p>资产清单的列举可参考上述方式，按照实际需求再作调整。清单全部列举完后，需要找离职者确认一遍，将模糊之处厘清，将缺漏之处补齐。</p>
+<h3 id="对接关系"><a href="#对接关系" class="headerlink" title="对接关系"></a>对接关系</h3><p>除了实际项目资产外，波老师原有的对接关系也是一项重要的隐形资产。</p>
+<p>对接关系是指在项目开展过程中，与其他同事建立起的必要工作关系，这些同事包括但不限于<strong>资源申请联系人、关联子系统负责人、权限审核人员、系统运维人员</strong>等，以实际场景举例：</p>
+<ul>
+<li>测试环境机器申请，需联系资源管理员 A。</li>
+<li>生产环境网络策略不通，需联系策略管理员 B。</li>
+<li>数据库扩容，需联系数据库管理员 C。</li>
+<li>某编程框架的使用问题，可咨询开发专家 D。</li>
+</ul>
+<p>与项目相关的对接关系复杂多样，通常只留存于离职者的工作聊天记录或大脑记忆中，而未被针对性地记录整理。因此，接替者应考虑各种可能出现的场景，当相应问题出现时应该与谁对接。否则，当你问了一圈都还未能找到对接人时，则会因为工作时间被白白消耗而感到抓狂。</p>
+<p>整理好未知的对接关系后，一定要与离职者确认补齐，因为厘清这些关系后，对后续项目开展会有事半功倍的效果。</p>
+<h3 id="鉴权主体变更"><a href="#鉴权主体变更" class="headerlink" title="鉴权主体变更"></a>鉴权主体变更</h3><p>项目开发过程中，或多或少会与公司内部其他子系统建立联系，需要调用 API 接口获取其他子系统的内部信息。在此之前，需要向相关子系统负责人申请 API 接口访问权限，而这些权限通常是以开发者波老师的名义申请的。</p>
+<p>因此，我们需要<strong>整理以离职者名义申请的访问权限，并与相关负责人确认这些权限日后是否会失效</strong>。若会失效，则需要接替者重新申请访问权限，完成鉴权主体变更。</p>
+<h3 id="收信主体变更"><a href="#收信主体变更" class="headerlink" title="收信主体变更"></a>收信主体变更</h3><p>项目运营过程中，开发者会设置<strong>与运营情况相关的日报或告警提醒功能</strong>。为避免波老师离任后导致系统监控缺失，我需要将日报或告警的提醒功能重置为自己的。</p>
+<p>鉴于日报或告警的种类繁多，接替者需要与离职者确认每种<strong>日报的上报方式</strong>，或每种<strong>告警的触发方式</strong>，并完成收信主体的变更设置。</p>
+<h3 id="需求开发指点"><a href="#需求开发指点" class="headerlink" title="需求开发指点"></a>需求开发指点</h3><p>项目交接后，我可能需要继续完成波老师正在开发的需求。由于刚刚接手的项目开发，我需要花费较多时间去理解代码，而波老师能够<strong>对当前或排期中的需求，给出合理的指导建议或实施方案</strong>，这有助于我快速过渡磨合期。</p>
+<p>接替者需要<strong>重点关注自己不熟悉的开发领域</strong>，根据需求优先级向离职者寻求建议，例如：</p>
+<ul>
+<li>为了监控程序的 IO 与 网络连接资源占用情况，可以用什么技术或哪个工具库实现？</li>
+<li>如何根据服务器的 CPU 架构类型下发不同版本的程序？</li>
+<li>此 SpringMVC  项目在 IntelliJ IDEA 的开发环境配置上需要注意什么？</li>
+</ul>
+<h3 id="问题解决方法"><a href="#问题解决方法" class="headerlink" title="问题解决方法"></a>问题解决方法</h3><p>项目在开发或运营过程中，难免会出现各种问题，而波老师往往对自己项目可能出现的问题了如指掌，能够<strong>对常见问题给出解决方法作为指导</strong>，同样有助于我在磨合期内少踩坑。</p>
+<p>接替者需要<strong>重点关注核心项目的常见问题及解决方法</strong>，例如：</p>
+<ul>
+<li>IDS 常见告警的确认方法？</li>
+<li>IDS 安装包下发失败的常见原因及解决方法？</li>
+<li>数据库出现慢查询的常见原因及解决方法？</li>
+</ul>
+<p>对于常见问题，通常有具体的解决方法，但若出现无法预料的问题，或某个问题可能由多种原因导致，则需要<strong>掌握问题排查思路，具体问题具体分析</strong>，例如：</p>
+<ul>
+<li>IDS 后端服务器重启可能原因及排查思路？</li>
+<li>IDS 采集客户端离线的可能原因及排查思路？</li>
+</ul>
+<h3 id="细枝末节"><a href="#细枝末节" class="headerlink" title="细枝末节"></a>细枝末节</h3><p>除了上述需要接替者重点关注的问题外，可能还有些细枝末节的问题，需要根据自身情况总结整理，在此暂不归类，包括但不限于<strong>管理归属确认、日常操作技巧、流程操作步骤</strong>等，例如：</p>
+<ul>
+<li>某系统的开发或运营我需要关注吗？</li>
+<li>IDS 采集客户端的开发调试技巧？</li>
+<li>如何快速统计日志文件中特定字段出现的次数？</li>
+<li>新环境部署 IDS 的操作流程？</li>
+<li>新版本发布时的操作流程？</li>
+</ul>
+<h1 id="0x02-写在最后"><a href="#0x02-写在最后" class="headerlink" title="0x02 写在最后"></a>0x02 写在最后</h1><p>在时间洪流的推动下，交接工作不知不觉已基本完成。在某个平常的工作日，波老师收拾完工位后便悄咪咪地离开了，当时还在操作间奋战的我也没来得及跟他道别。得知波老师是去北京追求爱情时，能做的只有在微信群送上最后的祝福：祝波老师北漂之旅幸福美满！</p>
+<p>最后，由衷感谢波老师对我项目开发的指导，道阻且长，行则将至，属于自己的战斗才刚刚打响…</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>Post author:  </strong>Cipher Saw
+  </li>
+  <li class="post-copyright-link">
+      <strong>Post link: </strong>
+      <a href="https://ciphersaw.me/2020/05/23/record-of-newbie-developer-taking-over-project-for-colleague-quitting/" title="萌新开发接手大佬项目初体验">https://ciphersaw.me/2020/05/23/record-of-newbie-developer-taking-over-project-for-colleague-quitting/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> unless stating additionally.
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Career/" rel="tag"># Career</a>
+              <a href="/tags/Guideline/" rel="tag"># Guideline</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/02/16/check-if-ip-belongs-to-cidr-by-javascript/" rel="prev" title="Javascript 判断 IP 地址是否属于 CIDR 范围">
+                  <i class="fa fa-chevron-left"></i> Javascript 判断 IP 地址是否属于 CIDR 范围
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/07/10/exploration-of-file-format-exception-while-vmware-loads-ovf/" rel="next" title="VMware 导入 ovf 文件格式异常报错之探解">
+                  VMware 导入 ovf 文件格式异常报错之探解 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-space-shuttle"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Cipher Saw</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+  
+
+
+  <script class="next-config" data-name="leancloud_visitors" type="application/json">{"enable":true,"app_id":"KWe6NtO4vhgQR3IfB99JElre-gzGzoHsz","app_key":"7nrrRDyHHUMcx03upUALYKIQ","server_url":null,"security":false}</script>
+  <script src="/js/third-party/statistics/lean-analytics.js"></script>
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"ciphersaw","count":false,"i18n":{"disqus":"disqus"}}</script>
+<script src="/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

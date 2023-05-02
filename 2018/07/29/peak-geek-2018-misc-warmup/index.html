@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ciphersaw.me","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.13.2","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="0x00 前言本届「巅峰极客」网络安全技能挑战赛共有三道 Misc 题，此题是最简单的一道，分值为 100pt，难度不大，涉及图片隐写与三种特殊的编码方式，主要考察选手们对常见 Misc 题知识点的综合运用能力。 题目下载链接如下：  下载链接：warmup.bmp">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【巅峰极客 2018】 Misc —— warmup">
+<meta property="og:url" content="https://ciphersaw.me/2018/07/29/peak-geek-2018-misc-warmup/index.html">
+<meta property="og:site_name" content="Secrypt Agency">
+<meta property="og:description" content="0x00 前言本届「巅峰极客」网络安全技能挑战赛共有三道 Misc 题，此题是最简单的一道，分值为 100pt，难度不大，涉及图片隐写与三种特殊的编码方式，主要考察选手们对常见 Misc 题知识点的综合运用能力。 题目下载链接如下：  下载链接：warmup.bmp">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/peak-geek-2018-misc-warmup/rgb-lsb.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/peak-geek-2018-misc-warmup/red-data-extract.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/peak-geek-2018-misc-warmup/rgb-info.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/peak-geek-2018-misc-warmup/rgb-zsteg.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/peak-geek-2018-misc-warmup/rgb-zsteg-all.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/peak-geek-2018-misc-warmup/short-ook!.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/peak-geek-2018-misc-warmup/ook!.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/peak-geek-2018-misc-warmup/brainfuck.png">
+<meta property="article:published_time" content="2018-07-29T13:08:54.000Z">
+<meta property="article:modified_time" content="2021-10-01T02:00:39.364Z">
+<meta property="article:author" content="Cipher Saw">
+<meta property="article:tag" content="CTF">
+<meta property="article:tag" content="Writeup">
+<meta property="article:tag" content="Crypto">
+<meta property="article:tag" content="巅峰极客">
+<meta property="article:tag" content="Steganography">
+<meta property="article:tag" content="Encoding">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/peak-geek-2018-misc-warmup/rgb-lsb.png">
+
+
+<link rel="canonical" href="https://ciphersaw.me/2018/07/29/peak-geek-2018-misc-warmup/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://ciphersaw.me/2018/07/29/peak-geek-2018-misc-warmup/","path":"2018/07/29/peak-geek-2018-misc-warmup/","title":"【巅峰极客 2018】 Misc —— warmup"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>【巅峰极客 2018】 Misc —— warmup | Secrypt Agency</title>
+  
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Secrypt Agency</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Welcome to a platform for network security artists.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li><li class="menu-item menu-item-friends"><a href="/friends/" rel="section"><i class="fa fa-users fa-fw"></i>Friends</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#0x00-%E5%89%8D%E8%A8%80"><span class="nav-text">0x00 前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x01-LSB-%E9%9A%90%E5%86%99"><span class="nav-text">0x01 LSB 隐写</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x02-%E5%AE%9A%E4%BD%8D%E9%9A%90%E5%86%99%E7%82%B9"><span class="nav-text">0x02 定位隐写点</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x03-%E6%91%98%E5%8F%96%E9%9A%90%E5%86%99%E4%BF%A1%E6%81%AF"><span class="nav-text">0x03 摘取隐写信息</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Stegsolve-%E6%91%98%E5%8F%96%E6%95%B0%E6%8D%AE"><span class="nav-text">Stegsolve 摘取数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#zsteg-%E6%91%98%E5%8F%96%E6%95%B0%E6%8D%AE"><span class="nav-text">zsteg 摘取数据</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x04-%E8%BE%A8%E8%AF%86%E7%89%B9%E6%AE%8A%E7%BC%96%E7%A0%81"><span class="nav-text">0x04 辨识特殊编码</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Short-Ook"><span class="nav-text">Short Ook!</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ook"><span class="nav-text">Ook!</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Brainfuck"><span class="nav-text">Brainfuck</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x05-%E6%80%BB%E7%BB%93"><span class="nav-text">0x05 总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Cipher Saw"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Cipher Saw</p>
+  <div class="site-description" itemprop="description">Not to be whom you don't want to be.</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">74</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ciphersaw" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ciphersaw" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/CipherSaw" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;CipherSaw" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe-asia fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://ctf-wiki.github.io/ctf-wiki/" title="https:&#x2F;&#x2F;ctf-wiki.github.io&#x2F;ctf-wiki&#x2F;" rel="noopener" target="_blank">CTF Wiki</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://www.owasp.org/index.php/Main_Page" title="https:&#x2F;&#x2F;www.owasp.org&#x2F;index.php&#x2F;Main_Page" rel="noopener" target="_blank">OWASP</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.pentest-standard.org/index.php/Main_Page" title="http:&#x2F;&#x2F;www.pentest-standard.org&#x2F;index.php&#x2F;Main_Page" rel="noopener" target="_blank">Pentest Standard</a>
+        </li>
+    </ul>
+  </div>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/ciphersaw" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ciphersaw.me/2018/07/29/peak-geek-2018-misc-warmup/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Cipher Saw">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Secrypt Agency">
+      <meta itemprop="description" content="Not to be whom you don't want to be.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="【巅峰极客 2018】 Misc —— warmup | Secrypt Agency">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          【巅峰极客 2018】 Misc —— warmup
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2018-07-29 21:08:54" itemprop="dateCreated datePublished" datetime="2018-07-29T21:08:54+08:00">2018-07-29</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2021-10-01 10:00:39" itemprop="dateModified" datetime="2021-10-01T10:00:39+08:00">2021-10-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/InfoSec/" itemprop="url" rel="index"><span itemprop="name">InfoSec</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/InfoSec/Misc/" itemprop="url" rel="index"><span itemprop="name">Misc</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/2018/07/29/peak-geek-2018-misc-warmup/" class="post-meta-item leancloud_visitors" data-flag-title="【巅峰极客 2018】 Misc —— warmup" title="Views">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h1><p>本届「巅峰极客」网络安全技能挑战赛共有三道 Misc 题，此题是最简单的一道，分值为 100pt，难度不大，涉及<strong>图片隐写</strong>与<strong>三种特殊的编码方式</strong>，主要考察选手们对常见 Misc 题知识点的综合运用能力。 题目下载链接如下：</p>
+<ul>
+<li>下载链接：<a target="_blank" rel="noopener" href="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A2_2018_Misc_warmup/warmup.bmp">warmup.bmp</a></li>
+</ul>
+<span id="more"></span>
+
+<h1 id="0x01-LSB-隐写"><a href="#0x01-LSB-隐写" class="headerlink" title="0x01 LSB 隐写"></a>0x01 LSB 隐写</h1><p><a target="_blank" rel="noopener" href="https://baike.baidu.com/item/RGB"><strong>RGB</strong></a> 色彩模式是工业界的一种颜色标准，通过红（R）、绿（G）、蓝（B）三原色的相互叠加得到各种颜色。</p>
+<p><strong>24 比特模式</strong>是当前最主流的表示方法，即使用三个 8 比特无符号整数分别代表红色、绿色和蓝色，每个像素点用 24 比特表示，可以产生 $2^{24} &#x3D; 16,777,216$ 种颜色组合。</p>
+<p><strong>LSB 隐写</strong>是指将信息隐藏在每个颜色通道的最低有效位（Least Significant Bit）。由于改变的是每个颜色通道的最低位，对颜色改变的影响极小，因此用肉眼是无法察觉出来的。</p>
+<p>显然，每个像素的三个通道可以隐藏 3 比特信息；每个 ASCII 字符有 8 比特，至少需要三个像素点，若只隐藏在某一个颜色通道，则需要八个像素点。</p>
+<p>下面以<strong>连续八个像素点的红色通道隐藏字符 <code>a</code></strong> 为例进行讲解：</p>
+<table>
+<thead>
+<tr>
+<th>像素序号</th>
+<th>像素隐写前</th>
+<th>隐写信息</th>
+<th>像素隐写后</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>(<strong>35</strong>, 21, 33)</td>
+<td>0</td>
+<td>(<strong>34</strong>, 21, 33)</td>
+</tr>
+<tr>
+<td>2</td>
+<td>(<strong>96</strong>, 89, 52)</td>
+<td>1</td>
+<td>(<strong>97</strong>, 89, 52)</td>
+</tr>
+<tr>
+<td>3</td>
+<td>(<strong>57</strong>, 211, 123)</td>
+<td>1</td>
+<td>(<strong>57</strong>, 211, 123)</td>
+</tr>
+<tr>
+<td>4</td>
+<td>(<strong>48</strong>, 110, 245)</td>
+<td>0</td>
+<td>(<strong>48</strong>, 110, 245)</td>
+</tr>
+<tr>
+<td>5</td>
+<td>(<strong>113</strong>, 201, 97)</td>
+<td>0</td>
+<td>(<strong>112</strong>, 201, 97)</td>
+</tr>
+<tr>
+<td>6</td>
+<td>(<strong>62</strong>, 52, 134)</td>
+<td>0</td>
+<td>(<strong>62</strong>, 52, 134)</td>
+</tr>
+<tr>
+<td>7</td>
+<td>(<strong>168</strong>, 65, 159)</td>
+<td>0</td>
+<td>(<strong>168</strong>, 65, 159)</td>
+</tr>
+<tr>
+<td>8</td>
+<td>(<strong>240</strong>, 76, 193)</td>
+<td>1</td>
+<td>(<strong>241</strong>, 76, 193)</td>
+</tr>
+</tbody></table>
+<p>字符 <code>a</code> 的二进制 ASCII 码是 <code>01100001</code>，每个比特分别隐写在每个像素点红色通道的最低有效位。无论隐写前该颜色通道的值或奇或偶，若隐写信息为 <code>0</code> 比特，则隐写后值为偶数；若隐写信息为 <code>1</code> 比特，则隐写后值为奇数。</p>
+<h1 id="0x02-定位隐写点"><a href="#0x02-定位隐写点" class="headerlink" title="0x02 定位隐写点"></a>0x02 定位隐写点</h1><p><a target="_blank" rel="noopener" href="http://www.caesum.com/handbook/stego.htm"><strong>Stegsolve</strong></a> 是专用于分析图片隐写的大杀器，用 Java 语言编写，主要功能如下所示：</p>
+<ul>
+<li>显示图片文件的格式信息。</li>
+<li>迅速浏览每个颜色通道的位平面，以及图片的一些简单变换。</li>
+<li>摘取任意颜色通道比特位的信息。</li>
+<li>按特定偏移量移动解析图片。</li>
+<li>剥离动图的每一帧。</li>
+<li>合并两张不同的图片。</li>
+</ul>
+<p>当我们用 Stegsolve 加载图片 warmup.bmp 后，分别在 RGB 通道最低位的位平面上方发现了异常，由此猜测可能存在隐写。</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/peak-geek-2018-misc-warmup/rgb-lsb.png" alt="rgb-lsb"></p>
+<h1 id="0x03-摘取隐写信息"><a href="#0x03-摘取隐写信息" class="headerlink" title="0x03 摘取隐写信息"></a>0x03 摘取隐写信息</h1><h2 id="Stegsolve-摘取数据"><a href="#Stegsolve-摘取数据" class="headerlink" title="Stegsolve 摘取数据"></a>Stegsolve 摘取数据</h2><p>点击 Stegsolve 的 <strong>Analyse -&gt; Data Extract</strong>，在红色通道最低位上打勾，点击 <strong>Preview</strong> 后，即可在提取数据的上方发现隐写信息，最后点击 <strong>Save Bin</strong> 保存为二进制文件 red.bin。</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/peak-geek-2018-misc-warmup/red-data-extract.png" alt="red-data-extract"></p>
+<p>接着对绿色与蓝色通道进行相同操作，分别得到二进制文件 green.bin 和 blue.bin，用文本编辑器打开后，即可摘取数据上方的隐写信息。</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/peak-geek-2018-misc-warmup/rgb-info.png" alt="rgb-info"></p>
+<p>除了使用 Stegsolve 摘取数据外，还可以尝试另一个自动化图片隐写检测工具 zsteg。</p>
+<h2 id="zsteg-摘取数据"><a href="#zsteg-摘取数据" class="headerlink" title="zsteg 摘取数据"></a>zsteg 摘取数据</h2><p><a target="_blank" rel="noopener" href="https://github.com/zed-0xff/zsteg"><strong>zsteg</strong></a> 是俄罗斯黑客开发的一款开源工具，专用于检测 PNG 与 BMP 格式图片中的隐写信息，用 Ruby 语言开发，主要用法如下所示：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">$ zsteg -h</span><br><span class="line"></span><br><span class="line">Usage: zsteg [options] filename.png [param_string]</span><br><span class="line"></span><br><span class="line">    -c, --channels X                 channels (R/G/B/A) or any combination, comma separated</span><br><span class="line">                                     valid values: r,g,b,a,rg,rgb,bgr,rgba,...</span><br><span class="line">    -l, --<span class="built_in">limit</span> N                    <span class="built_in">limit</span> bytes checked, 0 = no <span class="built_in">limit</span> (default: 256)</span><br><span class="line">    -b, --bits N                     number of bits (1..8), single value or <span class="string">&#x27;1,3,5&#x27;</span> or <span class="string">&#x27;1-8&#x27;</span></span><br><span class="line">        --lsb                        least significant BIT comes first</span><br><span class="line">        --msb                        most significant BIT comes first</span><br><span class="line">    -P, --prime                      analyze/extract only prime bytes/pixels</span><br><span class="line">    -a, --all                        try all known methods</span><br><span class="line">    -o, --order X                    pixel iteration order (default: <span class="string">&#x27;auto&#x27;</span>)</span><br><span class="line">                                     valid values: ALL,xy,yx,XY,YX,xY,Xy,bY,...</span><br><span class="line">    -E, --extract NAME               extract specified payload, NAME is like <span class="string">&#x27;1b,rgb,lsb&#x27;</span></span><br><span class="line"></span><br><span class="line">    -v, --verbose                    Run verbosely (can be used multiple <span class="built_in">times</span>)</span><br><span class="line">    -q, --quiet                      Silent any warnings (can be used multiple <span class="built_in">times</span>)</span><br><span class="line">    -C, --[no-]color                 Force (or <span class="built_in">disable</span>) color output (default: auto)</span><br><span class="line"></span><br><span class="line">PARAMS SHORTCUT</span><br><span class="line">	zsteg fname.png 2b,b,lsb,xy  ==&gt;  --bits 2 --channel b --lsb --order xy</span><br></pre></td></tr></table></figure>
+
+<p>在 Kali Linux 中，自带 Ruby 的包管理器 RubyGems，因此直接用以下命令安装后即可使用：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ gem install zsteg</span><br></pre></td></tr></table></figure>
+
+<p>切换至图片 warmup.bmp 所在目录下，分别输入以下命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ zsteg warmup.bmp --bits 1 --channel r --lsb --order xy --limit 2048</span><br><span class="line">$ zsteg warmup.bmp --bits 1 --channel g --lsb --order xy --limit 2048</span><br><span class="line">$ zsteg warmup.bmp --bits 1 --channel b --lsb --order xy --limit 2048</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>--bits 1</code>：每次只摘取颜色通道中的第 1 个比特。</li>
+<li><code>--channel r</code>：只摘取红色通道的比特位。</li>
+<li><code>--lsb</code>：按最低有效位优先的顺序进行摘取。</li>
+<li><code>--order xy</code>：按照从左至右、从上至下的顺序对图像素点进行摘取。</li>
+<li><code>--limit 2048</code>：最多摘取输出 2048 字节。</li>
+</ul>
+<p>即可自动摘取出隐写在图片内的信息：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/peak-geek-2018-misc-warmup/rgb-zsteg.png" alt="rgb-zsteg"></p>
+<p>仔细的读者还会发现，有一个懒人专属的选项 <code>--all</code>，可将所有可能的摘取方法都尝试一遍：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ zsteg warmup.bmp --all</span><br></pre></td></tr></table></figure>
+
+<p>最终在结果中挑选出可能的隐写信息：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/peak-geek-2018-misc-warmup/rgb-zsteg-all.png" alt="rgb-zsteg-all"></p>
+<h1 id="0x04-辨识特殊编码"><a href="#0x04-辨识特殊编码" class="headerlink" title="0x04 辨识特殊编码"></a>0x04 辨识特殊编码</h1><p>上述分别由 RGB 通道得到的隐写信息，属于三种特殊的编码方式，同时也是  <a target="_blank" rel="noopener" href="https://www.splitbrain.org/personal">Andreas Gohr</a> 的开源项目，可在其博客上的 <a target="_blank" rel="noopener" href="https://www.splitbrain.org/services/ook">Brainfuck&#x2F;Ook! Obfuscation&#x2F;Encoding</a> 在线工具中解码。</p>
+<p>以上编码方式的实现，读者不必知道其原理，只需在做题过程中能辨识出来是哪种编码即可，解码的工作留给工具完成。</p>
+<h2 id="Short-Ook"><a href="#Short-Ook" class="headerlink" title="Short Ook!"></a>Short Ook!</h2><p>由 red.bin 得到的隐写信息如下所示：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">..... ..... ..... ..... !?!!. ?.... ..... ..... ..... .?.?! .?... .!...</span><br><span class="line">..... ..... !.?.. ..... !?!!. ?!!!! !!?.? !.?!! !!!.. ..... ..... .!.?.</span><br><span class="line">..... ...!? !!.?. ..... ..?.? !.?.. ..... .!.?. ..... ...!? !!.?! !!!!!</span><br><span class="line">!!?.? !.?!! !!!!! !!!!! !!!.! !!!!. ?.... ..... ....! ?!!.? !!!!! !!!!!</span><br><span class="line">!!?.? !.?!! !!!!! !!!!! !!!!! .!!!! !.!!! !!!!! !.... ..... !.!!! .....</span><br><span class="line">..!.! !!!!! !!!!! !!!!! !!!.? .</span><br></pre></td></tr></table></figure>
+
+<p>以上编码方式称为 <strong>Short Ook!</strong> ，其包含的字符集如下所示：</p>
+<table>
+<thead>
+<tr>
+<th>字符</th>
+<th>含义</th>
+<th>ASCII 码</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>!</td>
+<td>叹号</td>
+<td>33（\x21）</td>
+</tr>
+<tr>
+<td>.</td>
+<td>句号</td>
+<td>46（\x2E）</td>
+</tr>
+<tr>
+<td>?</td>
+<td>问号</td>
+<td>63（\x3F）</td>
+</tr>
+</tbody></table>
+<p>将上述隐写信息用工具解码后得到字符串 <code>flag&#123;db640436-</code>：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/peak-geek-2018-misc-warmup/short-ook!.png" alt="short-ook!"></p>
+<h2 id="Ook"><a href="#Ook" class="headerlink" title="Ook!"></a>Ook!</h2><p>由 green.bin 得到的隐写信息如下所示：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook!</span><br><span class="line">Ook? Ook! Ook! Ook. Ook? Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook.</span><br><span class="line">Ook. Ook. Ook. Ook. Ook? Ook. Ook? Ook! Ook. Ook? Ook. Ook. Ook. Ook. Ook.</span><br><span class="line">Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook! Ook. Ook. Ook. Ook! Ook. Ook! Ook!</span><br><span class="line">Ook! Ook! Ook! Ook! Ook! Ook! Ook! Ook! Ook! Ook. Ook. Ook. Ook. Ook. Ook.</span><br><span class="line">Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook! Ook. Ook? Ook. Ook. Ook. Ook. Ook.</span><br><span class="line">Ook. Ook. Ook! Ook? Ook! Ook! Ook. Ook? Ook! Ook! Ook! Ook! Ook! Ook! Ook?</span><br><span class="line">Ook. Ook? Ook! Ook. Ook? Ook! Ook! Ook! Ook! Ook! Ook! Ook! Ook. Ook. Ook.</span><br><span class="line">Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook! Ook. Ook!</span><br><span class="line">Ook! Ook! Ook! Ook! Ook! Ook! Ook! Ook! Ook. Ook. Ook. Ook. Ook. Ook. Ook.</span><br><span class="line">Ook. Ook. Ook. Ook. Ook! Ook. Ook! Ook! Ook! Ook! Ook! Ook! Ook! Ook! Ook!</span><br><span class="line">Ook! Ook! Ook. Ook! Ook! Ook! Ook! Ook! Ook! Ook! Ook. Ook? Ook. Ook. Ook.</span><br><span class="line">Ook. Ook. Ook. Ook. Ook! Ook? Ook! Ook! Ook. Ook? Ook. Ook. Ook. Ook. Ook.</span><br><span class="line">Ook. Ook? Ook. Ook? Ook! Ook. Ook? Ook. Ook. Ook. Ook. Ook! Ook. Ook! Ook!</span><br><span class="line">Ook! Ook! Ook! Ook! Ook! Ook! Ook! Ook! Ook! Ook. Ook! Ook. Ook. Ook. Ook.</span><br><span class="line">Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook! Ook. Ook? Ook.</span><br></pre></td></tr></table></figure>
+
+<p>以上编码方式称为 <strong>Ook!</strong> ，其包含的字符集如下所示：</p>
+<table>
+<thead>
+<tr>
+<th>字符</th>
+<th>含义</th>
+<th>ASCII 码</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>!</td>
+<td>叹号</td>
+<td>33（\x21）</td>
+</tr>
+<tr>
+<td>.</td>
+<td>句号</td>
+<td>46（\x2E）</td>
+</tr>
+<tr>
+<td>?</td>
+<td>问号</td>
+<td>63（\x3F）</td>
+</tr>
+<tr>
+<td>O</td>
+<td>大写字母 O</td>
+<td>79（\x4F）</td>
+</tr>
+<tr>
+<td>k</td>
+<td>小写字母 k</td>
+<td>107（\x6B）</td>
+</tr>
+<tr>
+<td>o</td>
+<td>小写字母 o</td>
+<td>111（\x6F）</td>
+</tr>
+</tbody></table>
+<p>将上述隐写信息用工具解码后得到字符串 <code>7839-4050-8339</code>：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/peak-geek-2018-misc-warmup/ook!.png" alt="ook!"></p>
+<h2 id="Brainfuck"><a href="#Brainfuck" class="headerlink" title="Brainfuck"></a>Brainfuck</h2><p>由 blue.bin 得到的隐写信息如下所示：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">+++++ +[-&gt;+ +++++ &lt;]&gt;++ +++++ ++.&lt;+ ++[-&gt; +++&lt;] &gt;+.-- .&lt;+++ +++[- &gt;++++</span><br><span class="line">++&lt;]&gt; +++++ +++.&lt; +++++ +[-&gt;- ----- &lt;]&gt;-- --.-- .---- -.&lt;++ +++++ [-&gt;++</span><br><span class="line">+++++ &lt;]&gt;++ +.--- .&lt;+++ +++[- &gt;---- --&lt;]&gt; ----- ----- ..--. &lt;++++ ++[-&gt;</span><br><span class="line">+++++ +&lt;]&gt;+ +++++ +++++ +.&lt;++ +++[- &gt;++++ +&lt;]&gt;+ .&lt;</span><br></pre></td></tr></table></figure>
+
+<p>以上编码方式称为 <strong>Brainfuck</strong>，其包含的字符集如下所示：</p>
+<table>
+<thead>
+<tr>
+<th>字符</th>
+<th>含义</th>
+<th>ASCII 码</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>+</td>
+<td>加号</td>
+<td>43（\x2B）</td>
+</tr>
+<tr>
+<td>-</td>
+<td>减号</td>
+<td>45（\x2D）</td>
+</tr>
+<tr>
+<td>.</td>
+<td>句号</td>
+<td>46（\x2E）</td>
+</tr>
+<tr>
+<td>&lt;</td>
+<td>小于号</td>
+<td>60（\x3C）</td>
+</tr>
+<tr>
+<td>&gt;</td>
+<td>大于号</td>
+<td>62（\x3E）</td>
+</tr>
+<tr>
+<td>[</td>
+<td>左方括号</td>
+<td>91（\x5B）</td>
+</tr>
+<tr>
+<td>]</td>
+<td>右方括号</td>
+<td>93（\x5D）</td>
+</tr>
+</tbody></table>
+<p>将上述隐写信息用工具解码后得到字符串 <code>-75a972fc553c&#125;</code>：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/peak-geek-2018-misc-warmup/brainfuck.png" alt="brainfuck"></p>
+<h1 id="0x05-总结"><a href="#0x05-总结" class="headerlink" title="0x05 总结"></a>0x05 总结</h1><p>对以上三种编码进行解码后，将得到的字符串拼接起来即得到本题的 flag：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flag&#123;db640436-7839-4050-8339-75a972fc553c&#125;</span><br></pre></td></tr></table></figure>
+
+<p>笔者借助此题，将常见的图片隐写分析方法与特殊的编码方式进行了总结，既有助于初学者学习理解，也方便自己日后查看。文中的不足或错误之后还望读者多多包涵，不吝赐教。</p>
+<p>最后贴出两篇较好的 writeup 供读者学习：</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://ihomura.cn/2018/07/25/WriteUp-%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A2-Misc/">WriteUp:巅峰极客 Misc</a><br><a target="_blank" rel="noopener" href="http://120.79.189.7/?p=453">巅峰极客第一场CTF部分writeup</a></p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>Post author:  </strong>Cipher Saw
+  </li>
+  <li class="post-copyright-link">
+      <strong>Post link: </strong>
+      <a href="https://ciphersaw.me/2018/07/29/peak-geek-2018-misc-warmup/" title="【巅峰极客 2018】 Misc —— warmup">https://ciphersaw.me/2018/07/29/peak-geek-2018-misc-warmup/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> unless stating additionally.
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/CTF/" rel="tag"># CTF</a>
+              <a href="/tags/Writeup/" rel="tag"># Writeup</a>
+              <a href="/tags/Crypto/" rel="tag"># Crypto</a>
+              <a href="/tags/%E5%B7%85%E5%B3%B0%E6%9E%81%E5%AE%A2/" rel="tag"># 巅峰极客</a>
+              <a href="/tags/Steganography/" rel="tag"># Steganography</a>
+              <a href="/tags/Encoding/" rel="tag"># Encoding</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2018/06/15/python-trick-udp-server-and-client/" rel="prev" title="Python 绝技 —— UDP 服务器与客户端">
+                  <i class="fa fa-chevron-left"></i> Python 绝技 —— UDP 服务器与客户端
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2018/08/27/ichunqiu-web-brute-force-1/" rel="next" title="【i春秋】 Web —— 爆破-1">
+                  【i春秋】 Web —— 爆破-1 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-space-shuttle"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Cipher Saw</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+  
+
+
+  <script class="next-config" data-name="leancloud_visitors" type="application/json">{"enable":true,"app_id":"KWe6NtO4vhgQR3IfB99JElre-gzGzoHsz","app_key":"7nrrRDyHHUMcx03upUALYKIQ","server_url":null,"security":false}</script>
+  <script src="/js/third-party/statistics/lean-analytics.js"></script>
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"ciphersaw","count":false,"i18n":{"disqus":"disqus"}}</script>
+<script src="/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

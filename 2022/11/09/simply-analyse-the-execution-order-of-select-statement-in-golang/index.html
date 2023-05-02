@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ciphersaw.me","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.13.2","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="0x00 前言Go 语言中的 select 语句，用于控制 channel 的通信操作，分为发送操作与接收操作两类。 众所周知，大多数教程只是大致描述了 select 语句的执行流程：当 case 中存在一个或多个可执行的通信操作时，会随机选择进入其中一个，并完成该 case 下的相应语句。当不存在可执行的通道操作时，会先判断是否存在 default case，有则进入，无则阻塞，直至通信操作可执">
+<meta property="og:type" content="article">
+<meta property="og:title" content="浅析 Go select 语句的执行顺序问题">
+<meta property="og:url" content="https://ciphersaw.me/2022/11/09/simply-analyse-the-execution-order-of-select-statement-in-golang/index.html">
+<meta property="og:site_name" content="Secrypt Agency">
+<meta property="og:description" content="0x00 前言Go 语言中的 select 语句，用于控制 channel 的通信操作，分为发送操作与接收操作两类。 众所周知，大多数教程只是大致描述了 select 语句的执行流程：当 case 中存在一个或多个可执行的通信操作时，会随机选择进入其中一个，并完成该 case 下的相应语句。当不存在可执行的通道操作时，会先判断是否存在 default case，有则进入，无则阻塞，直至通信操作可执">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/simply-analyse-the-execution-order-of-select-statement-in-golang/step1-in-select-case.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/simply-analyse-the-execution-order-of-select-statement-in-golang/step4-in-select-case.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/simply-analyse-the-execution-order-of-select-statement-in-golang/steps-in-select-statement.png">
+<meta property="article:published_time" content="2022-11-09T15:07:19.000Z">
+<meta property="article:modified_time" content="2022-11-12T05:09:44.332Z">
+<meta property="article:author" content="Cipher Saw">
+<meta property="article:tag" content="Go">
+<meta property="article:tag" content="Syntax">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/simply-analyse-the-execution-order-of-select-statement-in-golang/step1-in-select-case.png">
+
+
+<link rel="canonical" href="https://ciphersaw.me/2022/11/09/simply-analyse-the-execution-order-of-select-statement-in-golang/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://ciphersaw.me/2022/11/09/simply-analyse-the-execution-order-of-select-statement-in-golang/","path":"2022/11/09/simply-analyse-the-execution-order-of-select-statement-in-golang/","title":"浅析 Go select 语句的执行顺序问题"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>浅析 Go select 语句的执行顺序问题 | Secrypt Agency</title>
+  
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Secrypt Agency</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Welcome to a platform for network security artists.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li><li class="menu-item menu-item-friends"><a href="/friends/" rel="section"><i class="fa fa-users fa-fw"></i>Friends</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#0x00-%E5%89%8D%E8%A8%80"><span class="nav-text">0x00 前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x01-select-%E8%AF%AD%E5%8F%A5%E5%AE%98%E6%96%B9%E8%AF%B4%E6%98%8E"><span class="nav-text">0x01 select 语句官方说明</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%AD%E8%8B%B1%E5%AF%B9%E8%AF%91"><span class="nav-text">中英对译</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%81%E7%A8%8B%E8%A7%A3%E6%9E%90"><span class="nav-text">流程解析</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x02-%E6%A0%B7%E4%BE%8B%E9%AA%8C%E8%AF%81"><span class="nav-text">0x02 样例验证</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E4%B8%80%EF%BC%9A%E7%9F%A9%E6%AD%A5%E6%96%B9%E8%A1%8C"><span class="nav-text">样例一：矩步方行</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E4%BA%8C%EF%BC%9A%E5%A4%A7%E5%90%8C%E5%B0%8F%E5%BC%82"><span class="nav-text">样例二：大同小异</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%B7%E4%BE%8B%E4%B8%89%EF%BC%9A%E6%97%B6%E7%A9%BA%E4%BA%A4%E9%94%99"><span class="nav-text">样例三：时空交错</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x03-%E6%80%BB%E7%BB%93"><span class="nav-text">0x03 总结</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-text">参考</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Cipher Saw"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Cipher Saw</p>
+  <div class="site-description" itemprop="description">Not to be whom you don't want to be.</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">74</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ciphersaw" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ciphersaw" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/CipherSaw" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;CipherSaw" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe-asia fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://ctf-wiki.github.io/ctf-wiki/" title="https:&#x2F;&#x2F;ctf-wiki.github.io&#x2F;ctf-wiki&#x2F;" rel="noopener" target="_blank">CTF Wiki</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://www.owasp.org/index.php/Main_Page" title="https:&#x2F;&#x2F;www.owasp.org&#x2F;index.php&#x2F;Main_Page" rel="noopener" target="_blank">OWASP</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.pentest-standard.org/index.php/Main_Page" title="http:&#x2F;&#x2F;www.pentest-standard.org&#x2F;index.php&#x2F;Main_Page" rel="noopener" target="_blank">Pentest Standard</a>
+        </li>
+    </ul>
+  </div>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/ciphersaw" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ciphersaw.me/2022/11/09/simply-analyse-the-execution-order-of-select-statement-in-golang/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Cipher Saw">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Secrypt Agency">
+      <meta itemprop="description" content="Not to be whom you don't want to be.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="浅析 Go select 语句的执行顺序问题 | Secrypt Agency">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          浅析 Go select 语句的执行顺序问题
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2022-11-09 23:07:19" itemprop="dateCreated datePublished" datetime="2022-11-09T23:07:19+08:00">2022-11-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2022-11-12 13:09:44" itemprop="dateModified" datetime="2022-11-12T13:09:44+08:00">2022-11-12</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Programming/" itemprop="url" rel="index"><span itemprop="name">Programming</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Programming/Go/" itemprop="url" rel="index"><span itemprop="name">Go</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/2022/11/09/simply-analyse-the-execution-order-of-select-statement-in-golang/" class="post-meta-item leancloud_visitors" data-flag-title="浅析 Go select 语句的执行顺序问题" title="Views">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h1><p>Go 语言中的 select 语句，用于控制 channel 的通信操作，分为<a target="_blank" rel="noopener" href="https://go.dev/ref/spec#Send_statements">发送操作</a>与<a target="_blank" rel="noopener" href="https://go.dev/ref/spec#Receive_operator">接收操作</a>两类。</p>
+<p>众所周知，大多数教程只是大致描述了 select 语句的执行流程：当 case 中存在一个或多个可执行的通信操作时，会随机选择进入其中一个，并完成该 case 下的相应语句。当不存在可执行的通道操作时，会先判断是否存在 default case，有则进入，无则阻塞，直至通信操作可执行。</p>
+<p>然而，对 case 中表达式的执行顺序，却少有解释。接下来，本文<strong>将根据官方对 select 语句的定义说明，重点阐述 case 中表达式的执行顺序问题</strong>，并给出样例辅助理解，最后对整体执行流程做出总结。</p>
+<span id="more"></span>
+
+<h1 id="0x01-select-语句官方说明"><a href="#0x01-select-语句官方说明" class="headerlink" title="0x01 select 语句官方说明"></a>0x01 select 语句官方说明</h1><p>Go 语言对 select 语句的官方说明，对于初学者而言难免晦涩难懂。为了帮助读者更好地理解，本章先对官方说明进行中英对译，再重点阐述 case 中表达式的执行顺序问题。</p>
+<h2 id="中英对译"><a href="#中英对译" class="headerlink" title="中英对译"></a>中英对译</h2><p><strong>Select statements</strong></p>
+<p><strong>Select 语句</strong></p>
+<p>A “select” statement chooses which of a set of possible <a target="_blank" rel="noopener" href="https://go.dev/ref/spec#Send_statements">send</a> or <a target="_blank" rel="noopener" href="https://go.dev/ref/spec#Receive_operator">receive</a> operations will proceed. It looks similar to a <a target="_blank" rel="noopener" href="https://go.dev/ref/spec#Switch_statements">“switch”</a> statement but with the cases all referring to communication operations.</p>
+<p>select 语句用于从一组<a target="_blank" rel="noopener" href="https://go.dev/ref/spec#Send_statements">发送操作</a>或<a target="_blank" rel="noopener" href="https://go.dev/ref/spec#Receive_operator">接收操作</a>中，选出一个可执行的操作。这有点像 <a target="_blank" rel="noopener" href="https://go.dev/ref/spec#Switch_statements">switch</a> 语句，只不过 case 都换成了与通信相关的操作而已。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">SelectStmt = <span class="string">&quot;select&quot;</span> <span class="string">&quot;&#123;&quot;</span> &#123; CommClause &#125; <span class="string">&quot;&#125;&quot;</span> .</span><br><span class="line">CommClause = CommCase <span class="string">&quot;:&quot;</span> StatementList .</span><br><span class="line">CommCase   = <span class="string">&quot;case&quot;</span> ( SendStmt | RecvStmt ) | <span class="string">&quot;default&quot;</span> .</span><br><span class="line">RecvStmt   = [ ExpressionList <span class="string">&quot;=&quot;</span> | IdentifierList <span class="string">&quot;:=&quot;</span> ] RecvExpr .</span><br><span class="line">RecvExpr   = Expression .</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>译者注：这是一种名为 <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Wirth_syntax_notation">Wirth syntax notation (WSN)</a> 的元语法标记，用于正式定义与描述 select 语句。考虑到上述标记在官方文档中均能找到定义，具有唯一性，因此后文不进行翻译。</p>
+</blockquote>
+<p>A case with a RecvStmt may assign the result of a RecvExpr to one or two variables, which may be declared using a <a target="_blank" rel="noopener" href="https://go.dev/ref/spec#Short_variable_declarations">short variable declaration</a>. The RecvExpr must be a (possibly parenthesized) receive operation. There can be at most one default case and it may appear anywhere in the list of cases.</p>
+<p>case 中的 RecvStmt 可将 RecvExpr 的结果赋值给一个或两个变量，同时也支持<a target="_blank" rel="noopener" href="https://go.dev/ref/spec#Short_variable_declarations">短变量声明</a>。其中，RecvExpr 表达式（可能被括号括起）必须为接收操作。另外，可以在多个 case 之间的任何位置，添加至多一个 default case。</p>
+<p>Execution of a “select” statement proceeds in several steps:</p>
+<ol>
+<li><p>For all the cases in the statement, <strong>the channel operands of receive operations</strong> and <strong>the channel and right-hand-side expressions of send statements</strong> are evaluated exactly once, in source order, upon entering the “select” statement. The result is a set of channels to receive from or send to, and the corresponding values to send. Any side effects in that evaluation will occur irrespective of which (if any) communication operation is selected to proceed. Expressions on the left-hand side of a RecvStmt with a short variable declaration or assignment are not yet evaluated.</p>
+</li>
+<li><p>If one or more of the communications can proceed, a single one that can proceed is chosen via a uniform pseudo-random selection. Otherwise, if there is a default case, that case is chosen. If there is no default case, the “select” statement blocks until at least one of the communications can proceed.</p>
+</li>
+<li><p>Unless the selected case is the default case, the respective communication operation is executed.</p>
+</li>
+<li><p>If the selected case is a RecvStmt with a short variable declaration or an assignment, <strong>the left-hand side expressions</strong> are evaluated and <strong>the received value (or values)</strong> are assigned.</p>
+</li>
+<li><p>The statement list of the selected case is executed.</p>
+</li>
+</ol>
+<p>select 语句的执行流程有以下步骤：</p>
+<ol>
+<li>在真正进入 select 语句之前，会按照源代码的编写顺序，检视所有 case 中的表达式，并对其中<strong>接收操作的通道操作数</strong>，以及<strong>发送语句中的通道与右值表达式</strong>进行一次求值，其结果将作为接收或发送操作的通道，以及相应待发送的值。上述求值过程可能会出现意想不到的副作用，并且与哪一个通信操作被选择执行了（如果有的话）无关。注意，此时 RecvStmt 中的短变量声明或变量赋值语句，其左值表达式尚未进行求值。</li>
+<li>若存在一个或多个可执行的通信操作，则其中一个会被统一的伪随机算法选择执行。否则，若存在一个 default case，则会选择执行；若不存在 default case，select 语句会一直阻塞到至少存在一个可执行的通信操作为止。</li>
+<li>执行所选 case 中相应的通信操作，而 default case 不涉及。</li>
+<li>如果所选的 case 是短变量声明或变量赋值的 RecvStmt，则会对其<strong>左值表达式</strong>进行求值，并把<strong>接收到的值</strong>赋给它。</li>
+<li>最后依次执行所选 case 下的所有语句。</li>
+</ol>
+<p>Since communication on <code>nil</code> channels can never proceed, a select with only <code>nil</code> channels and no default case blocks forever.</p>
+<p>由于 <code>nil</code> 通道无法执行通信操作，因此只有 <code>nil</code> 通道且不存在 default case 的 select 语句将永远阻塞。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a []<span class="type">int</span></span><br><span class="line"><span class="keyword">var</span> c, c1, c2, c3, c4 <span class="keyword">chan</span> <span class="type">int</span></span><br><span class="line"><span class="keyword">var</span> i1, i2 <span class="type">int</span></span><br><span class="line"><span class="keyword">select</span> &#123;</span><br><span class="line"><span class="keyword">case</span> i1 = &lt;-c1:</span><br><span class="line">	<span class="built_in">print</span>(<span class="string">&quot;received &quot;</span>, i1, <span class="string">&quot; from c1\n&quot;</span>)</span><br><span class="line"><span class="keyword">case</span> c2 &lt;- i2:</span><br><span class="line">	<span class="built_in">print</span>(<span class="string">&quot;sent &quot;</span>, i2, <span class="string">&quot; to c2\n&quot;</span>)</span><br><span class="line"><span class="keyword">case</span> i3, ok := (&lt;-c3):  <span class="comment">// same as: i3, ok := &lt;-c3</span></span><br><span class="line">	<span class="keyword">if</span> ok &#123;</span><br><span class="line">		<span class="built_in">print</span>(<span class="string">&quot;received &quot;</span>, i3, <span class="string">&quot; from c3\n&quot;</span>)</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="built_in">print</span>(<span class="string">&quot;c3 is closed\n&quot;</span>)</span><br><span class="line">	&#125;</span><br><span class="line"><span class="keyword">case</span> a[f()] = &lt;-c4:</span><br><span class="line">	<span class="comment">// same as:</span></span><br><span class="line">	<span class="comment">// case t := &lt;-c4</span></span><br><span class="line">	<span class="comment">//	a[f()] = t</span></span><br><span class="line"><span class="keyword">default</span>:</span><br><span class="line">	<span class="built_in">print</span>(<span class="string">&quot;no communication\n&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> &#123;  <span class="comment">// send random sequence of bits to c</span></span><br><span class="line">	<span class="keyword">select</span> &#123;</span><br><span class="line">	<span class="keyword">case</span> c &lt;- <span class="number">0</span>:  <span class="comment">// note: no statement, no fallthrough, no folding of cases</span></span><br><span class="line">	<span class="keyword">case</span> c &lt;- <span class="number">1</span>:</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">select</span> &#123;&#125;  <span class="comment">// block forever</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="流程解析"><a href="#流程解析" class="headerlink" title="流程解析"></a>流程解析</h2><p>接下来，重点关注上述 select 语句的执行流程。</p>
+<p>开发者通常遇到的场景，只要理解了流程中的第 2、3、5 步，即可编写出所需逻辑，这也是开头所说的，大多数教程对 select 语句执行流程的大致描述。</p>
+<p>随着接触到的业务场景日益渐增，不可避免地需要编写复杂的代码逻辑，这要求 select 语句与其他表达式或数据类型结合使用，而不只是通道的直接发送或接收那么简单。<strong>因此，能正确理解流程中的第 1、4 步，是完全掌握 select 语句用法的前提。</strong></p>
+<p>为了更直观地理解第 1、4 步的含义，专门绘制以下对应关系图：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/simply-analyse-the-execution-order-of-select-statement-in-golang/step1-in-select-case.png" alt="step1-in-select-case"></p>
+<ul>
+<li>接收操作：<code>recv_ch</code> 是通道操作数，可为接收通道，或输出结果为接收通道的表达式。</li>
+<li>发送操作：<code>send_ch</code> 是发送通道，或输出结果为发送通道的表达式；而 <code>expression</code> 是右值表达式，其值将会被发送至 <code>send_ch</code> 通道中。</li>
+</ul>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/simply-analyse-the-execution-order-of-select-statement-in-golang/step4-in-select-case.png" alt="step4-in-select-case"></p>
+<ul>
+<li>接收操作：<code>&lt;-recv_ch</code> 是从接收通道中获取的值，将赋值给左值表达式 <code>a[f()]</code>，此处 <code>a</code> 为 map 或 slice 类型的变量，因此需对 <code>f()</code> 进行求值以获取相应元素。注意，左值表达式可能为 int 或 string 等基本类型变量，也可能不存在，即赋值不是必须的。</li>
+</ul>
+<h1 id="0x02-样例验证"><a href="#0x02-样例验证" class="headerlink" title="0x02 样例验证"></a>0x02 样例验证</h1><p>介绍完 select 语句的官方说明后，相信大家对它的整体执行流程有了一定理解。接下来，将用几个样例重点验证第 1、4 步流程，以助于巩固加强。</p>
+<h2 id="样例一：矩步方行"><a href="#样例一：矩步方行" class="headerlink" title="样例一：矩步方行"></a>样例一：矩步方行</h2><p>本样例的 select 语句构造了三个函数与三个 case，通过打印日志的方法以窥探其执行顺序：</p>
+<ul>
+<li>case 1：接收操作，从 <code>getIntChan()</code> 返回的无缓冲通道中，接收 int 类型数值并赋值给 <code>intArr[getInt(0)]</code> 元素，注意此处是通过 <code>getInt(0)</code> 来获取 <code>intArr</code> 的第一个元素。</li>
+<li>case 2：发送操作，将 <code>getInt(1)</code> 的求值结果，发送至 <code>getIntBufChan()</code> 返回的有缓冲通道中。</li>
+<li>default case：默认操作，只打印日志。</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> (</span><br><span class="line">	intChan    = <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">int</span>)</span><br><span class="line">	intBufChan = <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">int</span>, <span class="number">2</span>)</span><br><span class="line">	intArr     = <span class="built_in">make</span>([]<span class="type">int</span>, <span class="number">2</span>)</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		intChan &lt;- <span class="number">0</span></span><br><span class="line">	&#125;()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">select</span> &#123;</span><br><span class="line">	<span class="keyword">case</span> intArr[getInt(<span class="number">0</span>)] = &lt;-getIntChan():</span><br><span class="line">		fmt.Printf(<span class="string">&quot;select case 1\n&quot;</span>)</span><br><span class="line">	<span class="keyword">case</span> getIntBufChan() &lt;- getInt(<span class="number">1</span>):</span><br><span class="line">		fmt.Printf(<span class="string">&quot;select case 2\n&quot;</span>)</span><br><span class="line">	<span class="keyword">default</span>:</span><br><span class="line">		fmt.Printf(<span class="string">&quot;select default case\n&quot;</span>)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">getInt</span><span class="params">(i <span class="type">int</span>)</span></span> <span class="type">int</span> &#123;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;get int %d\n&quot;</span>, i)</span><br><span class="line">	<span class="keyword">return</span> i</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">getIntChan</span><span class="params">()</span></span> <span class="keyword">chan</span> <span class="type">int</span> &#123;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;get int chan\n&quot;</span>)</span><br><span class="line">	<span class="keyword">return</span> intChan</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">getIntBufChan</span><span class="params">()</span></span> <span class="keyword">chan</span> <span class="type">int</span> &#123;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;get int buf chan\n&quot;</span>)</span><br><span class="line">	<span class="keyword">return</span> intBufChan</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>多次运行后，发现只有以下两种结果，而 default case 永远不会进入。</p>
+<p>第一种结果选择 case 1，执行顺序为：<code>getIntChan()</code> → <code>getIntBufChan()</code> → <code>getInt(1)</code> → <code>getInt(0)</code> → <code>intArr[getInt(0)]</code> → <code>fmt.Printf(&quot;select case 1\n&quot;)</code></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">get <span class="type">int</span> <span class="keyword">chan</span></span><br><span class="line">get <span class="type">int</span> buf <span class="keyword">chan</span></span><br><span class="line">get <span class="type">int</span> <span class="number">1</span></span><br><span class="line">get <span class="type">int</span> <span class="number">0</span></span><br><span class="line"><span class="keyword">select</span> <span class="keyword">case</span> <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p>第二种结果选择 case 2，执行顺序为：<code>getIntChan()</code> → <code>getIntBufChan()</code> → <code>getInt(1)</code> → <code>fmt.Printf(&quot;select case 2\n&quot;)</code></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">get <span class="type">int</span> <span class="keyword">chan</span></span><br><span class="line">get <span class="type">int</span> buf <span class="keyword">chan</span></span><br><span class="line">get <span class="type">int</span> <span class="number">1</span></span><br><span class="line"><span class="keyword">select</span> <span class="keyword">case</span> <span class="number">2</span></span><br></pre></td></tr></table></figure>
+
+<p>综上结果，与官方说明一致：执行流程第 1 步，先按代码编写顺序，分别对 <code>getIntChan()</code>、<code>getIntBufChan()</code>、<code>getInt(1)</code> 进行求值；执行流程第 4 步，若选择 case 1 的接收操作，则会对 <code>getInt(0)</code> 求值后进行赋值，否则 <code>getInt(0)</code> 不会执行。</p>
+<h2 id="样例二：大同小异"><a href="#样例二：大同小异" class="headerlink" title="样例二：大同小异"></a>样例二：大同小异</h2><p>本样例介绍一个在发送操作与接收操作中常见的理解误区，同样有三个函数与三个 case：</p>
+<ul>
+<li>case 1：发送操作与接收操作结合，将 <code>&lt;-getIntChan()</code> 的求值结果，发送至 <code>getIntBufChan()</code> 返回的有缓冲通道中。</li>
+<li>case 2：接收操作，从 <code>getIntBufChan()</code> 返回的有缓冲通道中，接收 int 类型数值并赋值给 <code>intArr</code> 的第二个元素 <code>intArr[1]</code>。</li>
+<li>default case：默认操作，只打印日志。</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> (</span><br><span class="line">	intChan    = <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">int</span>)</span><br><span class="line">	intBufChan = <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">int</span>, <span class="number">2</span>)</span><br><span class="line">	intArr     = <span class="built_in">make</span>([]<span class="type">int</span>, <span class="number">2</span>)</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		intBufChan &lt;- <span class="number">1</span></span><br><span class="line">	&#125;()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">select</span> &#123;</span><br><span class="line">	<span class="keyword">case</span> getIntBufChan() &lt;- &lt;-getIntChan():</span><br><span class="line">		fmt.Printf(<span class="string">&quot;select case 1\n&quot;</span>)</span><br><span class="line">	<span class="keyword">case</span> intArr[<span class="number">1</span>] = &lt;-getIntBufChan():</span><br><span class="line">		fmt.Printf(<span class="string">&quot;select case 2\n&quot;</span>)</span><br><span class="line">	<span class="keyword">default</span>:</span><br><span class="line">		fmt.Printf(<span class="string">&quot;select default case\n&quot;</span>)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">getIntChan</span><span class="params">()</span></span> <span class="keyword">chan</span> <span class="type">int</span> &#123;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;get int chan\n&quot;</span>)</span><br><span class="line">	<span class="keyword">return</span> intChan</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">getIntBufChan</span><span class="params">()</span></span> <span class="keyword">chan</span> <span class="type">int</span> &#123;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;get int buf chan\n&quot;</span>)</span><br><span class="line">	<span class="keyword">return</span> intBufChan</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>样例运行后，大家通常可能会认为 select 语句会选择 case 2，其实不然，在按顺序执行了 <code>getIntBufChan()</code>、<code>getIntChan()</code> 后，直接就报死锁错误了：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">get <span class="type">int</span> buf <span class="keyword">chan</span></span><br><span class="line">get <span class="type">int</span> <span class="keyword">chan</span></span><br><span class="line">fatal <span class="type">error</span>: all goroutines are asleep - deadlock!</span><br><span class="line"></span><br><span class="line">goroutine <span class="number">1</span> [<span class="keyword">chan</span> receive]:</span><br><span class="line">main.main()</span><br><span class="line">	C:/Go/src/<span class="keyword">select</span>-test/main.<span class="keyword">go</span>:<span class="number">17</span> +<span class="number">0x9d</span></span><br></pre></td></tr></table></figure>
+
+<p>以上结果的原因，在于对发送操作的右值表达式求值运算理解不到位：<strong>select 语句需要获取 <code>&lt;-getIntChan()</code> 表达式的求值结果，而不仅仅是 <code>getIntChan()</code> 的。</strong>因此，在没有任何 goroutine 往 <code>intChan</code> 通道发送数据的情况下，想要从中接收数据必定是阻塞的，继而引发程序死锁。</p>
+<p>在样例二的基础上，添加一个 goroutine 往 <code>intChan</code> 通道发送数据，即可解决问题：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> (</span><br><span class="line">	intChan    = <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">int</span>)</span><br><span class="line">	intBufChan = <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">int</span>, <span class="number">2</span>)</span><br><span class="line">	intArr     = <span class="built_in">make</span>([]<span class="type">int</span>, <span class="number">2</span>)</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		intChan &lt;- <span class="number">0</span></span><br><span class="line">	&#125;()</span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		intBufChan &lt;- <span class="number">0</span></span><br><span class="line">	&#125;()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">select</span> &#123;</span><br><span class="line">	<span class="keyword">case</span> getIntBufChan() &lt;- &lt;-getIntChan():</span><br><span class="line">		fmt.Printf(<span class="string">&quot;select case 1\n&quot;</span>)</span><br><span class="line">	<span class="keyword">case</span> intArr[<span class="number">1</span>] = &lt;-getIntBufChan():</span><br><span class="line">		fmt.Printf(<span class="string">&quot;select case 2\n&quot;</span>)</span><br><span class="line">	<span class="keyword">default</span>:</span><br><span class="line">		fmt.Printf(<span class="string">&quot;select default case\n&quot;</span>)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">getIntChan</span><span class="params">()</span></span> <span class="keyword">chan</span> <span class="type">int</span> &#123;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;get int chan\n&quot;</span>)</span><br><span class="line">	<span class="keyword">return</span> intChan</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">getIntBufChan</span><span class="params">()</span></span> <span class="keyword">chan</span> <span class="type">int</span> &#123;</span><br><span class="line">	fmt.Printf(<span class="string">&quot;get int buf chan\n&quot;</span>)</span><br><span class="line">	<span class="keyword">return</span> intBufChan</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>多次运行后，同样发现只有以下两种结果，并且 default case 永远不会进入。</p>
+<p>第一种结果选择 case 1，执行顺序为：<code>getIntBufChan()</code> → <code>getIntChan()</code> → <code>getIntBufChan()</code> → <code>fmt.Printf(&quot;select case 1\n&quot;)</code></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">get <span class="type">int</span> buf <span class="keyword">chan</span></span><br><span class="line">get <span class="type">int</span> <span class="keyword">chan</span></span><br><span class="line">get <span class="type">int</span> buf <span class="keyword">chan</span></span><br><span class="line"><span class="keyword">select</span> <span class="keyword">case</span> <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p>第二种结果选择 case 2，执行顺序为：<code>getIntBufChan()</code> → <code>getIntChan()</code> → <code>getIntBufChan()</code> → <code>intArr[1]</code> → <code>fmt.Printf(&quot;select case 2\n&quot;)</code></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">get <span class="type">int</span> buf <span class="keyword">chan</span></span><br><span class="line">get <span class="type">int</span> <span class="keyword">chan</span></span><br><span class="line">get <span class="type">int</span> buf <span class="keyword">chan</span></span><br><span class="line"><span class="keyword">select</span> <span class="keyword">case</span> <span class="number">2</span></span><br></pre></td></tr></table></figure>
+
+<p>综上结果，需特别注意 <code>&lt;-getIntChan()</code> 表达式在发送操作与接收操作中的区别：</p>
+<ul>
+<li>接收操作：只需对 <code>getIntChan()</code> 求值，只要其返回结果是接收通道即可。</li>
+<li>发送操作：需要对 <code>&lt;-getIntChan()</code> 整体求值，其返回结果必须是发送通道相应的数据类型。</li>
+</ul>
+<h2 id="样例三：时空交错"><a href="#样例三：时空交错" class="headerlink" title="样例三：时空交错"></a>样例三：时空交错</h2><p>接下来，再讨论一个与时间相关的执行顺序问题，以下样例只含有两个函数与两个 case：</p>
+<ul>
+<li>case 1：发送操作，将 <code>getInt(2)</code> 的求值结果，发送至 <code>getIntBufChan()</code> 返回的有缓冲通道中，注意此处 <code>getInt(2)</code> 需等待两秒后再返回。</li>
+<li>case 2：接收操作，从 <code>time.After(time.Second)</code> 返回的无缓冲通道中，等到一秒后，接收 time.Time 类型的数据，但不进行赋值。</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;log&quot;</span></span><br><span class="line">	<span class="string">&quot;time&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> intBufChan = <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">int</span>, <span class="number">2</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">select</span> &#123;</span><br><span class="line">	<span class="keyword">case</span> getIntBufChan() &lt;- getInt(<span class="number">2</span>):</span><br><span class="line">		log.Printf(<span class="string">&quot;select case 1\n&quot;</span>)</span><br><span class="line">	<span class="keyword">case</span> &lt;-time.After(time.Second):</span><br><span class="line">		log.Printf(<span class="string">&quot;select case 2\n&quot;</span>)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">getInt</span><span class="params">(i <span class="type">int</span>)</span></span> <span class="type">int</span> &#123;</span><br><span class="line">	log.Printf(<span class="string">&quot;get int sleep 2s...\n&quot;</span>)</span><br><span class="line">	time.Sleep(<span class="number">2</span> * time.Second)</span><br><span class="line">	log.Printf(<span class="string">&quot;get int %d\n&quot;</span>, i)</span><br><span class="line">	<span class="keyword">return</span> i</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">getIntBufChan</span><span class="params">()</span></span> <span class="keyword">chan</span> <span class="type">int</span> &#123;</span><br><span class="line">	log.Printf(<span class="string">&quot;get int buf chan\n&quot;</span>)</span><br><span class="line">	<span class="keyword">return</span> intBufChan</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>样例运行后，可能直观地会认为选择 case 2，因为 case 2 只需等待一秒，而 case 1 需要等待两秒。但事实却恰恰相反，样例中的 select 语句只会选择 case 1：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">2022</span>/<span class="number">11</span>/<span class="number">12</span> <span class="number">11</span>:<span class="number">22</span>:<span class="number">04</span> get <span class="type">int</span> buf <span class="keyword">chan</span></span><br><span class="line"><span class="number">2022</span>/<span class="number">11</span>/<span class="number">12</span> <span class="number">11</span>:<span class="number">22</span>:<span class="number">04</span> get <span class="type">int</span> sleep <span class="number">2</span>s...</span><br><span class="line"><span class="number">2022</span>/<span class="number">11</span>/<span class="number">12</span> <span class="number">11</span>:<span class="number">22</span>:<span class="number">06</span> get <span class="type">int</span> <span class="number">2</span></span><br><span class="line"><span class="number">2022</span>/<span class="number">11</span>/<span class="number">12</span> <span class="number">11</span>:<span class="number">22</span>:<span class="number">06</span> <span class="keyword">select</span> <span class="keyword">case</span> <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p>对于以上与直觉相悖的结果，仍然在于对表达式求值运算的理解有偏差：<strong>select 语句必须按顺序依次完成表达式的求值运算，若某个表达式未完成，则会一直阻塞在执行流程的第 1 步，导致后续的通信操作无法进行。</strong>因此，即使 case 2 等待时间比 case 1 短，但也需等 case 1 等待两秒并执行完毕后，才能开始一秒的倒计时，此时显然只能选择 case 1 的发送操作了。</p>
+<p>在样例三的基础上，调换两个 case 中的表达式再运行，会发现两个 case 均有被选择的可能：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;log&quot;</span></span><br><span class="line">	<span class="string">&quot;time&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> intBufChan = <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">int</span>, <span class="number">2</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">select</span> &#123;</span><br><span class="line">	<span class="keyword">case</span> &lt;-time.After(time.Second):</span><br><span class="line">		log.Printf(<span class="string">&quot;select case 1\n&quot;</span>)</span><br><span class="line">	<span class="keyword">case</span> getIntBufChan() &lt;- getInt(<span class="number">2</span>):</span><br><span class="line">		log.Printf(<span class="string">&quot;select case 2\n&quot;</span>)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">getInt</span><span class="params">(i <span class="type">int</span>)</span></span> <span class="type">int</span> &#123;</span><br><span class="line">	log.Printf(<span class="string">&quot;get int sleep 2s...\n&quot;</span>)</span><br><span class="line">	time.Sleep(<span class="number">2</span> * time.Second)</span><br><span class="line">	log.Printf(<span class="string">&quot;get int %d\n&quot;</span>, i)</span><br><span class="line">	<span class="keyword">return</span> i</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">getIntBufChan</span><span class="params">()</span></span> <span class="keyword">chan</span> <span class="type">int</span> &#123;</span><br><span class="line">	log.Printf(<span class="string">&quot;get int buf chan\n&quot;</span>)</span><br><span class="line">	<span class="keyword">return</span> intBufChan</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>第一种结果选择 case 1，执行顺序为：<code>time.After(time.Second)</code> → <code>getIntBufChan()</code> → <code>getInt(2)</code> → <code>time.Sleep(2 * time.Second)</code> → <code>fmt.Printf(&quot;select case 1\n&quot;)</code></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">2022</span>/<span class="number">11</span>/<span class="number">12</span> <span class="number">11</span>:<span class="number">53</span>:<span class="number">29</span> get <span class="type">int</span> buf <span class="keyword">chan</span></span><br><span class="line"><span class="number">2022</span>/<span class="number">11</span>/<span class="number">12</span> <span class="number">11</span>:<span class="number">53</span>:<span class="number">29</span> get <span class="type">int</span> sleep <span class="number">2</span>s...</span><br><span class="line"><span class="number">2022</span>/<span class="number">11</span>/<span class="number">12</span> <span class="number">11</span>:<span class="number">53</span>:<span class="number">31</span> get <span class="type">int</span> <span class="number">2</span></span><br><span class="line"><span class="number">2022</span>/<span class="number">11</span>/<span class="number">12</span> <span class="number">11</span>:<span class="number">53</span>:<span class="number">31</span> <span class="keyword">select</span> <span class="keyword">case</span> <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p>第二种结果选择 case 2，执行顺序为：<code>time.After(time.Second)</code> → <code>getIntBufChan()</code> → <code>getInt(2)</code> → <code>time.Sleep(2 * time.Second)</code> → <code>fmt.Printf(&quot;select case 2\n&quot;)</code></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">2022</span>/<span class="number">11</span>/<span class="number">12</span> <span class="number">11</span>:<span class="number">54</span>:<span class="number">15</span> get <span class="type">int</span> buf <span class="keyword">chan</span></span><br><span class="line"><span class="number">2022</span>/<span class="number">11</span>/<span class="number">12</span> <span class="number">11</span>:<span class="number">54</span>:<span class="number">15</span> get <span class="type">int</span> sleep <span class="number">2</span>s...</span><br><span class="line"><span class="number">2022</span>/<span class="number">11</span>/<span class="number">12</span> <span class="number">11</span>:<span class="number">54</span>:<span class="number">17</span> get <span class="type">int</span> <span class="number">2</span></span><br><span class="line"><span class="number">2022</span>/<span class="number">11</span>/<span class="number">12</span> <span class="number">11</span>:<span class="number">54</span>:<span class="number">17</span> <span class="keyword">select</span> <span class="keyword">case</span> <span class="number">2</span></span><br></pre></td></tr></table></figure>
+
+<p>即便如此，应该能意识到，样例三中 <code>&lt;-time.After(time.Second)</code> 表达式的用法是毫无意义的：要么被 <code>getInt(2)</code> 阻塞后才开始倒计时，要么倒计时结束后与 <code>getIntBufChan() &lt;- getInt(2)</code>  一起被随机选择，无法起到超时控制的作用。</p>
+<p>综上结果，需注意 case 中与时间相关的表达式求值运算，表达式中的时间等待，会阻塞 select 语句的整体执行流程。尤其是在使用 <code>time.After(d Duration)</code> 等超时控制函数时，应当留意其他 case 中的函数是否存在时间等待逻辑，避免事与愿违。</p>
+<h1 id="0x03-总结"><a href="#0x03-总结" class="headerlink" title="0x03 总结"></a>0x03 总结</h1><p>至此，相信大家对 select 语句的整体执行流程有了更全面的理解，也欢迎大家提出不同见解，相互交流学习。</p>
+<p>最后附上一张 select 语句完整的执行流程图：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/simply-analyse-the-execution-order-of-select-statement-in-golang/steps-in-select-statement.png" alt="steps-in-select-statement"></p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p>[1] <a target="_blank" rel="noopener" href="https://go.dev/ref/spec#Select_statements">The Go Programming Language Specification - Select statements</a></p>
+<p>[2] <a target="_blank" rel="noopener" href="https://www.runoob.com/go/go-select-statement.html">Go 语言 select 语句</a></p>
+<p>[3] <a target="_blank" rel="noopener" href="https://juejin.cn/post/7085618326516269064">Go语言36讲笔记–11通道的高级使用方式</a></p>
+<p>[4] <a target="_blank" rel="noopener" href="https://blog.csdn.net/qmhball/article/details/120290804">go语言select语句中的求值问题</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>Post author:  </strong>Cipher Saw
+  </li>
+  <li class="post-copyright-link">
+      <strong>Post link: </strong>
+      <a href="https://ciphersaw.me/2022/11/09/simply-analyse-the-execution-order-of-select-statement-in-golang/" title="浅析 Go select 语句的执行顺序问题">https://ciphersaw.me/2022/11/09/simply-analyse-the-execution-order-of-select-statement-in-golang/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> unless stating additionally.
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Go/" rel="tag"># Go</a>
+              <a href="/tags/Syntax/" rel="tag"># Syntax</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/08/29/vulnhub-stapler-1/" rel="prev" title="【Vulnhub】 Stapler：1">
+                  <i class="fa fa-chevron-left"></i> 【Vulnhub】 Stapler：1
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/05/02/operational-guide-of-elkeid-driver-performance-test/" rel="next" title="Elkeid Driver 性能测试操作指引">
+                  Elkeid Driver 性能测试操作指引 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-space-shuttle"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Cipher Saw</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+  
+
+
+  <script class="next-config" data-name="leancloud_visitors" type="application/json">{"enable":true,"app_id":"KWe6NtO4vhgQR3IfB99JElre-gzGzoHsz","app_key":"7nrrRDyHHUMcx03upUALYKIQ","server_url":null,"security":false}</script>
+  <script src="/js/third-party/statistics/lean-analytics.js"></script>
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"ciphersaw","count":false,"i18n":{"disqus":"disqus"}}</script>
+<script src="/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

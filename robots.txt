@@ -1,0 +1,12 @@
+User-agent: *
+
+Allow: /
+
+Disallow: /css/
+Disallow: /js/
+Disallow: /lib/
+Disallow: /images/
+Disallow: /postimages/
+
+Sitemap: https://ciphersaw.github.io/sitemap.xml
+Sitemap: https://ciphersaw.github.io/baidusitemap.xml

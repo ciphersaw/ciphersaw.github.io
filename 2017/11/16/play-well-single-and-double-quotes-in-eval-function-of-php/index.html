@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ciphersaw.me","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.13.2","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="0x00 前言在一次偶然学习 PHP eval() 函数的过程中，发现官方文档对该函数的示例说明很有意思，刚开始有点无法理解，想通之后便记录下此次辛酸的思考历程。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="玩转 PHP eval() 中的单双引号">
+<meta property="og:url" content="https://ciphersaw.me/2017/11/16/play-well-single-and-double-quotes-in-eval-function-of-php/index.html">
+<meta property="og:site_name" content="Secrypt Agency">
+<meta property="og:description" content="0x00 前言在一次偶然学习 PHP eval() 函数的过程中，发现官方文档对该函数的示例说明很有意思，刚开始有点无法理解，想通之后便记录下此次辛酸的思考历程。">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2017-11-16T11:17:16.000Z">
+<meta property="article:modified_time" content="2021-09-30T15:16:43.887Z">
+<meta property="article:author" content="Cipher Saw">
+<meta property="article:tag" content="Web">
+<meta property="article:tag" content="PHP">
+<meta property="article:tag" content="API">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://ciphersaw.me/2017/11/16/play-well-single-and-double-quotes-in-eval-function-of-php/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://ciphersaw.me/2017/11/16/play-well-single-and-double-quotes-in-eval-function-of-php/","path":"2017/11/16/play-well-single-and-double-quotes-in-eval-function-of-php/","title":"玩转 PHP eval() 中的单双引号"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>玩转 PHP eval() 中的单双引号 | Secrypt Agency</title>
+  
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Secrypt Agency</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Welcome to a platform for network security artists.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li><li class="menu-item menu-item-friends"><a href="/friends/" rel="section"><i class="fa fa-users fa-fw"></i>Friends</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#0x00-%E5%89%8D%E8%A8%80"><span class="nav-text">0x00 前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x01-eval-%E5%87%BD%E6%95%B0"><span class="nav-text">0x01 eval() 函数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x02-%E7%A4%BA%E4%BE%8B%E8%A7%A3%E6%9E%90"><span class="nav-text">0x02 示例解析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Rule-1%EF%BC%9A%E5%8D%95%E5%BC%95%E5%8F%B7%E5%86%85%E4%B8%8D%E8%A7%A3%E6%9E%90%E5%8F%98%E9%87%8F%EF%BC%8C%E5%8F%8C%E5%BC%95%E5%8F%B7%E5%86%85%E8%A7%A3%E6%9E%90%E5%8F%98%E9%87%8F"><span class="nav-text">Rule 1：单引号内不解析变量，双引号内解析变量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Rule-2%EF%BC%9APHP-%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%AD%E5%B5%8C%E5%A5%97%E5%BC%95%E5%8F%B7%E7%9A%84%E8%A7%A3%E6%9E%90%E6%98%AF%E7%94%B1%E5%A4%96%E5%90%91%E9%87%8C%E7%9A%84%EF%BC%8C%E4%B8%94%E5%8F%AA%E8%A7%A3%E6%9E%90%E4%B8%80%E6%AC%A1"><span class="nav-text">Rule 2：PHP 字符串中嵌套引号的解析是由外向里的，且只解析一次</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x03-%E7%8E%A9%E6%B3%95%E8%BF%9B%E9%98%B6"><span class="nav-text">0x03 玩法进阶</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8E%A9%E6%B3%95-1%EF%BC%9A%E5%B0%86-eval-%E5%87%BD%E6%95%B0%E7%9A%84%E7%AC%AC%E4%BA%8C%E5%B1%82%E8%A7%A3%E6%9E%90%E6%94%B9%E4%B8%BA%E5%8D%95%E5%BC%95%E5%8F%B7%EF%BC%9A"><span class="nav-text">玩法 1：将 eval() 函数的第二层解析改为单引号：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8E%A9%E6%B3%95-2%EF%BC%9A%E5%B0%86-origin-%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%A4%E8%BE%B9%E6%94%B9%E4%B8%BA%E5%8F%8C%E5%BC%95%E5%8F%B7%EF%BC%9A"><span class="nav-text">玩法 2：将 $origin 字符串两边改为双引号：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8E%A9%E6%B3%95-3%EF%BC%9A%E5%B0%86-eval-%E5%87%BD%E6%95%B0%E7%9A%84%E7%AC%AC%E4%BA%8C%E5%B1%82%E8%A7%A3%E6%9E%90%E6%94%B9%E4%B8%BA%E5%8D%95%E5%BC%95%E5%8F%B7%EF%BC%8C%E5%B9%B6%E5%B0%86-origin-%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%B8%A4%E8%BE%B9%E6%94%B9%E4%B8%BA%E5%8F%8C%E5%BC%95%E5%8F%B7%EF%BC%9A"><span class="nav-text">玩法 3：将 eval() 函数的第二层解析改为单引号，并将 $origin 字符串两边改为双引号：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8E%A9%E6%B3%95-4%EF%BC%9A%E5%B0%86-eval-%E5%87%BD%E6%95%B0%E7%9A%84%E7%AC%AC%E4%B8%80%E5%B1%82%E8%A7%A3%E6%9E%90%E6%94%B9%E4%B8%BA%E5%8D%95%E5%BC%95%E5%8F%B7%EF%BC%9A"><span class="nav-text">玩法 4：将 eval() 函数的第一层解析改为单引号：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8E%A9%E6%B3%95-5%EF%BC%9A%E5%B0%86-eval-%E5%87%BD%E6%95%B0%E7%9A%84%E7%AC%AC%E4%B8%80%E5%B1%82%E5%92%8C%E7%AC%AC%E4%BA%8C%E5%B1%82%E8%A7%A3%E6%9E%90%E9%83%BD%E6%94%B9%E4%B8%BA%E5%8D%95%E5%BC%95%E5%8F%B7%EF%BC%9A"><span class="nav-text">玩法 5：将 eval() 函数的第一层和第二层解析都改为单引号：</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Cipher Saw"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Cipher Saw</p>
+  <div class="site-description" itemprop="description">Not to be whom you don't want to be.</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">74</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ciphersaw" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ciphersaw" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/CipherSaw" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;CipherSaw" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe-asia fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://ctf-wiki.github.io/ctf-wiki/" title="https:&#x2F;&#x2F;ctf-wiki.github.io&#x2F;ctf-wiki&#x2F;" rel="noopener" target="_blank">CTF Wiki</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://www.owasp.org/index.php/Main_Page" title="https:&#x2F;&#x2F;www.owasp.org&#x2F;index.php&#x2F;Main_Page" rel="noopener" target="_blank">OWASP</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.pentest-standard.org/index.php/Main_Page" title="http:&#x2F;&#x2F;www.pentest-standard.org&#x2F;index.php&#x2F;Main_Page" rel="noopener" target="_blank">Pentest Standard</a>
+        </li>
+    </ul>
+  </div>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/ciphersaw" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ciphersaw.me/2017/11/16/play-well-single-and-double-quotes-in-eval-function-of-php/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Cipher Saw">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Secrypt Agency">
+      <meta itemprop="description" content="Not to be whom you don't want to be.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="玩转 PHP eval() 中的单双引号 | Secrypt Agency">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          玩转 PHP eval() 中的单双引号
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2017-11-16 19:17:16" itemprop="dateCreated datePublished" datetime="2017-11-16T19:17:16+08:00">2017-11-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2021-09-30 23:16:43" itemprop="dateModified" datetime="2021-09-30T23:16:43+08:00">2021-09-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Programming/" itemprop="url" rel="index"><span itemprop="name">Programming</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Programming/PHP/" itemprop="url" rel="index"><span itemprop="name">PHP</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/2017/11/16/play-well-single-and-double-quotes-in-eval-function-of-php/" class="post-meta-item leancloud_visitors" data-flag-title="玩转 PHP eval() 中的单双引号" title="Views">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h1><p>在一次偶然学习 PHP <strong>eval() 函数</strong>的过程中，发现<a target="_blank" rel="noopener" href="http://php.net/manual/zh/function.eval.php">官方文档</a>对该函数的示例说明很有意思，刚开始有点无法理解，想通之后便记录下此次辛酸的思考历程。</p>
+<span id="more"></span>
+
+<h1 id="0x01-eval-函数"><a href="#0x01-eval-函数" class="headerlink" title="0x01 eval() 函数"></a>0x01 eval() 函数</h1><p>官方文档将 eval() 函数的解释为<strong>「把字符串参数当作 PHP 代码执行」</strong>，说明如下：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">mixed</span> <span class="keyword">eval</span> ( <span class="keyword">string</span> <span class="variable">$code</span> )</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>参数 <code>$code</code> 是需要被执行的字符串</li>
+<li>返回值类型 <code>mixed</code> 是指存在多种不同类型的返回值，默认返回 NULL；如果代码中 return 了一个值，则该值也作为函数的返回值返回；如果代码中出现解析错误，则在 PHP7 之前，返回 FALSE，在 PHP7 之后，抛出 ParseError 异常。</li>
+</ul>
+<p>下面说明几点注意事项：</p>
+<ol>
+<li>字符串中代码不要忘记语句末尾的分号；</li>
+<li>return 语句会终止当前字符串的执行；</li>
+<li>eval() 函数中任何的变量定义或修改，都会在函数结束后被保留；</li>
+<li>若在代码执行过程中产生致命错误，则整个脚本都会终止。</li>
+</ol>
+<p>接下来就是有趣的例子 —— 简单的文本合并：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$string</span> = <span class="string">&#x27;cup&#x27;</span>;</span><br><span class="line"><span class="variable">$name</span> = <span class="string">&#x27;coffee&#x27;</span>;</span><br><span class="line"><span class="variable">$str</span> = <span class="string">&#x27;This is a $string with my $name in it.&#x27;</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$str</span>. <span class="string">&quot;\n&quot;</span>;</span><br><span class="line"><span class="keyword">eval</span>(<span class="string">&quot;\$str = \&quot;<span class="subst">$str</span>\&quot;;&quot;</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$str</span>. <span class="string">&quot;\n&quot;</span>;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>输出结果为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">This is a $string with my $name in it.</span><br><span class="line">This is a cup with my coffee in it.</span><br></pre></td></tr></table></figure>
+
+<p>刚开始看到输出结果，百思不得其解，<code>eval(&quot;\$str = \&quot;$str\&quot;;&quot;);</code> 语句不就把字符串 <code>&quot;\$str = \&quot;$str\&quot;;&quot;</code> 当成 PHP 代码来执行吗？如果去掉 eval() 函数后直接执行 <code>$str = &quot;$str&quot;;</code> 语句，为什么输出结果就变成了 <code>This is a $string with my $name in it.</code> 呢？</p>
+<h1 id="0x02-示例解析"><a href="#0x02-示例解析" class="headerlink" title="0x02 示例解析"></a>0x02 示例解析</h1><p>要理解上述现象，首先要知道以下两条规则：</p>
+<h2 id="Rule-1：单引号内不解析变量，双引号内解析变量"><a href="#Rule-1：单引号内不解析变量，双引号内解析变量" class="headerlink" title="Rule 1：单引号内不解析变量，双引号内解析变量"></a><strong>Rule 1：单引号内不解析变量，双引号内解析变量</strong></h2><p>下面给出 Rule 1 的 PoC：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> </span><br><span class="line"><span class="variable">$name</span> = <span class="string">&#x27;Alice&#x27;</span>;</span><br><span class="line"><span class="variable">$x</span> = <span class="string">&#x27;hello $name&#x27;</span>;  <span class="comment">//单引号内变量不被解析</span></span><br><span class="line"><span class="variable">$y</span> = <span class="string">&quot;hello <span class="subst">$name</span>&quot;</span>;  <span class="comment">//双引号内变量会被解析</span></span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$x</span>, <span class="string">&#x27;&lt;br /&gt;&#x27;</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$y</span>, <span class="string">&#x27;&lt;br /&gt;&#x27;</span>;	</span><br><span class="line"><span class="meta">?&gt;</span> </span><br></pre></td></tr></table></figure>
+
+<p>结果输出：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hello $name</span><br><span class="line">hello Alice</span><br></pre></td></tr></table></figure>
+
+<p>因此在 <code>eval(&quot;\$str = \&quot;$str\&quot;;&quot;);</code> 语句中，<code>\$str</code> 是为了变量不被解析成字符串，<code>\&quot;</code> 是为了转义内层的双引号，避免与外层的双引号闭合。</p>
+<h2 id="Rule-2：PHP-字符串中嵌套引号的解析是由外向里的，且只解析一次"><a href="#Rule-2：PHP-字符串中嵌套引号的解析是由外向里的，且只解析一次" class="headerlink" title="Rule 2：PHP 字符串中嵌套引号的解析是由外向里的，且只解析一次"></a><strong>Rule 2：PHP 字符串中嵌套引号的解析是由外向里的，且只解析一次</strong></h2><p>换句话说，即只解析最外层的引号，下面给出 Rule 2 的 PoC：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> </span><br><span class="line"><span class="variable">$name</span> = <span class="string">&#x27;Alice&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="variable">$x</span> = <span class="string">&#x27;hello $name&#x27;</span>;      <span class="comment">//单引号内变量不被解析</span></span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$x</span>, <span class="string">&#x27;&lt;br /&gt;&#x27;</span>;       <span class="comment">//直接输出变量$x，即字符串hello $name</span></span><br><span class="line"><span class="keyword">echo</span> <span class="string">&#x27;$x&#x27;</span>, <span class="string">&#x27;&lt;br /&gt;&#x27;</span>;     <span class="comment">//变量$x在单引号内不被解析，故输出字符串$x</span></span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;<span class="subst">$x</span>&quot;</span>, <span class="string">&#x27;&lt;br /&gt;&#x27;</span>;     <span class="comment">//变量$x在双引号内会被解析，故输出$x的值，即字符串hello $name</span></span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;&#x27;<span class="subst">$x</span>&#x27;&quot;</span>, <span class="string">&#x27;&lt;br /&gt;&#x27;</span>;   <span class="comment">//只有双引号起作用，变量$x会被解析，故输出字符串&#x27;hello $name&#x27;</span></span><br><span class="line"><span class="keyword">echo</span> <span class="string">&#x27;&quot;$x&quot;&#x27;</span>, <span class="string">&#x27;&lt;br /&gt;&#x27;</span>;   <span class="comment">//只有单引号起作用，变量$x不被解析，故输出字符串&quot;$x&quot;</span></span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;&#x27;\$x&#x27;&quot;</span>, <span class="string">&#x27;&lt;br /&gt;&#x27;</span>;  <span class="comment">//只有双引号起作用，变量$x被转义而不被解析，故输出字符串&#x27;$x&#x27;</span></span><br><span class="line"><span class="keyword">echo</span> <span class="string">&#x27;&quot;\$x&quot;&#x27;</span>, <span class="string">&#x27;&lt;br /&gt;&#x27;</span>;  <span class="comment">//只有单引号起作用，变量$x不被解析，故输出字符串&quot;\$x&quot;</span></span><br><span class="line"><span class="keyword">echo</span> <span class="string">&#x27;\&#x27;$x\&#x27;&#x27;</span>, <span class="string">&#x27;&lt;br /&gt;&#x27;</span>; <span class="comment">//只有外层单引号起作用，内层单引号需转义，变量$x不被解析，故输出字符串&#x27;\$x&#x27;</span></span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;\&quot;<span class="subst">$x</span>\&quot;&quot;</span>, <span class="string">&#x27;&lt;br /&gt;&#x27;</span>; <span class="comment">//只有外层双引号起作用，内层双引号需转义，变量$x会被解析，故输出字符串&quot;hello $name&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;&lt;br /&gt;&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="variable">$y</span> = <span class="string">&quot;hello <span class="subst">$name</span>&quot;</span>;      <span class="comment">//双引号内变量会被解析</span></span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$y</span>, <span class="string">&#x27;&lt;br /&gt;&#x27;</span>;       <span class="comment">//直接输出变量$y的实际值，即字符串hello Alice</span></span><br><span class="line"><span class="keyword">echo</span> <span class="string">&#x27;$y&#x27;</span>, <span class="string">&#x27;&lt;br /&gt;&#x27;</span>;     <span class="comment">//变量$y在单引号内不被解析，故输出字符串$y</span></span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;<span class="subst">$y</span>&quot;</span>, <span class="string">&#x27;&lt;br /&gt;&#x27;</span>;     <span class="comment">//变量$y在双引号内会被解析，故输出$y的值，即字符串hello Alice</span></span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;&#x27;<span class="subst">$y</span>&#x27;&quot;</span>, <span class="string">&#x27;&lt;br /&gt;&#x27;</span>;   <span class="comment">//只有双引号起作用，变量$y会被解析，故输出字符串&#x27;hello Alice&#x27;</span></span><br><span class="line"><span class="keyword">echo</span> <span class="string">&#x27;&quot;$y&quot;&#x27;</span>, <span class="string">&#x27;&lt;br /&gt;&#x27;</span>;   <span class="comment">//只有单引号起作用，变量$y不被解析，故输出字符串&quot;$y&quot;</span></span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;&#x27;\$y&#x27;&quot;</span>, <span class="string">&#x27;&lt;br /&gt;&#x27;</span>;  <span class="comment">//只有双引号起作用，变量$y被转义而不被解析，故输出字符串&#x27;$y&#x27;</span></span><br><span class="line"><span class="keyword">echo</span> <span class="string">&#x27;&quot;\$y&quot;&#x27;</span>, <span class="string">&#x27;&lt;br /&gt;&#x27;</span>;  <span class="comment">//只有单引号起作用，变量$y不被解析，故输出字符串&quot;\$y&quot;</span></span><br><span class="line"><span class="keyword">echo</span> <span class="string">&#x27;\&#x27;$y\&#x27;&#x27;</span>, <span class="string">&#x27;&lt;br /&gt;&#x27;</span>; <span class="comment">//只有外层单引号起作用，内层单引号需转义，变量$y不被解析，故输出字符串&#x27;\$y&#x27;</span></span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;\&quot;<span class="subst">$y</span>\&quot;&quot;</span>, <span class="string">&#x27;&lt;br /&gt;&#x27;</span>; <span class="comment">//只有外层双引号起作用，内层双引号需转义，变量$y会被解析，故输出字符串&quot;hello Alice&quot;</span></span><br><span class="line"><span class="meta">?&gt;</span> </span><br></pre></td></tr></table></figure>
+
+<p>结果输出：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">hello $name</span><br><span class="line">$x</span><br><span class="line">hello $name</span><br><span class="line">&#x27;hello $name&#x27;</span><br><span class="line">&quot;$x&quot;</span><br><span class="line">&#x27;$x&#x27;</span><br><span class="line">&quot;\$x&quot;</span><br><span class="line">&#x27;$x&#x27;</span><br><span class="line">&quot;hello $name&quot;</span><br><span class="line"></span><br><span class="line">hello Alice</span><br><span class="line">$y</span><br><span class="line">hello Alice</span><br><span class="line">&#x27;hello Alice&#x27;</span><br><span class="line">&quot;$y&quot;</span><br><span class="line">&#x27;$y&#x27;</span><br><span class="line">&quot;\$y&quot;</span><br><span class="line">&#x27;$y&#x27;</span><br><span class="line">&quot;hello Alice&quot;</span><br></pre></td></tr></table></figure>
+
+<p>下面开始分析以下代码，为了方便理解与说明，对官网文档中示例代码的变量名稍作修改，并将 eval() 函数中的字符串语句抽离出来，单独执行：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> </span><br><span class="line"><span class="variable">$string</span> = <span class="string">&#x27;cup&#x27;</span>;</span><br><span class="line"><span class="variable">$name</span> = <span class="string">&#x27;coffee&#x27;</span>;</span><br><span class="line"><span class="variable">$origin</span> = <span class="string">&#x27;This is a $string with my $name in it.&#x27;</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$origin</span>. <span class="string">&quot;\n&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="variable">$result_1</span> = <span class="string">&quot;<span class="subst">$origin</span>&quot;</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$result_1</span>. <span class="string">&quot;\n&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">eval</span>(<span class="string">&quot;\$result_2 = \&quot;<span class="subst">$origin</span>\&quot;;&quot;</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$result_2</span>. <span class="string">&quot;\n&quot;</span>;</span><br><span class="line"><span class="meta">?&gt;</span> </span><br></pre></td></tr></table></figure>
+
+<p>以上代码输出如下，也就是本人困惑的地方：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">This is a $string with my $name in it.</span><br><span class="line">This is a $string with my $name in it.</span><br><span class="line">This is a cup with my coffee in it.</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>$origin</code> 的输出没有问题，根据 Rule 1 即可理解；</li>
+<li><code>$result_1</code> 的输出为什么不变呢？理解了 <code>$result_1 = &quot;$origin&quot;;</code> 就明白了。根据 Rule1，<code>$origin</code> 会被解析，得到它本身的值，即字符串 <code>&#39;This is a $string with my $name in it.&#39;</code> （注意该字符串两边的引号与 <code>$origin</code> 的相同，此处为单引号），因此 <code>$result_1</code> 的输出与 <code>$origin</code> 一样；</li>
+<li><code>$result_2</code> 为什么会改变，是最难理解的。根据 Rule 2，可知 eval() 函数最外层的双引号会被解析，内层被转义的双引号原封不动，因此函数内执行的语句相当于 <code>$result_2 = &quot;This is a $string with my $name in it.&quot;</code>，注意该字符串两边已变成双引号，故$result_2&#96; 字符串中的变量会被解析。</li>
+</ul>
+<p>讲到这里，肯定有人疑问：不是说解析后字符串两边引号跟 <code>$origin</code> 相同吗？按理说应该是 <code>$result_2 = &quot;&#39;This is a $string with my $name in it.&#39;&quot;</code>，那么输出应该跟 Rule 2 PoC 中的 <code>echo &quot;&#39;$x&#39;&quot;</code> 一样啊！</p>
+<p><strong>请注意，此处因为有个 eval() 函数，所以可以有双层解析，即第一层是解析 eval() 函数最外层的双引号，第二层是解析字符串中的双引号。</strong>类似 <code>echo &quot;&#39;$x&#39;&quot;</code> 的引号嵌套，只有单层解析，因此 <code>result_1</code> 中 <code>&#39;This is a $string with my $name in it.&#39;</code> 的单引号与 <code>$origin</code> 的相同，而 <code>result_2</code> 中 <code>&quot;This is a $string with my $name in it.&quot;</code> 的引号则由第二层的双引号赋予。</p>
+<p>可能还有读者不死心，非要在赋值语句中构造双层解析，那我们就来试试看吧。在 <code>$result_1 = &quot;$origin&quot;;</code> 的基础上，再加个双引号吧，得到 <code>$result_1 = &quot;&quot;$origin&quot;&quot;;</code>，简直完美、帅气、机智…</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PHP Parse error:  syntax error, unexpected &#x27;$origin&#x27; (T_VARIABLE)</span><br></pre></td></tr></table></figure>
+
+<p>咳咳，已经丧失理智到忘记相邻两个双引号会闭合吗？不行就转义吧，看我骚操作 <code>$result_1 = &quot;\&quot;$origin\&quot;&quot;;</code>，还有 <code>$result_1 = &#39;&#39;$origin&#39;&#39;;</code> 与 <code>$result_1 = &#39;\&#39;$origin\&#39;&#39;;</code>！表演结束了吗？要不送一份 Rule 2 的 PoC 给你参考参考？</p>
+<p>以上故事告诉我们一个道理：<strong>单凭赋值语句是完成不了字符串单双引号转换的</strong>。</p>
+<hr>
+<h1 id="0x03-玩法进阶"><a href="#0x03-玩法进阶" class="headerlink" title="0x03 玩法进阶"></a>0x03 玩法进阶</h1><p>对于官方文档中示例代码的疑惑，看到分割线以上就 OK 了，想再深入理解的可继续看下面的玩法（每个玩法在上例基础上修改，之间互不干扰）：</p>
+<h2 id="玩法-1：将-eval-函数的第二层解析改为单引号："><a href="#玩法-1：将-eval-函数的第二层解析改为单引号：" class="headerlink" title="玩法 1：将 eval() 函数的第二层解析改为单引号："></a><strong>玩法 1：将 eval() 函数的第二层解析改为单引号：</strong></h2><blockquote>
+<p><strong>注意：第二层解析的单引号不需要转义，因为第一层是双引号。</strong></p>
+</blockquote>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">eval</span>(<span class="string">&quot;\$result_2 = &#x27;<span class="subst">$origin</span>&#x27;;&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>此时输出结果为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">This is a $string with my $name in it.</span><br><span class="line">This is a $string with my $name in it.</span><br><span class="line">This is a $string with my $name in it.</span><br></pre></td></tr></table></figure>
+
+<p>如果理解了上面 <code>result_2</code> 的输出原理，结果容易理解，即相当于执行了 <code>$result_2 = &#39;This is a $string with my $name in it.&#39;</code>，自然与 <code>$origin</code> 和 <code>result_1</code> 相同。</p>
+<h2 id="玩法-2：将-origin-字符串两边改为双引号："><a href="#玩法-2：将-origin-字符串两边改为双引号：" class="headerlink" title="玩法 2：将 $origin 字符串两边改为双引号："></a><strong>玩法 2：将 <code>$origin</code> 字符串两边改为双引号：</strong></h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$origin</span> = <span class="string">&quot;This is a <span class="subst">$string</span> with my <span class="subst">$name</span> in it.&quot;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>此时输出结果为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">This is a cup with my coffee in it.</span><br><span class="line">This is a cup with my coffee in it.</span><br><span class="line">This is a cup with my coffee in it.</span><br></pre></td></tr></table></figure>
+
+<p>这种情况也容易理解，原始字符串一开始就是双引号，那自然是一直解析到底。</p>
+<h2 id="玩法-3：将-eval-函数的第二层解析改为单引号，并将-origin-字符串两边改为双引号："><a href="#玩法-3：将-eval-函数的第二层解析改为单引号，并将-origin-字符串两边改为双引号：" class="headerlink" title="玩法 3：将 eval() 函数的第二层解析改为单引号，并将 $origin 字符串两边改为双引号："></a><strong>玩法 3：将 eval() 函数的第二层解析改为单引号，并将 <code>$origin</code> 字符串两边改为双引号：</strong></h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$origin</span> = <span class="string">&quot;This is a <span class="subst">$string</span> with my <span class="subst">$name</span> in it.&quot;</span>;</span><br><span class="line"><span class="keyword">eval</span>(<span class="string">&quot;\$result_2 = &#x27;<span class="subst">$origin</span>&#x27;;&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>此时输出结果为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">This is a cup with my coffee in it.</span><br><span class="line">This is a cup with my coffee in it.</span><br><span class="line">This is a cup with my coffee in it.</span><br></pre></td></tr></table></figure>
+
+<p>输出结果与玩法 2 相同，<strong>不过注意一点，就是 eval() 函数第一层转义后，返回值为 <code>$result_2 = &#39;This is a cup with my coffee in it.&#39;</code>，即得到的是所有变量都解析后的字符串</strong>。</p>
+<h2 id="玩法-4：将-eval-函数的第一层解析改为单引号："><a href="#玩法-4：将-eval-函数的第一层解析改为单引号：" class="headerlink" title="玩法 4：将 eval() 函数的第一层解析改为单引号："></a><strong>玩法 4：将 eval() 函数的第一层解析改为单引号：</strong></h2><blockquote>
+<p><strong>注意：第二层解析的双引号不需要转义，因为第一层是单引号，并且单引号内本身就不会转义 <code>$</code>，所以 <code>$</code>  前面的转义字符也可以去除。</strong></p>
+</blockquote>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">eval</span>(<span class="string">&#x27;$result_2 = &quot;$origin&quot;;&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>此时输出结果为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">This is a $string with my $name in it.</span><br><span class="line">This is a $string with my $name in it.</span><br><span class="line">This is a $string with my $name in it.</span><br></pre></td></tr></table></figure>
+
+<p>输出结果与玩法 1 相同，但输出原理却不同了。第一层解析时，<code>$origin</code> 是原封不动保留下来的，即 <code>$result_2 = &quot;$origin&quot;</code>，跟 <code>result_1</code> 的情况完全相同。</p>
+<h2 id="玩法-5：将-eval-函数的第一层和第二层解析都改为单引号："><a href="#玩法-5：将-eval-函数的第一层和第二层解析都改为单引号：" class="headerlink" title="玩法 5：将 eval() 函数的第一层和第二层解析都改为单引号："></a><strong>玩法 5：将 eval() 函数的第一层和第二层解析都改为单引号：</strong></h2><blockquote>
+<p><strong>注意：第二层解析的单引号此时需要转义，因为第一层也是单引号。</strong></p>
+</blockquote>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">eval</span>(<span class="string">&#x27;$result_2 = \&#x27;$origin\&#x27;;&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>此时输出结果为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">This is a $string with my $name in it.</span><br><span class="line">This is a $string with my $name in it.</span><br><span class="line">$origin</span><br></pre></td></tr></table></figure>
+
+<p>这次的输出结果有点意思，跟玩法 4 一样，在第一层解析时，<code>$origin</code> 原封不动保留下来，即 <code>$result_2 = &#39;$origin&#39;</code>，而且在第二层解析时也要原封不动地输出字符串 <code>$origin</code>。</p>
+<p>还有两种玩法（即分别在玩法 4 和玩法 5 的基础上，将 <code>$origin</code> 字符串两边改为双引号）大同小异，这里就不详述了，有兴趣的读者可以自行推导。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>Post author:  </strong>Cipher Saw
+  </li>
+  <li class="post-copyright-link">
+      <strong>Post link: </strong>
+      <a href="https://ciphersaw.me/2017/11/16/play-well-single-and-double-quotes-in-eval-function-of-php/" title="玩转 PHP eval() 中的单双引号">https://ciphersaw.me/2017/11/16/play-well-single-and-double-quotes-in-eval-function-of-php/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> unless stating additionally.
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Web/" rel="tag"># Web</a>
+              <a href="/tags/PHP/" rel="tag"># PHP</a>
+              <a href="/tags/API/" rel="tag"># API</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2017/11/12/hash-length-extension-attack/" rel="prev" title="Hash Length Extension Attack（哈希长度扩展攻击）">
+                  <i class="fa fa-chevron-left"></i> Hash Length Extension Attack（哈希长度扩展攻击）
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2017/12/16/illustration-of-quick-rebound-of-post-request-in-ctf-web/" rel="next" title="详解 CTF Web 中的快速反弹 POST 请求">
+                  详解 CTF Web 中的快速反弹 POST 请求 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-space-shuttle"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Cipher Saw</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+  
+
+
+  <script class="next-config" data-name="leancloud_visitors" type="application/json">{"enable":true,"app_id":"KWe6NtO4vhgQR3IfB99JElre-gzGzoHsz","app_key":"7nrrRDyHHUMcx03upUALYKIQ","server_url":null,"security":false}</script>
+  <script src="/js/third-party/statistics/lean-analytics.js"></script>
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"ciphersaw","count":false,"i18n":{"disqus":"disqus"}}</script>
+<script src="/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

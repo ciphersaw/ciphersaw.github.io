@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ciphersaw.me","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.13.2","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="0x00 前言「网络」一直以来都是黑客最热衷的竞技场。数据在网络中肆意传播：主机扫描、代码注入、网络嗅探、数据篡改重放、拒绝服务攻击……黑客的功底越深厚，能做的就越多。 Python 作为一种解释型脚本语言，自 1991 年问世以来，其简洁、明确、可读性强的语法深受黑客青睐，特别在网络工具的编写上，避免了繁琐的底层语法，没有对运行速度的高效要求，使得 Python 成为安全工作者的必备杀手锏。 本">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python 绝技 —— TCP 服务器与客户端">
+<meta property="og:url" content="https://ciphersaw.me/2018/05/23/python-trick-tcp-server-and-client/index.html">
+<meta property="og:site_name" content="Secrypt Agency">
+<meta property="og:description" content="0x00 前言「网络」一直以来都是黑客最热衷的竞技场。数据在网络中肆意传播：主机扫描、代码注入、网络嗅探、数据篡改重放、拒绝服务攻击……黑客的功底越深厚，能做的就越多。 Python 作为一种解释型脚本语言，自 1991 年问世以来，其简洁、明确、可读性强的语法深受黑客青睐，特别在网络工具的编写上，避免了繁琐的底层语法，没有对运行速度的高效要求，使得 Python 成为安全工作者的必备杀手锏。 本">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/python-trick-tcp-server-and-client/tcp-three-way-handshake.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/python-trick-tcp-server-and-client/tcp-four-way-handshake.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/python-trick-tcp-server-and-client/tcp-socket-python.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/python-trick-tcp-server-and-client/one-server-vs-one-client.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/python-trick-tcp-server-and-client/one-server-vs-multiple-clients.png">
+<meta property="article:published_time" content="2018-05-23T14:33:19.000Z">
+<meta property="article:modified_time" content="2021-09-30T15:26:41.663Z">
+<meta property="article:author" content="Cipher Saw">
+<meta property="article:tag" content="Network">
+<meta property="article:tag" content="Python">
+<meta property="article:tag" content="API">
+<meta property="article:tag" content="TCP">
+<meta property="article:tag" content="Socket">
+<meta property="article:tag" content="Server">
+<meta property="article:tag" content="Client">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/python-trick-tcp-server-and-client/tcp-three-way-handshake.png">
+
+
+<link rel="canonical" href="https://ciphersaw.me/2018/05/23/python-trick-tcp-server-and-client/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://ciphersaw.me/2018/05/23/python-trick-tcp-server-and-client/","path":"2018/05/23/python-trick-tcp-server-and-client/","title":"Python 绝技 —— TCP 服务器与客户端"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Python 绝技 —— TCP 服务器与客户端 | Secrypt Agency</title>
+  
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Secrypt Agency</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Welcome to a platform for network security artists.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li><li class="menu-item menu-item-friends"><a href="/friends/" rel="section"><i class="fa fa-users fa-fw"></i>Friends</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#0x00-%E5%89%8D%E8%A8%80"><span class="nav-text">0x00 前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x01-TCP-%E5%8D%8F%E8%AE%AE"><span class="nav-text">0x01 TCP 协议</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9E%E6%8E%A5%E5%88%9B%E5%BB%BA%EF%BC%88Connection-Establishment%EF%BC%89"><span class="nav-text">连接创建（Connection Establishment）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Handshake-Step-1"><span class="nav-text">Handshake Step 1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Handshake-Step-2"><span class="nav-text">Handshake Step 2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Handshake-Step-3"><span class="nav-text">Handshake Step 3</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9E%E6%8E%A5%E7%BB%88%E6%AD%A2%EF%BC%88Connection-Termination%EF%BC%89"><span class="nav-text">连接终止（Connection Termination）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Handshake-Step-1-1"><span class="nav-text">Handshake Step 1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Handshake-Step-2-1"><span class="nav-text">Handshake Step 2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Handshake-Step-3-1"><span class="nav-text">Handshake Step 3</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Handshake-Step-4"><span class="nav-text">Handshake Step 4</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x02-Network-Socket"><span class="nav-text">0x02 Network Socket</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x03-TCP-%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="nav-text">0x03 TCP 服务器</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x04-TCP-%E5%AE%A2%E6%88%B7%E7%AB%AF"><span class="nav-text">0x04 TCP 客户端</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x05-TCP-%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1"><span class="nav-text">0x05 TCP 进程间通信</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%95%E6%9C%8D%E5%8A%A1%E5%99%A8-VS-%E5%8D%95%E5%AE%A2%E6%88%B7%E7%AB%AF"><span class="nav-text">单服务器 VS 单客户端</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%95%E6%9C%8D%E5%8A%A1%E5%99%A8-VS-%E5%A4%9A%E5%AE%A2%E6%88%B7%E7%AB%AF"><span class="nav-text">单服务器 VS 多客户端</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x06-Python-API-Reference"><span class="nav-text">0x06 Python API Reference</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#socket-%E6%A8%A1%E5%9D%97"><span class="nav-text">socket 模块</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#socket-%E5%87%BD%E6%95%B0"><span class="nav-text">socket() 函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#bind-%E5%87%BD%E6%95%B0"><span class="nav-text">bind() 函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#listen-%E5%87%BD%E6%95%B0"><span class="nav-text">listen() 函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#connect-%E5%87%BD%E6%95%B0"><span class="nav-text">connect() 函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#accept-%E5%87%BD%E6%95%B0"><span class="nav-text">accept() 函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#send-%E5%87%BD%E6%95%B0"><span class="nav-text">send() 函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#recv-%E5%87%BD%E6%95%B0"><span class="nav-text">recv() 函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#close-%E5%87%BD%E6%95%B0"><span class="nav-text">close() 函数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#threading-%E6%A8%A1%E5%9D%97"><span class="nav-text">threading 模块</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Thread-%E7%B1%BB"><span class="nav-text">Thread() 类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#start-%E5%87%BD%E6%95%B0"><span class="nav-text">start() 函数</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x07-%E6%80%BB%E7%BB%93"><span class="nav-text">0x07 总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Cipher Saw"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Cipher Saw</p>
+  <div class="site-description" itemprop="description">Not to be whom you don't want to be.</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">74</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ciphersaw" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ciphersaw" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/CipherSaw" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;CipherSaw" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe-asia fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://ctf-wiki.github.io/ctf-wiki/" title="https:&#x2F;&#x2F;ctf-wiki.github.io&#x2F;ctf-wiki&#x2F;" rel="noopener" target="_blank">CTF Wiki</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://www.owasp.org/index.php/Main_Page" title="https:&#x2F;&#x2F;www.owasp.org&#x2F;index.php&#x2F;Main_Page" rel="noopener" target="_blank">OWASP</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.pentest-standard.org/index.php/Main_Page" title="http:&#x2F;&#x2F;www.pentest-standard.org&#x2F;index.php&#x2F;Main_Page" rel="noopener" target="_blank">Pentest Standard</a>
+        </li>
+    </ul>
+  </div>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/ciphersaw" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ciphersaw.me/2018/05/23/python-trick-tcp-server-and-client/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Cipher Saw">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Secrypt Agency">
+      <meta itemprop="description" content="Not to be whom you don't want to be.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Python 绝技 —— TCP 服务器与客户端 | Secrypt Agency">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Python 绝技 —— TCP 服务器与客户端
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2018-05-23 22:33:19" itemprop="dateCreated datePublished" datetime="2018-05-23T22:33:19+08:00">2018-05-23</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2021-09-30 23:26:41" itemprop="dateModified" datetime="2021-09-30T23:26:41+08:00">2021-09-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Programming/" itemprop="url" rel="index"><span itemprop="name">Programming</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Programming/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/2018/05/23/python-trick-tcp-server-and-client/" class="post-meta-item leancloud_visitors" data-flag-title="Python 绝技 —— TCP 服务器与客户端" title="Views">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h1><p>「网络」一直以来都是黑客最热衷的竞技场。数据在网络中肆意传播：主机扫描、代码注入、网络嗅探、数据篡改重放、拒绝服务攻击……黑客的功底越深厚，能做的就越多。</p>
+<p>Python 作为一种解释型脚本语言，自 1991 年问世以来，其简洁、明确、可读性强的语法深受黑客青睐，特别在网络工具的编写上，避免了繁琐的底层语法，没有对运行速度的高效要求，使得 Python 成为安全工作者的必备杀手锏。</p>
+<p>本文作为「Python 绝技」系列工具文章的开篇，先介绍因特网的<strong>核心协议 TCP</strong> ，再以 Python 的 socket 模块为例介绍网络套接字，最后给出 <strong>TCP 服务器与客户端</strong>的 Python 脚本，并演示两者之间的通信过程。</p>
+<span id="more"></span>
+
+<h1 id="0x01-TCP-协议"><a href="#0x01-TCP-协议" class="headerlink" title="0x01 TCP 协议"></a>0x01 TCP 协议</h1><p><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Transmission_Control_Protocol"><strong>TCP（Transmission Control Protocol，传输控制协议）</strong></a>是一种面向连接、可靠的、基于字节流的传输层通信协议。</p>
+<p>TCP 协议的执行过程分为<strong>连接创建（Connection Establishment）</strong>、<strong>数据传送（Data Transfer）</strong>和<strong>连接终止（Connection Termination）</strong>三个阶段，其中「连接创建」与「连接终止」分别是耳熟能详的 <strong>TCP 协议三次握手（TCP Three-way Handshake）</strong>与<strong>四次挥手（TCP Four-way Handshake）</strong>，也是理解本文 TCP 服务器与客户端通信过程的两个核心阶段。</p>
+<p>为了能更好地理解下述过程，对 TCP 协议头的关键区段做以下几点说明：</p>
+<ul>
+<li>报文的功能在 TCP 协议头的<strong>标记符（Flags）</strong>区段中定义，该区段位于第 104~111 比特位，共占 8 比特，每个比特位对应一种功能，置 1 代表开启，置 0 代表关闭。例如，SYN 报文的标记符为 <code>00000010</code>，ACK 报文的标记符为 <code>00010000</code>，ACK + SYN 报文的标记符为 <code>00010010</code>。</li>
+<li>报文的序列号在 TCP 协议头的<strong>序列号（Sequence Number）</strong>区段中定义，该区段位于第 32~63 比特位，共占 32 比特。例如，在「三次握手」过程中，初始序列号 $seq$ 由数据发送方随机生成。</li>
+<li>报文的确认号在 TCP 协议头的<strong>确认号（Acknowledgement Number）</strong>区段中定义，该区段位于第 64~95 比特位，共占 32 比特。例如，在「三次握手」过程中，确认号 $ack$ 为前序接收报文的序列号加 1，代表下一次期望接收到的报文序列号。</li>
+</ul>
+<h2 id="连接创建（Connection-Establishment）"><a href="#连接创建（Connection-Establishment）" class="headerlink" title="连接创建（Connection Establishment）"></a>连接创建（Connection Establishment）</h2><p>所谓的「三次握手」，即 TCP 服务器与客户端成功建立通信连接必经的三个步骤，共需通过三个报文完成。</p>
+<p>一般而言，首先发送 SYN 报文的一方是客户端，服务器则是监听来自客户端的建立连接请求。</p>
+<h3 id="Handshake-Step-1"><a href="#Handshake-Step-1" class="headerlink" title="Handshake Step 1"></a>Handshake Step 1</h3><p>客户端向服务器发送 SYN 报文（$SYN &#x3D; 1$）请求建立连接。</p>
+<p>此时报文的初始序列号为 $seq &#x3D; x$，确认号为 $ack &#x3D; 0$。发送完毕后，客户端进入 <strong><code>SYN_SENT</code></strong> 状态。</p>
+<h3 id="Handshake-Step-2"><a href="#Handshake-Step-2" class="headerlink" title="Handshake Step 2"></a>Handshake Step 2</h3><p>服务器接收到客户端的 SYN 报文后，发送 ACK + SYN 报文（$ACK &#x3D; 1，SYN &#x3D; 1$）确认客户端的建立连接请求，并也向其发起建立连接请求。</p>
+<p>此时报文的序列号为 $seq &#x3D; y$，确认号为 $ack &#x3D; x + 1$。发送完毕后，服务器进入 <strong><code>SYN_RCVD</code></strong> 状态。</p>
+<h3 id="Handshake-Step-3"><a href="#Handshake-Step-3" class="headerlink" title="Handshake Step 3"></a>Handshake Step 3</h3><p>客户端接收到服务器的 SYN 报文后，发送 ACK 报文（$ACK &#x3D; 1$）确认服务器的建立连接请求。</p>
+<p>此时报文的序列号为 $seq &#x3D; x + 1$，确认号为 $ack &#x3D; y + 1$。发送完毕后，客户端进入 <strong><code>ESTABLISHED</code></strong> 状态；当服务器接收该报文后，也进入了 <strong><code>ESTABLISHED</code></strong> 状态。</p>
+<p>至此，「三次握手」过程全部结束，TCP 通信连接成功建立。</p>
+<p>读者可参照以下「三次握手」的示意图进行理解：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/python-trick-tcp-server-and-client/tcp-three-way-handshake.png" alt="tcp-three-way-handshake"></p>
+<h2 id="连接终止（Connection-Termination）"><a href="#连接终止（Connection-Termination）" class="headerlink" title="连接终止（Connection Termination）"></a>连接终止（Connection Termination）</h2><p>所谓的「四次挥手」，即 TCP 服务器与客户端完全终止通信连接必经的四个步骤，共需通过四个报文完成。</p>
+<p>由于 TCP 通信连接是全双工的，因此每个方向的连接可以单独关闭，即可视为一对「二次挥手」，或一对单工连接。主动先发送 FIN 报文的一方，意味着想要关闭到另一方的通信连接，即在此方向上不再传输数据，但仍可以接收来自另一方传输过来的数据，直到另一方也发送 FIN 报文，双方的通信连接才完全终止。</p>
+<p><strong>注意，首先发送 FIN 报文的一方，既可以是客户端，也可以是服务器。</strong>下面以客户端先发起关闭请求为例，对「四次挥手」的过程进行讲解。</p>
+<h3 id="Handshake-Step-1-1"><a href="#Handshake-Step-1-1" class="headerlink" title="Handshake Step 1"></a>Handshake Step 1</h3><p>当客户端不再向服务器传输数据时，则向其发送 FIN 报文（$FIN &#x3D; 1$）请求关闭连接。</p>
+<p>此时报文的初始序列号为 $seq &#x3D; u$，确认号为 $ack &#x3D; 0$（若此报文中 $ACK &#x3D; 1$，则 $ack$ 的值与客户端的前序接收报文有关）。发送完毕后，客户端进入 <strong><code>FIN_WAIT_1</code></strong> 状态。</p>
+<h3 id="Handshake-Step-2-1"><a href="#Handshake-Step-2-1" class="headerlink" title="Handshake Step 2"></a>Handshake Step 2</h3><p>服务器接收到客户端的 FIN 报文后，发送 ACK 报文（$ACK &#x3D; 1$）确认客户端的关闭连接请求。</p>
+<p>此时报文的序列号为 $seq &#x3D; v$，确认号为 $ack &#x3D; u + 1$。发送完毕后，服务器进入 <strong><code>CLOSE_WAIT</code></strong> 状态；当客户端接收该报文后，进入 <strong><code>FIN_WAIT_2</code></strong> 状态。</p>
+<p>注意，此时 TCP 通信连接处于<strong>半关闭</strong>状态，即客户端不再向服务器传输数据，但仍可以接收服务器传输过来的数据。</p>
+<h3 id="Handshake-Step-3-1"><a href="#Handshake-Step-3-1" class="headerlink" title="Handshake Step 3"></a>Handshake Step 3</h3><p>当服务器不再向客户端传输数据时，则向其发送 FIN + ACK 报文（$FIN &#x3D; 1，ACK &#x3D; 1$）请求关闭连接。</p>
+<p>此时报文的序列号为 $seq &#x3D; w$（若在半关闭状态，服务器没有向客户端传输过数据，则 $seq &#x3D; v + 1$ ），确认号为 $ack &#x3D; u + 1$。发送完毕后，服务器进入 <strong><code>LAST_ACK</code></strong> 状态。</p>
+<h3 id="Handshake-Step-4"><a href="#Handshake-Step-4" class="headerlink" title="Handshake Step 4"></a>Handshake Step 4</h3><p>客户端接收到服务器的 FIN + ACK 报文后，发送 ACK 报文（$ACK &#x3D; 1$）确认服务器的关闭连接请求。</p>
+<p>此时报文的序列号为 $seq &#x3D; u + 1$，确认号为 $ack &#x3D; w + 1$。发送完毕后，客户端进入 <strong><code>TIME_WAIT</code></strong> 状态；当服务器接收该报文后，进入 <strong><code>CLOSED</code></strong> 状态；当客户端等待了 <strong>2<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Maximum_segment_lifetime">MSL</a></strong> 后，仍没接到服务器的响应，则认为服务器已正常关闭，自己也进入 <strong><code>CLOSED</code></strong> 状态。</p>
+<p>至此，「四次挥手」过程全部结束，TCP 通信连接成功关闭。</p>
+<p>读者可参照以下「四次挥手」的示意图进行理解：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/python-trick-tcp-server-and-client/tcp-four-way-handshake.png" alt="tcp-four-way-handshake"></p>
+<h1 id="0x02-Network-Socket"><a href="#0x02-Network-Socket" class="headerlink" title="0x02 Network Socket"></a>0x02 Network Socket</h1><p><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Network_socket"><strong>Network Socket（网络套接字）</strong></a>是计算机网络中进程间通信的数据流端点，广义上也代表操作系统提供的一种进程间通信机制。</p>
+<p><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Inter-process_communication"><strong>进程间通信（Inter-Process Communication，IPC）</strong></a>的根本前提是<strong>能够唯一标示每个进程</strong>。在本地主机的进程间通信中，可以用 <strong><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Process_identifier">PID（进程 ID）</a><strong>唯一标示每个进程，但 PID 只在本地唯一，在网络中不同主机的 PID 则可能发生冲突，因此采用</strong>「IP 地址 + 传输层协议 + 端口号」</strong>的方式唯一标示网络中的一个进程。</p>
+<blockquote>
+<p>小贴士：网络层的 IP 地址可以唯一标示主机，传输层的 TCP&#x2F;UDP 协议和端口号可以唯一标示该主机的一个进程。注意，同一主机中 TCP 协议与 UDP 协议的可以使用相同的端口号。</p>
+</blockquote>
+<p>所有支持网络通信的编程语言都各自提供了一套 socket API，下面以 Python 3 为例，讲解服务器与客户端建立 TCP 通信连接的交互过程：</p>
+<p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/python-trick-tcp-server-and-client/tcp-socket-python.png" alt="tcp-socket-python"></p>
+<p>脑海中先对上述过程产生一定印象后，更易于理解下面两节 TCP 服务器与客户端的 Python 实现。</p>
+<h1 id="0x03-TCP-服务器"><a href="#0x03-TCP-服务器" class="headerlink" title="0x03 TCP 服务器"></a>0x03 TCP 服务器</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python3</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="keyword">import</span> socket</span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">tcplink</span>(<span class="params">conn, addr</span>):</span><br><span class="line">	<span class="built_in">print</span>(<span class="string">&quot;Accept new connection from %s:%s&quot;</span> % addr)</span><br><span class="line">	conn.send(<span class="string">b&quot;Welcome!\n&quot;</span>)</span><br><span class="line">	<span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">		conn.send(<span class="string">b&quot;What&#x27;s your name?&quot;</span>)</span><br><span class="line">		data = conn.recv(<span class="number">1024</span>)</span><br><span class="line">		<span class="keyword">if</span> data == <span class="string">b&quot;exit&quot;</span>:</span><br><span class="line">			conn.send(<span class="string">b&quot;Good bye!\n&quot;</span>)</span><br><span class="line">			<span class="keyword">break</span></span><br><span class="line">		conn.send(<span class="string">b&quot;Hello %s!\n&quot;</span> % data)</span><br><span class="line">	conn.close()</span><br><span class="line">	<span class="built_in">print</span>(<span class="string">&quot;Connection from %s:%s is closed&quot;</span> % addr)</span><br><span class="line"></span><br><span class="line">s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)</span><br><span class="line">s.bind((<span class="string">&quot;127.0.0.1&quot;</span>, <span class="number">6000</span>))</span><br><span class="line">s.listen(<span class="number">5</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Waiting for connection...&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">	conn, addr = s.accept()</span><br><span class="line">	t = threading.Thread(target = tcplink, args = (conn, addr))</span><br><span class="line">	t.start()</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Line 6：定义一个 tcplink() 函数，第一个 <em>conn</em> 参数为服务器与客户端交互数据的套接字对象，第二个 <em>addr</em> 参数为客户端的 IP 地址与端口号，用二元组 (host, port) 表示。</li>
+<li>Line 8：连接成功后，向客户端发送欢迎信息 <code>b&quot;Welcome!\n&quot;</code>。</li>
+<li>Line 9：进入与客户端交互数据的循环阶段。</li>
+<li>Line 10：向客户端发送询问信息 <code>b&quot;What&#39;s your name?&quot;</code>。</li>
+<li>Line 11：接收客户端发来的 bytes 对象。</li>
+<li>Line 12：若 bytes 对象为 <code>b&quot;exit&quot;</code>，则向客户端发送结束响应信息 <code>b&quot;Good bye!\n&quot;</code>，并结束与客户端交互数据的循环阶段。</li>
+<li>Line 15：若 bytes 对象不为 <code>b&quot;exit&quot;</code>，则向客户端发送问候响应信息 <code>b&quot;Hello %s!\n&quot;</code>，其中 <code>%s</code> 是客户端发来的 bytes 对象。</li>
+<li>Line 16：关闭套接字，不再向客户端发送数据。</li>
+<li>Line 19：创建 socket 对象，第一个参数为 <em>socket.AF_INET</em>，代表采用 IPv4 协议用于网络通信，第二个参数为 <em>socket.SOCK_STREAM</em>，代表采用 TCP 协议用于面向连接的网络通信。</li>
+<li>Line 20：向 socket 对象绑定服务器主机地址 (“127.0.0.1”, 6000)，即本地主机的 TCP 6000 端口。</li>
+<li>Line 21：开启 socket 对象的监听功能，等待客户端的连接请求。</li>
+<li>Line 24：进入监听客户端连接请求的循环阶段。</li>
+<li>Line 25：接收客户端的连接请求，并获得与客户端交互数据的套接字对象 conn 与客户端的 IP 地址与端口号 addr，其中 addr 为二元组 (host, port)。</li>
+<li>Line 26：利用多线程技术，为每个请求连接的 TCP 客户端创建一个新线程，实现了一台服务器同时与多台客户端进行通信的功能。</li>
+<li>Line 27：开启新线程的活动。</li>
+</ul>
+<h1 id="0x04-TCP-客户端"><a href="#0x04-TCP-客户端" class="headerlink" title="0x04 TCP 客户端"></a>0x04 TCP 客户端</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python3</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="keyword">import</span> socket</span><br><span class="line"></span><br><span class="line">s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)</span><br><span class="line">s.connect((<span class="string">&quot;127.0.0.1&quot;</span>, <span class="number">6000</span>))</span><br><span class="line"><span class="built_in">print</span>(s.recv(<span class="number">1024</span>).decode())</span><br><span class="line"></span><br><span class="line">data = <span class="string">&quot;client&quot;</span></span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">	<span class="keyword">if</span> data:</span><br><span class="line">		<span class="built_in">print</span>(s.recv(<span class="number">1024</span>).decode())</span><br><span class="line">	data = <span class="built_in">input</span>(<span class="string">&quot;Please input your name: &quot;</span>)</span><br><span class="line">	<span class="keyword">if</span> <span class="keyword">not</span> data:</span><br><span class="line">		<span class="keyword">continue</span></span><br><span class="line">	s.send(data.encode())</span><br><span class="line">	<span class="built_in">print</span>(s.recv(<span class="number">1024</span>).decode())</span><br><span class="line">	<span class="keyword">if</span> data == <span class="string">&quot;exit&quot;</span>:</span><br><span class="line">		<span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">s.close()</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Line 5：创建 socket 对象，第一个参数为 <em>socket.AF_INET</em>，代表采用 IPv4 协议用于网络通信，第二个参数为 <em>socket.SOCK_STREAM</em>，代表采用 TCP 协议用于面向连接的网络通信。</li>
+<li>Line 6：向 (“127.0.0.1”, 6000) 主机发起连接请求，即本地主机的 TCP 6000 端口。</li>
+<li>Line 7：连接成功后，接收服务器发来的欢迎信息 <code>b&quot;Welcome!\n&quot;</code>，并转换为字符串后打印输出。</li>
+<li>Line 9：创建一个非空字符串变量 data，并赋初值为 <code>&quot;client&quot;</code>（只要是非空字符串即可），用于判断是否接收来自服务器发来的询问信息 <code>b&quot;What&#39;s your name?&quot;</code>。</li>
+<li>Line 10：进入与服务器交互数据的循环阶段。</li>
+<li>Line 11：当变量 data 非空时，则接收服务器发来的询问信息。</li>
+<li>Line 13：要求用户输入名字。</li>
+<li>Line 14：当用户的输入为空时，则重新开始循环，要求用户重新输入。</li>
+<li>Line 16：当用户的输入非空时，则将字符串转换为 bytes 对象后发送至服务器。</li>
+<li>Line 17：接收服务器的响应数据，并将响应的 bytes 对象转换为字符串后打印输出。</li>
+<li>Line 18：当用户的输入为 <code>&quot;exit&quot;</code> 时，则终止与服务器交互数据的循环阶段，即将关闭套接字。</li>
+<li>Line 21：关闭套接字，不再向服务器发送数据。</li>
+</ul>
+<h1 id="0x05-TCP-进程间通信"><a href="#0x05-TCP-进程间通信" class="headerlink" title="0x05 TCP 进程间通信"></a>0x05 TCP 进程间通信</h1><p>将 TCP 服务器与客户端的脚本分别命名为 <code>tcp_server.py</code> 与 <code>tcp_client.py</code>，然后存至桌面，笔者将在 Windows 10 系统下用 PowerShell 进行演示。</p>
+<blockquote>
+<p>小贴士：读者进行复现时，要确保本机已安装 Python 3，注意笔者已将默认的启动路径名 <code>python</code> 改为了 <code>python3</code>。</p>
+</blockquote>
+<h2 id="单服务器-VS-单客户端"><a href="#单服务器-VS-单客户端" class="headerlink" title="单服务器 VS 单客户端"></a>单服务器 VS 单客户端</h2><p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/python-trick-tcp-server-and-client/one-server-vs-one-client.png" alt="one-server-vs-one-client"></p>
+<ol>
+<li>在其中一个 PowerShell 中运行命令 <code>python3 ./tcp_server.py</code>，服务器显示 <code>Waiting for connection...</code>，并监听本地主机的 TCP 6000 端口，进入等待连接状态；</li>
+<li>在另一个 PowerShell 中运行命令 <code>python3 ./tcp_client.py</code>，服务器显示 <code>Accept new connection from 127.0.0.1:42101</code>，完成与本地主机的 TCP 42101 端口建立通信连接，并向客户端发送欢迎信息与询问信息，客户端接收到信息后打印输出；</li>
+<li>若客户端向服务器发送字符串 <code>Alice</code> 与 <code>Bob</code>，则收到服务器的问候响应信息；</li>
+<li>若客户端向服务器发送空字符串，则被要求重新输入；</li>
+<li>若客户端向服务器发送字符串 <code>exit</code>，则收到服务器的结束响应信息；</li>
+<li>客户端与服务器之间的通信连接已关闭，服务器显示 <code>Connection from 127.0.0.1:42101 is closed</code>，并继续监听客户端的连接请求。</li>
+</ol>
+<h2 id="单服务器-VS-多客户端"><a href="#单服务器-VS-多客户端" class="headerlink" title="单服务器 VS 多客户端"></a>单服务器 VS 多客户端</h2><p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/python-trick-tcp-server-and-client/one-server-vs-multiple-clients.png" alt="one-server-vs-multiple-clients"></p>
+<ol>
+<li>在其中一个 PowerShell 中运行命令 <code>python3 ./tcp_server.py</code>，服务器显示 <code>Waiting for connection...</code>，并监听本地主机的 TCP 6000 端口，进入等待连接状态；</li>
+<li>在另三个 PowerShell 中分别运行命令 <code>python3 ./tcp_client.py</code>，服务器同时与本地主机的 TCP 42719、42721、42722 端口建立通信连接，并分别向客户端发送欢迎信息与询问信息，客户端接收到信息后打印输出；</li>
+<li>三台客户端分别向服务器发送字符串 <code>Client1</code>、<code>Client2</code>、<code>Client3</code>，并收到服务器的问候响应信息；</li>
+<li>所有客户端分别向服务器发送字符串 <code>exit</code>，并收到服务器的结束响应信息；</li>
+<li>所有客户端与服务器之间的通信连接已关闭，服务器继续监听客户端的连接请求。</li>
+</ol>
+<h1 id="0x06-Python-API-Reference"><a href="#0x06-Python-API-Reference" class="headerlink" title="0x06 Python API Reference"></a>0x06 Python API Reference</h1><h2 id="socket-模块"><a href="#socket-模块" class="headerlink" title="socket 模块"></a>socket 模块</h2><p>本节介绍上述代码中用到的<a target="_blank" rel="noopener" href="https://docs.python.org/3/library/socket.html">内建模块 socket</a>，是 Python 网络编程的核心模块。</p>
+<h3 id="socket-函数"><a href="#socket-函数" class="headerlink" title="socket() 函数"></a>socket() 函数</h3><p><a target="_blank" rel="noopener" href="https://docs.python.org/3/library/socket.html#socket.socket">socket() 函数</a>用于创建网络通信中的套接字对象。函数原型如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">socket.socket(family=AF_INET, <span class="built_in">type</span>=SOCK_STREAM, proto=<span class="number">0</span>, fileno=<span class="literal">None</span>)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><em>family</em> 参数代表<a target="_blank" rel="noopener" href="https://docs.python.org/3/library/socket.html#socket-families">地址族（Address Family）</a>，默认值为 <em>AF_INET</em>，用于 IPv4 网络通信，常用的还有 <em>AF_INET6</em>，用于 IPv6 网络通信。<em>family</em> 参数的可选值取决于本机操作系统。</li>
+<li><em>type</em> 参数代表套接字的类型，默认值为 <em>SOCK_STREAM</em>，用于 TCP 协议（面向连接）的网络通信，常用的还有 <em>SOCK_DGRAM</em>，用于 UDP 协议（无连接）的网络通信。</li>
+<li><em>proto</em> 参数代表套接字的协议，默认值为 <em>0</em>，一般忽略该参数，除非 <em>family</em> 参数为 <em>AF_CAN</em>，则 <em>proto</em> 参数需设置为 <em>CAN_RAW</em> 或 <em>CAN_BCM</em>。</li>
+<li><em>fileno</em> 参数代表套接字的文件描述符，默认值为 <em>None</em>，若设置了该参数，则其他三个参数将会被忽略。</li>
+</ul>
+<p>创建完套接字对象后，需使用对象的内置函数完成网络通信过程。<strong>注意，以下函数原型中的「socket」是指 socket 对象，而不是上述的 socket 模块。</strong></p>
+<h3 id="bind-函数"><a href="#bind-函数" class="headerlink" title="bind() 函数"></a>bind() 函数</h3><p><a target="_blank" rel="noopener" href="https://docs.python.org/3/library/socket.html#socket.socket.bind">bind() 函数</a>用于向套接字对象绑定 IP 地址与端口号。注意，套接字对象必须未被绑定，并且端口号未被占用，否则会报错。函数原型如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">socket.bind(address)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><em>address</em> 参数代表套接字要绑定的地址，其格式取决于套接字的 <em>family</em> 参数。若 <em>family</em> 参数为 <em>AF_INET</em>，则 <em>address</em> 参数表示为二元组 (host, port)，其中 host 是用字符串表示的主机地址，port 是用整型表示的端口号。</li>
+</ul>
+<h3 id="listen-函数"><a href="#listen-函数" class="headerlink" title="listen() 函数"></a>listen() 函数</h3><p><a target="_blank" rel="noopener" href="https://docs.python.org/3/library/socket.html#socket.socket.listen">listen() 函数</a>用于 TCP 服务器开启套接字的监听功能。函数原型如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">socket.listen([backlog])</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><em>backlog</em> 可选参数代表套接字在拒绝新连接之前，操作系统可以挂起的最大连接数。<em>backlog</em> 参数一般设置为 <em>5</em>，若未设置，系统会为其自动设置一个合理的值。</li>
+</ul>
+<h3 id="connect-函数"><a href="#connect-函数" class="headerlink" title="connect() 函数"></a>connect() 函数</h3><p><a target="_blank" rel="noopener" href="https://docs.python.org/3/library/socket.html#socket.socket.connect">connect() 函数</a>用于 TCP 客户端向 TCP 服务器发起连接请求。函数原型如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">socket.connect(address)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><em>address</em> 参数代表套接字要连接的地址，其格式取决于套接字的 <em>family</em> 参数。若 <em>family</em> 参数为 <em>AF_INET</em>，则 <em>address</em> 参数表示为二元组 (host, port)，其中 host 是用字符串表示的主机地址，port 是用整型表示的端口号。</li>
+</ul>
+<h3 id="accept-函数"><a href="#accept-函数" class="headerlink" title="accept() 函数"></a>accept() 函数</h3><p><a target="_blank" rel="noopener" href="https://docs.python.org/3/library/socket.html#socket.socket.accept">accept() 函数</a>用于 TCP 服务器接受 TCP 客户端的连接请求。函数原型如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">socket.accept()</span><br></pre></td></tr></table></figure>
+
+<p>accept() 函数的返回值是二元组 (conn, address)，其中 conn 是服务器用来与客户端交互数据的套接字对象，address 是客户端的 IP 地址与端口号，用二元组 (host, port) 表示。</p>
+<h3 id="send-函数"><a href="#send-函数" class="headerlink" title="send() 函数"></a>send() 函数</h3><p><a target="_blank" rel="noopener" href="https://docs.python.org/3/library/socket.html#socket.socket.send">send() 函数</a>用于向远程套接字对象发送数据。注意，本机套接字必须与远程套接字成功连接后才能使用该函数，否则会报错。可见，send() 函数只能用于 TCP 进程间通信，而对于 UDP 进程间通信应该用 sendto() 函数。函数原型如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">socket.send(<span class="built_in">bytes</span>[, flags])</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><em>bytes</em> 参数代表即将发送的 <a target="_blank" rel="noopener" href="https://docs.python.org/3/library/stdtypes.html#bytes-objects">bytes 对象</a>数据。例如，对于字符串 <code>&quot;hello world!&quot;</code> 而言，需要用 encode() 函数转换为 bytes 对象 <code>b&quot;hello world!&quot;</code> 才能进行网络传输。</li>
+<li><em>flags</em> 可选参数用于设置 send() 函数的特殊功能，默认值为 <em>0</em>，也可由一个或多个预定义值组成，用位或操作符 <code>|</code> 隔开。详情可参考 Unix 函数手册中的 <a target="_blank" rel="noopener" href="https://linux.die.net/man/2/send">send(2)</a>，<em>flags</em> 参数的常见取值有 MSG_OOB、MSG_EOR 、MSG_DONTROUTE等。</li>
+</ul>
+<p>send() 函数的返回值是发送数据的字节数。</p>
+<h3 id="recv-函数"><a href="#recv-函数" class="headerlink" title="recv() 函数"></a>recv() 函数</h3><p><a target="_blank" rel="noopener" href="https://docs.python.org/3/library/socket.html#socket.socket.recv">recv() 函数</a>用于从远程套接字对象接收数据。注意，与 send() 函数不同，recv() 函数既可用于 TCP 进程间通信，也能用于 UDP 进程间通信。函数原型如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">socket.recv(bufsize[, flags])</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><em>bufsize</em> 参数代表套接字可接收数据的最大字节数。注意，为了使硬件设备与网络传输更好地匹配，<em>bufsize</em> 参数的值最好设置为 2 的幂次方，例如 <em>4096</em>。</li>
+<li><em>flags</em> 可选参数用于设置 recv() 函数的特殊功能，默认值为 <em>0</em>，也可由一个或多个预定义值组成，用位或操作符 <code>|</code> 隔开。详情可参考 Unix 函数手册中的 <a target="_blank" rel="noopener" href="https://linux.die.net/man/2/recv">recv(2)</a>，<em>flags</em> 参数的常见取值有 MSG_OOB、MSG_PEEK、MSG_WAITALL 等。</li>
+</ul>
+<p>recv() 函数的返回值是接收到的 bytes 对象数据。例如，接收到 bytes 对象 <code>b&quot;hello world!&quot;</code>，最好用 decode() 函数转换为字符串 <code>&quot;hello world!&quot;</code> 再打印输出。</p>
+<h3 id="close-函数"><a href="#close-函数" class="headerlink" title="close() 函数"></a>close() 函数</h3><p><a target="_blank" rel="noopener" href="https://docs.python.org/3/library/socket.html#socket.socket.close">close() 函数</a>用于关闭本地套接字对象，释放与该套接字连接的所有资源。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">socket.close()</span><br></pre></td></tr></table></figure>
+
+<h2 id="threading-模块"><a href="#threading-模块" class="headerlink" title="threading 模块"></a>threading 模块</h2><p>本节介绍上述代码中用到的<a target="_blank" rel="noopener" href="https://docs.python.org/3/library/threading.html">内建模块 threading</a>，是 Python 多线程的核心模块。</p>
+<h3 id="Thread-类"><a href="#Thread-类" class="headerlink" title="Thread() 类"></a>Thread() 类</h3><p><a target="_blank" rel="noopener" href="https://docs.python.org/3/library/threading.html#threading.Thread">Thread() 类</a>可以创建线程对象，用于调用 start() 函数启动新线程。类原型如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">threading</span>.Thread(group=<span class="literal">None</span>, target=<span class="literal">None</span>, name=<span class="literal">None</span>, args=(), kwargs=&#123;&#125;, *, daemon=<span class="literal">None</span>)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><em>group</em> 参数作为以后实现 ThreadGroup() 类的保留参数，目前默认值为 <em>None</em>。</li>
+<li><em>target</em> 参数代表线程被 run() 函数激活后调用的函数，默认值为 <em>None</em>，即没有任何函数会被调用。</li>
+<li>name 参数代表线程名，默认值为 <em>None</em>，则系统会自动为其命名，格式为「Thread-<em>N</em>」，<em>N</em> 是从 <em>1</em> 开始的十进制数。</li>
+<li><em>args</em> 参数代表 <em>target</em> 参数指向函数的普通参数，用元组（tuple）表示，默认值为空元组 <code>()</code>。</li>
+<li><em>kwargs</em> 参数代表 <em>target</em> 参数指向函数的关键字参数，用字典（dict）表示，默认值为空字典 <code>&#123;&#125;</code>。</li>
+<li><em>daemon</em> 参数用于标示进程是否为守护进程。若设置为 <em>True</em>，则标示为守护进程；若设置为 <em>False</em>，则标示为非守护进程；若设置为 <em>None</em>，则继承当前父线程的 <em>daemon</em> 参数值。</li>
+</ul>
+<p>创建完线程对象后，需使用对象的内置函数控制多线程活动。</p>
+<h3 id="start-函数"><a href="#start-函数" class="headerlink" title="start() 函数"></a>start() 函数</h3><p><a target="_blank" rel="noopener" href="https://docs.python.org/3/library/threading.html#threading.Thread.start">start() 函数</a>用于开启线程活动。函数原型如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Thread.start()</span><br></pre></td></tr></table></figure>
+
+<p>注意，每个线程对象只能调用一次 start() 函数，否则会导致 <a target="_blank" rel="noopener" href="https://docs.python.org/3/library/exceptions.html#RuntimeError">RuntimeError</a> 错误。</p>
+<h1 id="0x07-总结"><a href="#0x07-总结" class="headerlink" title="0x07 总结"></a>0x07 总结</h1><p>本文介绍了 TCP 协议与 socket 编程的基础知识，再用 Python 3 实现并演示了 TCP 服务器与客户端的通信过程，其中还运用了简单的多线程技术，最后将脚本中涉及到的 Python API 做成了的参考索引，有助于理解实现过程。</p>
+<p>笔者水平有限，若文中出现不足或错误之处，还望大家不吝相告，多多包涵，欢迎读者前来交流技术，感谢阅读。</p>
+<p>本文的相关参考请移步至：</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/xingerr/article/details/72834303">TCP三次握手详解</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/xingerr/article/details/72845941">TCP四次挥手详解</a><br><a target="_blank" rel="noopener" href="http://www.cnblogs.com/dolphinX/p/3460545.html">简单理解Socket</a><br><a target="_blank" rel="noopener" href="https://www.liaoxuefeng.com/wiki/0014316089557264a6b348958f449949df42a6d3a2e542c000/001432004374523e495f640612f4b08975398796939ec3c000">TCP编程 - 廖雪峰的官方网站</a><br><a target="_blank" rel="noopener" href="https://www.liaoxuefeng.com/wiki/0014316089557264a6b348958f449949df42a6d3a2e542c000/00143192823818768cd506abbc94eb5916192364506fa5d000">多线程 - 廖雪峰的官方网站</a></p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>Post author:  </strong>Cipher Saw
+  </li>
+  <li class="post-copyright-link">
+      <strong>Post link: </strong>
+      <a href="https://ciphersaw.me/2018/05/23/python-trick-tcp-server-and-client/" title="Python 绝技 —— TCP 服务器与客户端">https://ciphersaw.me/2018/05/23/python-trick-tcp-server-and-client/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> unless stating additionally.
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Network/" rel="tag"># Network</a>
+              <a href="/tags/Python/" rel="tag"># Python</a>
+              <a href="/tags/API/" rel="tag"># API</a>
+              <a href="/tags/TCP/" rel="tag"># TCP</a>
+              <a href="/tags/Socket/" rel="tag"># Socket</a>
+              <a href="/tags/Server/" rel="tag"># Server</a>
+              <a href="/tags/Client/" rel="tag"># Client</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2018/04/15/ichunqiu-pentest-introduction-comprehensive-website-pentest/" rel="prev" title="【i春秋】渗透测试入门 —— 网站综合渗透实验">
+                  <i class="fa fa-chevron-left"></i> 【i春秋】渗透测试入门 —— 网站综合渗透实验
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2018/06/15/python-trick-udp-server-and-client/" rel="next" title="Python 绝技 —— UDP 服务器与客户端">
+                  Python 绝技 —— UDP 服务器与客户端 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-space-shuttle"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Cipher Saw</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+  
+
+
+  <script class="next-config" data-name="leancloud_visitors" type="application/json">{"enable":true,"app_id":"KWe6NtO4vhgQR3IfB99JElre-gzGzoHsz","app_key":"7nrrRDyHHUMcx03upUALYKIQ","server_url":null,"security":false}</script>
+  <script src="/js/third-party/statistics/lean-analytics.js"></script>
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"ciphersaw","count":false,"i18n":{"disqus":"disqus"}}</script>
+<script src="/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

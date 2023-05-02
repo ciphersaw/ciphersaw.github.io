@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico">
+  <link rel="mask-icon" href="/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ciphersaw.me","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.13.2","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="0x00 前言本次 UESTC CNSS Recruit 2017 中，Crypto 方面的题推出了 RSA 套餐，涉及 RSA 加密算法原理与特定情况下对 RSA 的密码攻击，对密码学初学者是个很好的练习机会，在此感谢出题人 JHSN 和 xris 。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【CNSS 2017】 Crypto —— RSA Combo">
+<meta property="og:url" content="https://ciphersaw.me/2017/10/27/cnss-2017-crypto-rsa-combo/index.html">
+<meta property="og:site_name" content="Secrypt Agency">
+<meta property="og:description" content="0x00 前言本次 UESTC CNSS Recruit 2017 中，Crypto 方面的题推出了 RSA 套餐，涉及 RSA 加密算法原理与特定情况下对 RSA 的密码攻击，对密码学初学者是个很好的练习机会，在此感谢出题人 JHSN 和 xris 。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/cnss-2017-crypto-rsa-combo/easy-rsa.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/cnss-2017-crypto-rsa-combo/rsa-cool.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/cnss-2017-crypto-rsa-combo/rsa-cooler.png">
+<meta property="og:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/cnss-2017-crypto-rsa-combo/rsa-coolest.png">
+<meta property="article:published_time" content="2017-10-27T14:11:08.000Z">
+<meta property="article:modified_time" content="2021-09-30T15:20:58.070Z">
+<meta property="article:author" content="Cipher Saw">
+<meta property="article:tag" content="CTF">
+<meta property="article:tag" content="Writeup">
+<meta property="article:tag" content="CNSS">
+<meta property="article:tag" content="Crypto">
+<meta property="article:tag" content="RSA">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/cnss-2017-crypto-rsa-combo/easy-rsa.png">
+
+
+<link rel="canonical" href="https://ciphersaw.me/2017/10/27/cnss-2017-crypto-rsa-combo/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://ciphersaw.me/2017/10/27/cnss-2017-crypto-rsa-combo/","path":"2017/10/27/cnss-2017-crypto-rsa-combo/","title":"【CNSS 2017】 Crypto —— RSA Combo"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>【CNSS 2017】 Crypto —— RSA Combo | Secrypt Agency</title>
+  
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Secrypt Agency</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Welcome to a platform for network security artists.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li><li class="menu-item menu-item-friends"><a href="/friends/" rel="section"><i class="fa fa-users fa-fw"></i>Friends</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#0x00-%E5%89%8D%E8%A8%80"><span class="nav-text">0x00 前言</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#RSA-%E5%AF%86%E9%92%A5%E5%AF%B9%E7%9A%84%E7%94%9F%E6%88%90"><span class="nav-text">RSA 密钥对的生成</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RSA-%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95"><span class="nav-text">RSA 加密算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RSA-%E8%A7%A3%E5%AF%86%E7%AE%97%E6%B3%95"><span class="nav-text">RSA 解密算法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x01-Easy-RSA"><span class="nav-text">0x01 Easy RSA</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x02-RSA-Cool"><span class="nav-text">0x02 RSA Cool</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x03-RSA-Cooler"><span class="nav-text">0x03 RSA Cooler</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B1%E6%A8%A1%E6%94%BB%E5%87%BB"><span class="nav-text">共模攻击</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x04-RSA-Coolest"><span class="nav-text">0x04 RSA Coolest</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%8E%E6%8C%87%E6%95%B0%E6%94%BB%E5%87%BB"><span class="nav-text">低指数攻击</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Cipher Saw"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Cipher Saw</p>
+  <div class="site-description" itemprop="description">Not to be whom you don't want to be.</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">74</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ciphersaw" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ciphersaw" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/CipherSaw" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;CipherSaw" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe-asia fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://ctf-wiki.github.io/ctf-wiki/" title="https:&#x2F;&#x2F;ctf-wiki.github.io&#x2F;ctf-wiki&#x2F;" rel="noopener" target="_blank">CTF Wiki</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://www.owasp.org/index.php/Main_Page" title="https:&#x2F;&#x2F;www.owasp.org&#x2F;index.php&#x2F;Main_Page" rel="noopener" target="_blank">OWASP</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://www.pentest-standard.org/index.php/Main_Page" title="http:&#x2F;&#x2F;www.pentest-standard.org&#x2F;index.php&#x2F;Main_Page" rel="noopener" target="_blank">Pentest Standard</a>
+        </li>
+    </ul>
+  </div>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/ciphersaw" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://ciphersaw.me/2017/10/27/cnss-2017-crypto-rsa-combo/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Cipher Saw">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Secrypt Agency">
+      <meta itemprop="description" content="Not to be whom you don't want to be.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="【CNSS 2017】 Crypto —— RSA Combo | Secrypt Agency">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          【CNSS 2017】 Crypto —— RSA Combo
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2017-10-27 22:11:08" itemprop="dateCreated datePublished" datetime="2017-10-27T22:11:08+08:00">2017-10-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2021-09-30 23:20:58" itemprop="dateModified" datetime="2021-09-30T23:20:58+08:00">2021-09-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/InfoSec/" itemprop="url" rel="index"><span itemprop="name">InfoSec</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/InfoSec/Crypto/" itemprop="url" rel="index"><span itemprop="name">Crypto</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/2017/10/27/cnss-2017-crypto-rsa-combo/" class="post-meta-item leancloud_visitors" data-flag-title="【CNSS 2017】 Crypto —— RSA Combo" title="Views">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h1><p>本次 <a target="_blank" rel="noopener" href="https://ctf.cnssuestc.org/">UESTC CNSS Recruit 2017</a> 中，Crypto 方面的题推出了 RSA 套餐，涉及 <strong>RSA 加密算法原理</strong>与<strong>特定情况下对 RSA 的密码攻击</strong>，对密码学初学者是个很好的练习机会，在此感谢出题人 <a target="_blank" rel="noopener" href="http://blog.chrstm.com/">JHSN</a> 和 <a target="_blank" rel="noopener" href="http://xr1s.me/">xris</a> 。</p>
+<span id="more"></span>
+
+<p>此 RSA 套餐一共四题，前两题涉及 RSA 加密算法原理，后两题涉及 RSA 密码攻击。</p>
+<p>RSA 公钥密码体制于 1977 年由 Ron Rivest、Adi Shamir、Leonard Adleman 一起提出，并以三人的姓氏首字母拼接命名，现已成为公钥密码的国际标准，是目前应用最广泛的公钥密码体制之一。RSA 是基于大整数因子分解问题的公钥密码，因此阅读本文需要有<strong>数论</strong>基础，并且所有代码选用 <strong>Python</strong>，便于大整数运算。</p>
+<p>下面先介绍 RSA 加解密算法的过程，需要用到的几个数论知识，请读者自行学习理解。</p>
+<h2 id="RSA-密钥对的生成"><a href="#RSA-密钥对的生成" class="headerlink" title="RSA 密钥对的生成"></a>RSA 密钥对的生成</h2><p>RSA 公私密钥对的生成，由以下四个步骤完成：</p>
+<ol>
+<li>选取两个<strong>大素数</strong> $p$ 和 $q$ （目前安全标准要求 $p$、$q$ 长度相差不能太大，且至少有 $512 bits$；</li>
+<li>计算乘积 $n &#x3D; p \times q$ 和 $\varphi\left(n\right) &#x3D; \left(p-1\right)\left(q-1\right)$，其中 $\varphi\left(n\right)$ 是<strong>欧拉函数</strong>；</li>
+<li>随机选取整数 $e$ 作为公钥，$1 &lt; e &lt; \varphi\left(n\right)$，并且要求 $gcd\left(e,\varphi\left(n\right)\right) &#x3D; 1$，即 $e$ 与 $\varphi\left(n\right)$ 互素，<strong>最大公约数</strong>为 $1$；</li>
+<li>用<strong>扩展欧几里得算法</strong>计算私钥 $d$，满足 $d \times e \equiv 1 \ mod \ \varphi\left(n\right)$，即 $d \equiv e^{-1} \ mod \ \varphi\left(n\right)$，称 $d$ 是 $e$ 在模 $\varphi\left(n\right)$ 下的<strong>乘法逆元</strong>。</li>
+</ol>
+<p>此时得到公钥 $\left(e,n\right)$ 与 私钥 $d$。应注意，用户需要公开公钥 $\left(e,n\right)$，而只需保留私钥 $d$，两个大素数 $p$ 和 $q$ 已不再需要，最好销毁，但千万不能泄露。</p>
+<h2 id="RSA-加密算法"><a href="#RSA-加密算法" class="headerlink" title="RSA 加密算法"></a>RSA 加密算法</h2><p>加密时首先将明文消息字符串转换为二进制编码，用十六进制表示，然后将明文比特串分组，每个分组的十进制数必须小于 $n$，即每个分组的比特数不大于 $\log_2 n $，最后对每个明文分组进行加密运算，过程如下：</p>
+<ol>
+<li>获得接收方的公钥 $\left(e,n\right)$；</li>
+<li>将明文 $M$ 划分为 $N$ 个明文分组 $M &#x3D; m_1m_2 \cdots m_N$，其中每个分组长度为 $L$（$L &lt; \log_2 n$）；</li>
+<li>对明文分组进行加密运算，每个分组对应的密文为 $c_i &#x3D; {m_i}^{e} \ mod \ n$，其中 $1 \le i \le N$，加密后得密文分组 $C &#x3D; c_1c_2 \cdots c_N$；</li>
+<li>将密文 $C$ 发送给接收方。</li>
+</ol>
+<h2 id="RSA-解密算法"><a href="#RSA-解密算法" class="headerlink" title="RSA 解密算法"></a>RSA 解密算法</h2><p>解密时首先将密文比特串恢复成明文比特串，再对其进行相应的字符编码，即可得到明文消息，过程如下：</p>
+<ol>
+<li>接收方收到密文 $C$ 后，先按照分组长度 $L$ 进行划分，得密文分组 $C &#x3D; c_1c_2 \cdots c_N$；</li>
+<li>使用私钥 $d$，对密文分组进行解密运算，每个分组对应的明文为 $m_i &#x3D; {c_i}^{d} \ mod \ n$，其中 $1 \le i \le N$，解密后得明文分组 $M &#x3D; m_1m_2 \cdots m_N$。</li>
+</ol>
+<p>以上就是 RSA 加密算法的基本原理，涉及到的数论知识已加粗标识，基本部分没掌握好的请自行查阅资料学习。</p>
+<p>下面进入正题，借助 <strong>Python 2.7</strong> 来对 RSA 加解密过程的大整数进行运算，要用到模块 <a target="_blank" rel="noopener" href="https://pypi.python.org/pypi/gmpy2">gmpy2</a> 进行大整数运算，使用文档请见 <a target="_blank" rel="noopener" href="http://gmpy2.readthedocs.io/en/latest/">http://gmpy2.readthedocs.io/en/latest/</a>，以及模块 <a target="_blank" rel="noopener" href="https://docs.python.org/2/library/binascii.html">binascii</a>，将 ASCII 码十六进制字符串还原成明文。</p>
+<p><strong>注意：由于以下四题的明文量较小，均有 $m &lt; p \times q &#x3D; n$，因此明密文不涉及分组过程。</strong></p>
+<h1 id="0x01-Easy-RSA"><a href="#0x01-Easy-RSA" class="headerlink" title="0x01 Easy RSA"></a>0x01 Easy RSA</h1><p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/cnss-2017-crypto-rsa-combo/easy-rsa.png" alt="easy-rsa"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">p: 0xddb9fe428c938abdce551751b299feed367c97b52b17062d</span><br><span class="line">q: 0x265ad78c77eab2c5ab9b69fb44a11624818bed56c003d2c5e6d29f7</span><br><span class="line">e: 0x1fffffffffffffff</span><br><span class="line">d: 0x9737352a92d198aaeddb8db9cc5cb81a788aa7d0ec0ec9bac7f6ffece7ff928c8db6a47656dffb0421ef9ca595665b6b55d35f</span><br><span class="line">c: 0x1c0aa41505131e967d3db09227ef9572337a5e79f07484428efd6262eddee2fb67b6e6e6b5506871891ece1949eabf7a03cafdb</span><br></pre></td></tr></table></figure>
+
+<p>根据题意，已知 $p、q、e、d、c$，求 $m$。此题属于 RSA 加密算法基础题，思路也容易想到，直接求 $m &#x3D; c^d \ mod \ n$ 即可得到明文，且 $n &#x3D; p \times q$。下面给出 Python 解题代码，代码中的函数使用方法请自行查阅相应模块的使用手册。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> gmpy2</span><br><span class="line"><span class="keyword">import</span> binascii</span><br><span class="line"></span><br><span class="line">p = gmpy2.mpz(<span class="number">0xddb9fe428c938abdce551751b299feed367c97b52b17062d</span>)</span><br><span class="line">q = gmpy2.mpz(<span class="number">0x265ad78c77eab2c5ab9b69fb44a11624818bed56c003d2c5e6d29f7</span>)</span><br><span class="line">d = gmpy2.mpz(<span class="number">0x9737352a92d198aaeddb8db9cc5cb81a788aa7d0ec0ec9bac7f6ffece7ff928c8db6a47656dffb0421ef9ca595665b6b55d35f</span>)</span><br><span class="line">c = gmpy2.mpz(<span class="number">0x1c0aa41505131e967d3db09227ef9572337a5e79f07484428efd6262eddee2fb67b6e6e6b5506871891ece1949eabf7a03cafdb</span>)</span><br><span class="line"></span><br><span class="line">m = <span class="built_in">hex</span>(<span class="built_in">pow</span>(c, d, p*q))  <span class="comment"># Figure out c^d modulo n, then change to hex. Note that n = p * q.</span></span><br><span class="line"><span class="built_in">print</span> <span class="string">&quot;plaintext:&quot;</span>, m</span><br><span class="line"><span class="built_in">print</span> <span class="string">&quot;flag:&quot;</span>, binascii.a2b_hex(<span class="built_in">str</span>(m)[<span class="number">2</span>:])</span><br></pre></td></tr></table></figure>
+
+<p>代码执行后，打印明文的十六进制数值，以及对应的 ASCII 字符串：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">plaintext: 0x636e73737b555f6d7573745f6b6e30775f41534331315f616e645f5235617d</span><br><span class="line">flag: cnss&#123;U_must_kn0w_ASC11_and_R5a&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="0x02-RSA-Cool"><a href="#0x02-RSA-Cool" class="headerlink" title="0x02 RSA Cool"></a>0x02 RSA Cool</h1><p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/cnss-2017-crypto-rsa-combo/rsa-cool.png" alt="easy-rsa"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">p: 0xf5621a5fd44994f720c1b971fea84f63</span><br><span class="line">q: 0xdfb85e3d22c0b59271884df021a57123</span><br><span class="line">e: 0xf36698ed9d9fedd7</span><br><span class="line">c: 0x448040a0a4757a630c4d8401fb3c0518ab0bce9a02085329536244c91727775c</span><br></pre></td></tr></table></figure>
+<p>根据所给数据，本题是已知 $p、q、e、c$，求 $m$，与第一题相比少给了私钥 $d$。此题也属于 RSA 加密算法基础题，在第一题的基础上先求出私钥 $d$，再求 $m &#x3D; c^d \ mod \ n$ 即可得到明文。下面给出 Python 解题代码。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> gmpy2</span><br><span class="line"><span class="keyword">import</span> binascii</span><br><span class="line"></span><br><span class="line">p = gmpy2.mpz(<span class="number">0xf5621a5fd44994f720c1b971fea84f63</span>)</span><br><span class="line">q = gmpy2.mpz(<span class="number">0xdfb85e3d22c0b59271884df021a57123</span>)</span><br><span class="line">e = gmpy2.mpz(<span class="number">0xf36698ed9d9fedd7</span>)</span><br><span class="line">c = gmpy2.mpz(<span class="number">0x448040a0a4757a630c4d8401fb3c0518ab0bce9a02085329536244c91727775c</span>)</span><br><span class="line"></span><br><span class="line">phi_n = (p - <span class="number">1</span>) * (q - <span class="number">1</span>)</span><br><span class="line">d = gmpy2.invert(e, phi_n)  <span class="comment"># Figure out the multiplicative inverse of e modulo phi_n (i.e. the private key). </span></span><br><span class="line">m = <span class="built_in">hex</span>(<span class="built_in">pow</span>(c, d, p*q))  <span class="comment"># Figure out c^d modulo n, then change to hex. Note that n = p * q.</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span> <span class="string">&quot;private key:&quot;</span>, <span class="built_in">hex</span>(d)</span><br><span class="line"><span class="built_in">print</span> <span class="string">&quot;plaintext:&quot;</span>, m</span><br><span class="line"><span class="built_in">print</span> <span class="string">&quot;flag:&quot;</span>, binascii.a2b_hex(<span class="built_in">str</span>(m)[<span class="number">2</span>:])</span><br></pre></td></tr></table></figure>
+
+<p>代码执行后，打印私钥、明文的十六进制数值，以及对应的 ASCII 字符串：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">private key: 0x93f984ff1d6333df9c43c135c3098a83d27516f5cf32f9475171fe31da5c7edb</span><br><span class="line">plaintext: 0x636e73737b5269763373745f5368616d31725f34646c656d616e7d</span><br><span class="line">flag: cnss&#123;Riv3st_Sham1r_4dleman&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="0x03-RSA-Cooler"><a href="#0x03-RSA-Cooler" class="headerlink" title="0x03 RSA Cooler"></a>0x03 RSA Cooler</h1><p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/cnss-2017-crypto-rsa-combo/rsa-cooler.png" alt="easy-rsa"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">public key 1:</span><br><span class="line">n = 0x9ff2e873e1fcafbed22341b4eafdae01afec540e4e84e6041b0a0e83253f1c5da5dabc73004faa82cfaff8e83e5a99255f9790a7744dd18a694d09a89a5caf638d0cf4fe1150a9e894d47a17f386c107a083ae227efab851196de992a2441b7af3442f31a757234ef8997d8af1a3c3aecf2b6100d393a7b632913c2b1c921409</span><br><span class="line">e = 0xe9a44960483b5ca224cfd18818944eaae47de3a158debbc7886b74d7e11165e2e4158c86add4ccc5317256e5323596c9947513766645aefdac4f0375a0296743</span><br><span class="line"></span><br><span class="line">encrypted message 1:</span><br><span class="line">c = 0x636f86fb2b1991d4788092563adf87d14b975e9c7ab7279b10f4741f515788bba2e6e788d6f6c165f4daf65eabee93cebfc55a1d651b1dfb1190174ab338d959775658cf1c6d42b0fe6b7b1abaf5a9aa4ca239367bfcbe88b304c99d5e5f8aac019ec74b11662a5deba523c2f93b7c68a731c019578e3ac64db64cfd3533e91b</span><br><span class="line"></span><br><span class="line">public key 2:</span><br><span class="line">n = 0x9ff2e873e1fcafbed22341b4eafdae01afec540e4e84e6041b0a0e83253f1c5da5dabc73004faa82cfaff8e83e5a99255f9790a7744dd18a694d09a89a5caf638d0cf4fe1150a9e894d47a17f386c107a083ae227efab851196de992a2441b7af3442f31a757234ef8997d8af1a3c3aecf2b6100d393a7b632913c2b1c921409</span><br><span class="line">e = 0xd9b47cdd777deb3e94cfa3d416aa91b04f9391af0504a83de03e9e0c49faae8b79cf7c99f575af99ed2e9e5a7edb09219c4f79cf961092f9919ab33bc3c9a74f</span><br><span class="line"></span><br><span class="line">encrypted message 2:</span><br><span class="line">c = 0x53b601daa8f93166495a69fa747f8553bb8317cfe6dc3f7fec8c8511e209f9288038405fdee399f3ed68ab25dcd91be8bb2ef2ecac1173318b5d2bba932afdcab2d4e5b46987a0f774a29204ce481f79ea422943118f2eaf6c6820b501d9da8d3fbbcea464a2d158a39de6bae6ab845555e4646ae556d7b1e00567b00d41b06c</span><br></pre></td></tr></table></figure>
+
+<p>根据所给数据，可看出本题是已知两组 $n、e、c$，求 $m$，且两组中的模数 $n$ 相等。</p>
+<p>换言之，就是已知两个都在模 $n$ 下的公钥，记为 $e_1、e_2$，以及相应的密文 $c_1、c_2$，看你能不能恢复出明文？即使学过 RSA，如果数学基础不够扎实，也很难想出解法的。翻阅了几本密码学教材，发现这种在特定场景下的 RSA 密码攻击，大名为<strong>共模攻击</strong>。</p>
+<h2 id="共模攻击"><a href="#共模攻击" class="headerlink" title="共模攻击"></a>共模攻击</h2><p><strong>共模攻击</strong>，是指在 RSA 加密算法的实际使用中，有时为了方便起见，给每个用户设置相同的模数 $n$，仅用不同的公钥 $e$ 来区分不同用户。在这种场景下，若攻击者截获了分别用不同公钥 $e_1、e_2$ 加密相同明文 $m$ 后的密文 $c_1、c_2$，则能够在不知道用户私钥 $d_1、d_2$ 的情况下，恢复出明文 $m$。</p>
+<p>假设两个用户的公钥分别为 $e_1、e_2$，且 $e_1$ 与 $e_2$ 互素，模数为 $n$，明文为 $m$，密文分别为 $c_1 \equiv m^{e_1} \ mod \ n 、 c_2 \equiv m^{e_2} \ mod \ n$。攻击者截获 $c_1、c_2$ 后，可通过<strong>扩展欧几里得算法</strong>，求出满足等式 $xe_1 + ye_2 &#x3D; 1$ 的两个整数 $x$ 和 $y$，其中 $x$ 是 $e_1$ 在模 $e_2$ 下的<strong>乘法逆元</strong>，$y$ 是 $e_2$ 在模 $e_1$ 下的<strong>乘法逆元</strong>，由此计算 ${c_1}^x{c_2}^y \equiv m^{xe_1}m^{ye_2} \equiv m^{\left(xe_1+ye_2\right)} \equiv m \ mod \ n$ 即可得到明文 $m$。下面给出 Python 解题代码。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> gmpy2</span><br><span class="line"><span class="keyword">import</span> binascii</span><br><span class="line"></span><br><span class="line"><span class="comment"># Extended Euclid Algorithm</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">extendedGCD</span>(<span class="params">a, b</span>):  </span><br><span class="line">    <span class="comment"># a*xi + b*yi = ri</span></span><br><span class="line">    <span class="keyword">if</span> b == <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">return</span> (<span class="number">1</span>, <span class="number">0</span>, a)</span><br><span class="line">    <span class="comment"># a*x1 + b*y1 = a</span></span><br><span class="line">    x1 = <span class="number">1</span></span><br><span class="line">    y1 = <span class="number">0</span></span><br><span class="line">    <span class="comment"># a*x2 + b*y2 = b</span></span><br><span class="line">    x2 = <span class="number">0</span></span><br><span class="line">    y2 = <span class="number">1</span></span><br><span class="line">    <span class="keyword">while</span> b != <span class="number">0</span>:</span><br><span class="line">        q = a / b</span><br><span class="line">        <span class="comment"># ri = r(i-2) % r(i-1)</span></span><br><span class="line">        r = a % b</span><br><span class="line">        a = b</span><br><span class="line">        b = r</span><br><span class="line">        <span class="comment"># xi = x(i-2) - q*x(i-1)</span></span><br><span class="line">        x = x1 - q*x2</span><br><span class="line">        x1 = x2</span><br><span class="line">        x2 = x</span><br><span class="line">        <span class="comment"># yi = y(i-2) - q*y(i-1)</span></span><br><span class="line">        y = y1 - q*y2</span><br><span class="line">        y1 = y2</span><br><span class="line">        y2 = y</span><br><span class="line">    <span class="keyword">return</span> (x1, y1, a)</span><br><span class="line"></span><br><span class="line">n = gmpy2.mpz(<span class="number">0x9ff2e873e1fcafbed22341b4eafdae01afec540e4e84e6041b0a0e83253f1c5da5dabc73004faa82cfaff8e83e5a99255f9790a7744dd18a694d09a89a5caf638d0cf4fe1150a9e894d47a17f386c107a083ae227efab851196de992a2441b7af3442f31a757234ef8997d8af1a3c3aecf2b6100d393a7b632913c2b1c921409</span>)</span><br><span class="line">e1 = gmpy2.mpz(<span class="number">0xe9a44960483b5ca224cfd18818944eaae47de3a158debbc7886b74d7e11165e2e4158c86add4ccc5317256e5323596c9947513766645aefdac4f0375a0296743</span>)</span><br><span class="line">e2 = gmpy2.mpz(<span class="number">0xd9b47cdd777deb3e94cfa3d416aa91b04f9391af0504a83de03e9e0c49faae8b79cf7c99f575af99ed2e9e5a7edb09219c4f79cf961092f9919ab33bc3c9a74f</span>)</span><br><span class="line">c1 = gmpy2.mpz(<span class="number">0x636f86fb2b1991d4788092563adf87d14b975e9c7ab7279b10f4741f515788bba2e6e788d6f6c165f4daf65eabee93cebfc55a1d651b1dfb1190174ab338d959775658cf1c6d42b0fe6b7b1abaf5a9aa4ca239367bfcbe88b304c99d5e5f8aac019ec74b11662a5deba523c2f93b7c68a731c019578e3ac64db64cfd3533e91b</span>)</span><br><span class="line">c2 = gmpy2.mpz(<span class="number">0x53b601daa8f93166495a69fa747f8553bb8317cfe6dc3f7fec8c8511e209f9288038405fdee399f3ed68ab25dcd91be8bb2ef2ecac1173318b5d2bba932afdcab2d4e5b46987a0f774a29204ce481f79ea422943118f2eaf6c6820b501d9da8d3fbbcea464a2d158a39de6bae6ab845555e4646ae556d7b1e00567b00d41b06c</span>)</span><br><span class="line"></span><br><span class="line">x, y, r = extendedGCD(e1, e2)</span><br><span class="line">m = <span class="built_in">hex</span>(<span class="built_in">pow</span>(c1, x, n) * <span class="built_in">pow</span>(c2, y, n) % n)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span> <span class="string">&quot;plaintext:&quot;</span>, m</span><br><span class="line"><span class="built_in">print</span> <span class="string">&quot;flag:&quot;</span>, binascii.a2b_hex(<span class="built_in">str</span>(m)[<span class="number">2</span>:])</span><br></pre></td></tr></table></figure>
+
+<p>代码执行后，打印明文的十六进制数值，以及对应的 ASCII 字符串：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">plaintext: 0x636e73737b5253415f63306d6d4f6e5f6d6f64754975355f34746b7d</span><br><span class="line">flag: cnss&#123;RSA_c0mmOn_moduIu5_4tk&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="0x04-RSA-Coolest"><a href="#0x04-RSA-Coolest" class="headerlink" title="0x04 RSA Coolest"></a>0x04 RSA Coolest</h1><p><img src="https://blog-1255335783.cos.ap-guangzhou.myqcloud.com/cnss-2017-crypto-rsa-combo/rsa-coolest.png" alt="easy-rsa"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">public key 1:</span><br><span class="line">n = 0xba298d721fadbadb15dabd393db296c13610b33bfeb3aea844815439df3b025bcc6a7085a21eeb3b904a17071c01f05229873518828a8eb8a9129cff611f3481</span><br><span class="line">e = 0x3</span><br><span class="line"></span><br><span class="line">encrypted message 1:</span><br><span class="line">c = 0x7d4f6c0953ec517212b6c778da72245820a749254d21b62d09e36b44e073f858114f174b71cee25104b4d3b0abbf7eb31f031201bf40846290344c865c4b9cf8</span><br><span class="line"></span><br><span class="line">public key 2:</span><br><span class="line">n = 0xe37a3cab324cc0a5ea1030b498f3838f674e6ee9b4e441900c604e4d095b04c70cd32a7c4a5be0b463e3fd94594b3bd25ada9bc9ca17a80d72b7928e233f726d</span><br><span class="line">e = 0x3</span><br><span class="line"></span><br><span class="line">encrypted message 2:</span><br><span class="line">c = 0xc09aea0a9b6e10d7db7a5c2071b46f5801896c536152badb81db37848ef373cf6c6842737a87c12f6aba1d39bdf5d2aaf40e919628a64e4cd78a42c2cdde651a</span><br><span class="line"></span><br><span class="line">public key 3:</span><br><span class="line">n = 0xd8b6924687baaffe1c205ac0474fd5b5f894cb97abb3d427df0e47f30c7f035c07586430679ab65c5bbdccbc53cea9c95c466f3171d24efb85433bd05bc36c5d</span><br><span class="line">e = 0x3</span><br><span class="line"></span><br><span class="line">encrypted message 3:</span><br><span class="line">c = 0x6e3591536b9aadcdb412d6b05a755d603d0272434cc27447a8877707861363c8408b47da377474924db89a3e104717855613cbea16ad439c98b6e7bfdb7ae14f</span><br></pre></td></tr></table></figure>
+
+<p>根据所给数据，可看出本题是已知三组 $n、e、c$，求 $m$，且三组中的公钥 $e$ 都等于较小的数 $3$。</p>
+<p>换言之，就是已知在三个不同模数 $n_1、n_2、n_3$ 下的相同公钥 $e$，以及相应的密文 $c_1、c_2、c_3$，问能不能恢复出明文？刚才的密码学教材继续往下看，得知在此特定场景下的 RSA 密码攻击，名为<strong>低指数攻击</strong>，顾名思义，即要求此相同公钥 $e$ 是个较小的数。</p>
+<h2 id="低指数攻击"><a href="#低指数攻击" class="headerlink" title="低指数攻击"></a>低指数攻击</h2><p><strong>低指数攻击</strong>，是指为了增强 RSA 加密算法在实际使用中高效性，给每个用户设置相同且较小的公钥 $e$，仅用不同的模数 $n$ 来区分不同用户。在这种场景下，若攻击者截获了在不同模数 $n_1、n_2、n_3$ 下用相同公钥 $e$ 加密相同明文 $m$ 后的密文 $c_1、c_2、c_3$，则能够在不知道用户私钥 $d_1、d_2、d_3$ 的情况下，恢复出明文 $m$。</p>
+<p>假设三个用户的模数分别为 $n_1、n_2、n_3$，且不同的模数间两两互素，否则通过计算最大公约数可分解模数，公钥为 $e &#x3D; 0x3$，明文为 $m$，密文分别为<br>$$<br>\begin{cases}<br>c_1 \equiv m^3 \ mod \ n_1  \\<br>c_2 \equiv m^3 \ mod \ n_2  \\<br>c_3 \equiv m^3 \ mod \ n_3<br>\end{cases}<br>$$<br>即可得<br>$$<br>\begin{cases}<br>m^3 \equiv c_1 \ mod \ n_1  \\<br>m^3 \equiv c_2 \ mod \ n_2  \\<br>m^3 \equiv c_3 \ mod \ n_3<br>\end{cases}<br>$$<br>令 $N &#x3D; n_1n_2n_3$，则通过<strong>中国剩余定理</strong>可求得 $m^3 \ mod \ N$。又因为 $m^3 &lt; N$，则可直接对 $m^3$ 开立方根得到明文 $m$。至此，可知为何要求公钥 $e$ 是个较小的数，因为 $e$ 太大的话会增加开方运算的难度。下面给出 Python 解题代码。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> gmpy2</span><br><span class="line"><span class="keyword">import</span> binascii</span><br><span class="line"></span><br><span class="line">n1 = gmpy2.mpz(<span class="number">0xba298d721fadbadb15dabd393db296c13610b33bfeb3aea844815439df3b025bcc6a7085a21eeb3b904a17071c01f05229873518828a8eb8a9129cff611f3481</span>)</span><br><span class="line">n2 = gmpy2.mpz(<span class="number">0xe37a3cab324cc0a5ea1030b498f3838f674e6ee9b4e441900c604e4d095b04c70cd32a7c4a5be0b463e3fd94594b3bd25ada9bc9ca17a80d72b7928e233f726d</span>)</span><br><span class="line">n3 = gmpy2.mpz(<span class="number">0xd8b6924687baaffe1c205ac0474fd5b5f894cb97abb3d427df0e47f30c7f035c07586430679ab65c5bbdccbc53cea9c95c466f3171d24efb85433bd05bc36c5d</span>)</span><br><span class="line">e  = gmpy2.mpz(<span class="number">0x3</span>)</span><br><span class="line">c1 = gmpy2.mpz(<span class="number">0x7d4f6c0953ec517212b6c778da72245820a749254d21b62d09e36b44e073f858114f174b71cee25104b4d3b0abbf7eb31f031201bf40846290344c865c4b9cf8</span>)</span><br><span class="line">c2 = gmpy2.mpz(<span class="number">0xc09aea0a9b6e10d7db7a5c2071b46f5801896c536152badb81db37848ef373cf6c6842737a87c12f6aba1d39bdf5d2aaf40e919628a64e4cd78a42c2cdde651a</span>)</span><br><span class="line">c3 = gmpy2.mpz(<span class="number">0x6e3591536b9aadcdb412d6b05a755d603d0272434cc27447a8877707861363c8408b47da377474924db89a3e104717855613cbea16ad439c98b6e7bfdb7ae14f</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Chinese Remainder Theorem with three equations</span></span><br><span class="line">N  = n1 * n2 * n3</span><br><span class="line">N1 = N / n1</span><br><span class="line">N2 = N / n2</span><br><span class="line">N3 = N / n3</span><br><span class="line">b1 = gmpy2.invert(N1, n1)</span><br><span class="line">b2 = gmpy2.invert(N2, n2)</span><br><span class="line">b3 = gmpy2.invert(N3, n3)</span><br><span class="line">m_pow_e = (c1*b1*N1 + c2*b2*N2 + c3*b3*N3) % N</span><br><span class="line"></span><br><span class="line">m, boolean = gmpy2.iroot(m_pow_e, e)  <span class="comment"># Figure out the cubic root of m_pow_e</span></span><br><span class="line">m = <span class="built_in">hex</span>(m)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span> <span class="string">&quot;plaintext:&quot;</span>, m</span><br><span class="line"><span class="built_in">print</span> <span class="string">&quot;flag:&quot;</span>, binascii.a2b_hex(<span class="built_in">str</span>(m)[<span class="number">2</span>:])</span><br></pre></td></tr></table></figure>
+
+<p>代码执行后，打印明文的十六进制数值，以及对应的 ASCII 字符串：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">plaintext: 0x636e73737b436f304f6f4f30306f4f304f6f4f6f304f306f6c6573747d</span><br><span class="line">flag: cnss&#123;Co0OoO00oO0OoOo0O0olest&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>以上四道关于 RSA 公钥密码体题目的 writeup 到此全部结束，作者水平和经验有限，文中若有错误或不妥之处在所难免，希望发现问题的读者可在文末留言，同时也希望本文能够对读者的密码学探索之旅给予帮助与启发，谢谢。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>Post author:  </strong>Cipher Saw
+  </li>
+  <li class="post-copyright-link">
+      <strong>Post link: </strong>
+      <a href="https://ciphersaw.me/2017/10/27/cnss-2017-crypto-rsa-combo/" title="【CNSS 2017】 Crypto —— RSA Combo">https://ciphersaw.me/2017/10/27/cnss-2017-crypto-rsa-combo/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> unless stating additionally.
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/CTF/" rel="tag"># CTF</a>
+              <a href="/tags/Writeup/" rel="tag"># Writeup</a>
+              <a href="/tags/CNSS/" rel="tag"># CNSS</a>
+              <a href="/tags/Crypto/" rel="tag"># Crypto</a>
+              <a href="/tags/RSA/" rel="tag"># RSA</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2017/09/28/shiyanbar-ctf-web-forgotten-password/" rel="prev" title="【实验吧 CTF】 Web —— 忘记密码了">
+                  <i class="fa fa-chevron-left"></i> 【实验吧 CTF】 Web —— 忘记密码了
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2017/11/12/hash-length-extension-attack/" rel="next" title="Hash Length Extension Attack（哈希长度扩展攻击）">
+                  Hash Length Extension Attack（哈希长度扩展攻击） <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-space-shuttle"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Cipher Saw</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+  
+
+
+  <script class="next-config" data-name="leancloud_visitors" type="application/json">{"enable":true,"app_id":"KWe6NtO4vhgQR3IfB99JElre-gzGzoHsz","app_key":"7nrrRDyHHUMcx03upUALYKIQ","server_url":null,"security":false}</script>
+  <script src="/js/third-party/statistics/lean-analytics.js"></script>
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"ciphersaw","count":false,"i18n":{"disqus":"disqus"}}</script>
+<script src="/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>
